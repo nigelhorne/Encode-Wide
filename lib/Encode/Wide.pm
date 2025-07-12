@@ -70,6 +70,8 @@ sub wide_to_html
 
 	$string =~ s/\xe2\x80\x93/&ndash;/g;
 	$string =~ s/\xe2\x80\x94/&mdash;/g;
+	$string =~ s/\xe2\x80\x98/&apos;/g;	# ‘
+	$string =~ s/\xe2\x80\x99/&apos;/g;	# ’
 	$string =~ s/\xe2\x80\xA6/.../g;	# …
 	unless($params->{'keep_apos'}) {
 		# $string =~ s/'/&apos;/g;
@@ -365,6 +367,8 @@ sub wide_to_xml
 	# $string =~ s/\x98/&apos;/g;
 	$string =~ s/\xe2\x80\x93/&ndash;/g;
 	$string =~ s/\xe2\x80\x94/&mdash;/g;
+	$string =~ s/\xe2\x80\x98/&apos;/g;	# ‘
+	$string =~ s/\xe2\x80\x99/&apos;/g;	# ’
 	$string =~ s/\xe2\x80\xA6/.../g;	# …
 	$string =~ s/['‘’‘\x98]/&apos;/g;
 
