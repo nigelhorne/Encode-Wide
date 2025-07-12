@@ -58,13 +58,19 @@ sub wide_to_html
 		$string =~ s/</&lt;/g;
 		$string =~ s/>/&gt;/g;
 		$string =~ s/"/&quot;/g;
-		$string =~ s/“/&quot;/g;	# U+201C
-		$string =~ s/”/&quot;/g;	# U+201D
 	}
+
+	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
+	$string =~ s/\xe2\x80\x9d/&quot;/g;	# ”
+	$string =~ s/“/&quot;/g;	# U+201C
+	$string =~ s/”/&quot;/g;	# U+201D
 
 	# $string =~ s/&db=/&amp;db=/g;
 	# $string =~ s/&id=/&amp;id=/g;
 
+	$string =~ s/\xe2\x80\x93/&ndash;/g;
+	$string =~ s/\xe2\x80\x94/&mdash;/g;
+	$string =~ s/\xe2\x80\xA6/.../g;	# …
 	unless($params->{'keep_apos'}) {
 		# $string =~ s/'/&apos;/g;
 		# $string =~ s/‘/&apos;/g;
@@ -88,6 +94,7 @@ sub wide_to_html
 	$string =~ s/\xc3\x81/&Aacute;/g;	# Á
 	$string =~ s/\xc3\x83/&Icirc;/g;	# Î
 	$string =~ s/\xc3\x9e/&THORN;/g;	# Þ
+	$string =~ s/\xc3\xa0/&agrave;/g;	# à
 	$string =~ s/\xc3\xa1/&aacute;/g;	# á
 	$string =~ s/\xc3\xa2/&acirc;/g;
 	$string =~ s/\xc3\xa4/&auml;/g;
@@ -346,16 +353,25 @@ sub wide_to_xml
 		$string =~ s/([<>“”"])/$replacements{$1} || $1/eg;
 	}
 
+	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
+	$string =~ s/\xe2\x80\x9d/&quot;/g;	# ”
+	$string =~ s/“/&quot;/g;	# U+201C
+	$string =~ s/”/&quot;/g;	# U+201D
+
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/’/&apos;/g;
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/\x98/&apos;/g;
+	$string =~ s/\xe2\x80\x93/&ndash;/g;
+	$string =~ s/\xe2\x80\x94/&mdash;/g;
+	$string =~ s/\xe2\x80\xA6/.../g;	# …
 	$string =~ s/['‘’‘\x98]/&apos;/g;
 
 	$string =~ s/&Aacute;/&#x0C1;/g;	# Á
 	$string =~ s/&aring;/&#x0E5;/g;	# å
 	$string =~ s/&ccaron;/&#x10D;/g;
+	$string =~ s/&agrave;/&#x0E0;/g;	# á
 	$string =~ s/&aacute;/&#x0E1;/g;	# á
 	$string =~ s/&acirc;/&#x0E2;/g;		# â
 	$string =~ s/&auml;/&#x0E4;/g;		# ä
@@ -406,6 +422,7 @@ sub wide_to_xml
 	$string =~ s/\xc2\xae/&#x0AE;/g;
 	$string =~ s/\xc3\x81/&#x0C1;/g;	# Á
 	$string =~ s/\xc3\x8e/&#x0CE;/g;	# Î
+	$string =~ s/\xc3\xa0/&#x0E0;/g;	# à
 	$string =~ s/\xc3\xa1/&#x0E1;/g;	# á
 	$string =~ s/\xc3\xa5/&#x0E5;/g;	# å
 	$string =~ s/\xc3\xa9/&#x0E9;/g;

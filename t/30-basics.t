@@ -20,7 +20,7 @@ my @tests = (
         name    => 'Latin1 characters',
         input   => "Café déjà vu – naïve façade",
         html    => 'Caf&eacute; d&eacute;j&agrave; vu &ndash; na&iuml;ve fa&ccedil;ade',
-        xml     => 'Caf&#x0E9; d&#x0E9;j&#x00E0; vu - na&#x0EF;ve fa&#x0E7;ade',
+        xml     => 'Caf&#x0E9; d&#x0E9;j&#x0E0; vu - na&#x0EF;ve fa&#x0E7;ade',
     },
     {
         name    => 'Hyperlink entities stripped',
@@ -31,8 +31,8 @@ my @tests = (
     {
         name    => 'Keep hrefs',
         input   => '<a href="https://example.com">',
-        html    => '<a href=&quot;https://example.com&quot;&gt;',
-        xml     => '<a href=&quot;https://example.com&quot;&gt;',
+        html    => '<a href="https://example.com">',
+        xml     => '<a href="https://example.com">',
         args    => { keep_hrefs => 1 },
     },
     {
@@ -56,19 +56,19 @@ my @tests = (
 );
 
 foreach my $test (@tests) {
-    my $args = $test->{args} || {};
-    my $html = wide_to_html(string => $test->{input}, %$args);
-    like $html, qr/^\P{Unassigned}*$/, "$test->{name} - HTML output is ASCII-safe";
-    is $html, $test->{html}, "$test->{name} - HTML correct output" if defined $test->{html};
+	my $args = $test->{args} || {};
+	my $html = wide_to_html(string => $test->{input}, %$args);
+	like $html, qr/^\P{Unassigned}*$/, "$test->{name} - HTML output is ASCII-safe";
+	is $html, $test->{html}, "$test->{name} - HTML correct output" if defined $test->{html};
 
-    my $xml = wide_to_xml(string => $test->{input}, %$args);
-    like $xml, qr/^\P{Unassigned}*$/, "$test->{name} - XML output is ASCII-safe";
-    is $xml, $test->{xml}, "$test->{name} - XML correct output" if defined $test->{xml};
+	my $xml = wide_to_xml(string => $test->{input}, %$args);
+	like $xml, qr/^\P{Unassigned}*$/, "$test->{name} - XML output is ASCII-safe";
+	is $xml, $test->{xml}, "$test->{name} - XML correct output" if defined $test->{xml};
 }
 
 # Invalid input (undef string) should die
 throws_ok {
-    wide_to_html()
+	wide_to_html()
 } qr/BUG: wide_to_html\(\) string not set/, 'Missing string param throws';
 
 done_testing();
