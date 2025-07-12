@@ -22,6 +22,72 @@ our @EXPORT_OK = qw(wide_to_html wide_to_xml);
 #
 # keep_hrefs => 1 means ensure hyperlinks still work
 # keep_apos => 1 means keep apostrophes, useful within <script>
+
+=head1 NAME
+
+Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII entities
+
+=head1 SYNOPSIS
+
+    use Encode::Wide qw(wide_to_html wide_to_xml);
+
+    my $html = wide_to_html(string => "Café déjà vu – naïve façade");
+    # returns: 'Caf&eacute; d&eacute;j&agrave; vu &ndash; na&iuml;ve fa&ccedil;ade'
+
+    my $xml = wide_to_xml(string => "Café déjà vu – naïve façade");
+    # returns: 'Caf&#xE9; d&#xE9;j&#xE0; vu &#x2013; na&#xEF;ve fa&#xE7;ade'
+
+=head1 DESCRIPTION
+
+Encode::Wide provides functions for converting wide (Unicode) characters into ASCII-safe
+formats suitable for embedding in HTML or XML documents. It is especially useful
+when dealing with text containing accented or typographic characters that need
+to be safely represented in markup.
+
+The module offers two exportable functions:
+
+=over 4
+
+=item * C<wide_to_html(string => $text)>
+
+Converts Unicode characters in the input string to their named HTML entities if available,
+or hexadecimal numeric entities otherwise. Common characters such as `é`, `à`, `&`, `<`, `>` are
+converted to their standard HTML representations like `&eacute;`, `&agrave;`, `&amp;`, etc.
+
+=item * C<wide_to_xml(string => $text)>
+
+Converts all non-ASCII characters in the input string to hexadecimal numeric entities.
+Unlike HTML, XML does not support many named entities, so this function ensures compliance
+by using numeric representations such as `&#xE9;` for `é`.
+
+=back
+
+=head1 PARAMETERS
+
+Both functions accept a named parameter:
+
+=over 4
+
+=item * C<string> — The Unicode string to convert.
+
+=back
+
+=head1 ENCODING
+
+Input strings are expected to be valid UTF-8. If a byte string is passed, the module will attempt
+to decode it appropriately. Output is guaranteed to be pure ASCII.
+
+=head1 EXPORT
+
+None by default.
+
+Optionally exportable:
+
+    wide_to_html
+    wide_to_xml
+
+=cut
+
 sub wide_to_html
 {
 	my $params = Params::Get::get_params('string', @_);
@@ -290,7 +356,7 @@ sub wide_to_html
 			while((my @call_details = caller($i++))) {
 				print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 			}
-			complain("TODO: wide_to_html($string)") if($complain);
+			$complain->("TODO: wide_to_html($string)") if($complain);
 			warn "TODO: wide_to_html($string)";
 			$string =~ s/[^[:ascii:]]/XXXXX/g;
 			die "BUG: wide_to_html($string)";
@@ -603,10 +669,29 @@ sub wide_to_xml
 		while((my @call_details = caller($i++))) {
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
-		complain("TODO: wide_to_xml($string)") if($complain);
+		$complain->("TODO: wide_to_xml($string)") if($complain);
 		warn "TODO: wide_to_xml($string)";
 		$string =~ s/[^[:ascii:]]/XXXXX/g;
 		die "BUG: wide_to_xml($string)";
 	}
 	return $string;
 }
+
+=head1 SEE ALSO
+
+L<HTML::Entities>, L<Encode>, L<XML::Entities>, L<Unicode::Escape>
+
+=head1 AUTHOR
+
+Nigel Horne <njh@nigelhorne.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2025 Nigel Horne
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+1;
