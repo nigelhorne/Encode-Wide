@@ -23,9 +23,17 @@ our @EXPORT_OK = qw(wide_to_html wide_to_xml);
 # keep_hrefs => 1 means ensure hyperlinks still work
 # keep_apos => 1 means keep apostrophes, useful within <script>
 
+=encoding UTF-8
+
 =head1 NAME
 
 Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII entities
+
+=head1 VERSION
+
+=cut
+
+our $VERSION = 0.01;
 
 =head1 SYNOPSIS
 
