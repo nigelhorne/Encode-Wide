@@ -31,6 +31,8 @@ Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII ent
 
 =head1 VERSION
 
+0.01
+
 =cut
 
 our $VERSION = 0.01;
@@ -704,7 +706,9 @@ sub wide_to_xml
 
 =head1 SEE ALSO
 
-L<HTML::Entities>, L<Encode>, L<XML::Entities>, L<Unicode::Escape>
+L<HTML::Entities>, L<Encode>, L<XML::Entities>, L<Unicode::Escape>.
+
+L<https://www.compart.com/en/unicode/>.
 
 =head1 AUTHOR
 

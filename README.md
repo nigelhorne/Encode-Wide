@@ -2,6 +2,10 @@
 
 Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII entities
 
+# VERSION
+
+0.01
+
 # SYNOPSIS
 
     use Encode::Wide qw(wide_to_html wide_to_xml);
@@ -55,7 +59,9 @@ Optionally exportable:
 
 # SEE ALSO
 
-[HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities), [Encode](https://metacpan.org/pod/Encode), [XML::Entities](https://metacpan.org/pod/XML%3A%3AEntities), [Unicode::Escape](https://metacpan.org/pod/Unicode%3A%3AEscape)
+[HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities), [Encode](https://metacpan.org/pod/Encode), [XML::Entities](https://metacpan.org/pod/XML%3A%3AEntities), [Unicode::Escape](https://metacpan.org/pod/Unicode%3A%3AEscape).
+
+[https://www.compart.com/en/unicode/](https://www.compart.com/en/unicode/).
 
 # AUTHOR
 
