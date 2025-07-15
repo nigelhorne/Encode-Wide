@@ -31,11 +31,11 @@ Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII ent
 
 =head1 VERSION
 
-0.01
+0.02
 
 =cut
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 =head1 SYNOPSIS
 
@@ -714,12 +714,23 @@ L<https://www.compart.com/en/unicode/>.
 
 Nigel Horne <njh@nigelhorne.com>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 LICENCE AND COPYRIGHT
 
-Copyright (C) 2025 Nigel Horne
+Copyright 2025 Nigel Horne.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+Usage is subject to licence terms.
+
+The licence terms of this software are as follows:
+
+=over 4
+
+=item * Personal single user, single computer use: GPL2
+
+=item * All other users (including Commercial, Charity, Educational, Government)
+  must apply in writing for a licence for use from Nigel Horne at the
+  above e-mail.
+
+=back
 
 =cut
 
