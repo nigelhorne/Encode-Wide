@@ -670,6 +670,7 @@ sub wide_to_xml
 	$string =~ s/«/&quot;/g;
 	$string =~ s/»/&quot;/g;
 	$string =~ s/—/-/g;
+	$string =~ s/–/-/g;
 	$string =~ s/…/.../g;
 	$string =~ s/●/&#x25CF;/g;
 	$string =~ s/\x80$/ /;

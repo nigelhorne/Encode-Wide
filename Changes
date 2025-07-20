@@ -1,5 +1,8 @@
 Revision history for Encode::Wide
 
+0.03
+	Added – (ndash) encoding in wide_to_xml
+
 0.02	Tue Jul 15 21:48:42 EDT 2025
 	Extended testing
 
