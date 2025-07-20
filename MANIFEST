@@ -9,4 +9,5 @@ t/30-basics.t
 t/edge.t
 t/eof.t
 t/eol.t
+t/manifest.t
 t/pod-synopsis.t
