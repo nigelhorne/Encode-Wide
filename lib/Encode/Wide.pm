@@ -466,13 +466,14 @@ sub wide_to_xml
 	$string =~ s/‘/&apos;/g;
 	$string =~ s/\x98/&apos;/g;
 
+	$string =~ s/&copy;/&#x0A9;/g;
 	$string =~ s/&Aacute;/&#x0C1;/g;	# Á
-	$string =~ s/&aring;/&#x0E5;/g;	# å
 	$string =~ s/&ccaron;/&#x10D;/g;
 	$string =~ s/&agrave;/&#x0E0;/g;	# á
 	$string =~ s/&aacute;/&#x0E1;/g;	# á
 	$string =~ s/&acirc;/&#x0E2;/g;		# â
 	$string =~ s/&auml;/&#x0E4;/g;		# ä
+	$string =~ s/&aring;/&#x0E5;/g;	# å
 	$string =~ s/&ccedil;/&#x0E7;/g;	# ç
 	$string =~ s/&egrave;/&#x0E8;/g;
 	$string =~ s/&eacute;/&#x0E9;/g;
