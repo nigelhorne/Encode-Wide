@@ -498,7 +498,6 @@ sub wide_to_xml
 	$string =~ s/&Scaron;/&#x160;/g;
 	$string =~ s/&THORN;/&#x0DE;/g;	# Þ
 	$string =~ s/&thorn;/&#x0FE;/g;	# þ
-	$string =~ s/&copy;/&#x0A9;/g;
 	$string =~ s/&reg;/&#x0AE;/g;
 	$string =~ s/&pound;/&#163;/g;
 	$string =~ s/&ntilde;/&#x0F1;/g;
