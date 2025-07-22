@@ -1,5 +1,8 @@
 Revision history for Encode::Wide
 
+0.04
+	Trap &excl; in XML
+
 0.03	Sun Jul 20 11:22:05 EDT 2025
 	Added – (ndash) and U2018/U2019 encoding in wide_to_xml
 	Better debug message now dumps the errant bytes

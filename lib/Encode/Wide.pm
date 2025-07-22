@@ -503,6 +503,7 @@ sub wide_to_xml
 	$string =~ s/&ntilde;/&#x0F1;/g;
 	$string =~ s/&mdash;/-/g;
 	$string =~ s/&ndash;/-/g;
+	$string =~ s/&excl;/!/g;
 
 	if($string !~ /[^[:ascii:]]/) {
 		return $string;
