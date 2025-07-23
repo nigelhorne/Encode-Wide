@@ -27,15 +27,15 @@ our @EXPORT_OK = qw(wide_to_html wide_to_xml);
 
 =head1 NAME
 
-Encode::Wide - Convert wide characters (Unicode) into HTML or XML-safe ASCII entities
+Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities
 
 =head1 VERSION
 
-0.03
+0.04
 
 =cut
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 =head1 SYNOPSIS
 
@@ -60,8 +60,9 @@ The module offers two exportable functions:
 
 =item * C<wide_to_html(string => $text)>
 
-Converts Unicode characters in the input string to their named HTML entities if available,
-or hexadecimal numeric entities otherwise. Common characters such as `é`, `à`, `&`, `<`, `>` are
+Converts all non-ASCII characters in the input string to their named HTML entities if available,
+or hexadecimal numeric entities otherwise.
+Common characters such as `é`, `à`, `&`, `<`, `>` are
 converted to their standard HTML representations like `&eacute;`, `&agrave;`, `&amp;`, etc.
 
 =item * C<wide_to_xml(string => $text)>
@@ -84,8 +85,9 @@ Both functions accept a named parameter:
 
 =head1 ENCODING
 
-Input strings are expected to be valid UTF-8. If a byte string is passed, the module will attempt
-to decode it appropriately. Output is guaranteed to be pure ASCII.
+Input strings are expected to be valid UTF-8 or Unicode.
+If a byte string is passed, the module will attempt to decode it appropriately.
+Output is guaranteed to be pure ASCII.
 
 =head1 EXPORT
 
@@ -725,6 +727,16 @@ sub wide_to_xml
 L<HTML::Entities>, L<Encode>, L<XML::Entities>, L<Unicode::Escape>.
 
 L<https://www.compart.com/en/unicode/>.
+
+=head1 SUPPORT
+
+This module is provided as-is without any warranty.
+
+Please report any bugs or feature requests to C<bug-encode-wide at rt.cpan.org>,
+or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide>.
+I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
 
 =head1 AUTHOR
 
