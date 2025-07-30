@@ -215,21 +215,36 @@ sub wide_to_html
 		return $string;
 	}
 
+	@byte_map = (
+		["\xc2\xa3", '&pound;'],
+		["\xc2\xa9", '&copy;'],
+		["\xc2\xae", '&reg;'],
+		["\xc3\xa2", '&acirc;'],
+		["\xc3\xa4", '&auml;'],
+		["\xc3\xa9", '&eacute;'],
+	);
+
+	# Build an alternation sorted by longest sequence first
+	$pattern = join '|',
+		map { quotemeta($_->[0]) }
+		sort { length $b->[0] <=> length $a->[0] }
+		@byte_map;
+
+	$string =~ s/($pattern)/do {
+		my $bytes = $1;
+		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
+		$pair->[1];
+	}/ge;
+
 	$string =~ s/\xc2\xa0/ /g;	# Non breaking space
-	$string =~ s/\xc2\xa3/&pound;/g;
-	$string =~ s/\xc2\xa9/&copy;/g;
 	$string =~ s/\xc2\xaa/&ordf;/g;	# ª
 	$string =~ s/\xc2\xab/&quot;/g;	# «
-	$string =~ s/\xc2\xae/&reg;/g;
 	$string =~ s/\xc2\xbb/&quot;/g;	# »
 	$string =~ s/\xc3\x81/&Aacute;/g;	# Á
 	$string =~ s/\xc3\x83/&Icirc;/g;	# Î
 	$string =~ s/\xc3\x9e/&THORN;/g;	# Þ
 	$string =~ s/\xc3\xa0/&agrave;/g;	# à
 	$string =~ s/\xc3\xa1/&aacute;/g;	# á
-	$string =~ s/\xc3\xa2/&acirc;/g;
-	$string =~ s/\xc3\xa4/&auml;/g;
-	$string =~ s/\xc3\xa9/&eacute;/g;
 	$string =~ s/\xc3\xad/&iacute;/g;	# í
 	$string =~ s/\xc3\xb0/&eth;/g;	# ð
 	$string =~ s/\xc3\xba/&uacute;/g;	# ú
