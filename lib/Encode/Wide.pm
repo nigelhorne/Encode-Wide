@@ -173,14 +173,27 @@ sub wide_to_html
 	$string =~ s/\xe2\x80\x98/&apos;/g;	# ‘
 	$string =~ s/\xe2\x80\x99/&apos;/g;	# ’
 	$string =~ s/\xe2\x80\xA6/.../g;	# …
+
 	unless($params->{'keep_apos'}) {
 		# We can't combine since each char in the multi-byte matches, not the entire multi-byte
 		# $string =~ s/['‘’‘\x98]/&apos;/g;
-		$string =~ s/'/&apos;/g;
-		$string =~ s/‘/&apos;/g;
-		$string =~ s/’/&apos;/g;
-		$string =~ s/‘/&apos;/g;
-		$string =~ s/\x98/&apos;/g;
+		%entity_map = (
+			"'" => '&apos;',
+			'‘' => '&apos;',
+			'’' => '&apos;',
+			'‘' => '&apos;',
+			"\x98" => '&apos;',
+		);
+
+		$string =~ s{
+			# ([\x80-\x{10FFFF}])
+			(.)
+		}{
+			my $cp = $1;
+			exists $entity_map{$cp}
+				? $entity_map{$cp}
+				: $cp
+		}gex;
 	}
 
 	if($string !~ /[^[:ascii:]]/) {
@@ -443,9 +456,22 @@ sub wide_to_xml
 	# print STDERR __LINE__, ": ($string)\n";
 
 	# $string =~ s/&amp;/&/g;
-	$string =~ s/&ccaron;/č/g;	# I don't think HTML::Entities does this
-	$string =~ s/&zcaron;/ž/g;	# I don't think HTML::Entities does this
-	$string =~ s/&Scaron;/Š/g;	# I don't think HTML::Entities does this
+	# I don't think HTML::Entities does these
+	my %entity_map = (
+		'&ccaron' => 'č',
+		'&zcaron' => 'ž',
+		'&Scaron' => 'Š',
+	);
+
+	$string =~ s{
+		# ([\x80-\x{10FFFF}])
+		(.)
+	}{
+		my $cp = $1;
+		exists $entity_map{$cp}
+			? $entity_map{$cp}
+			: $cp
+	}gex;
 
 	# Escape only if it's not already part of an entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;

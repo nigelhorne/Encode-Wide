@@ -1,5 +1,8 @@
 Revision history for Encode::Wide
 
+0.05
+	Start to make some table driven to reduce the number of scans of the string
+
 0.04	Tue Jul 22 20:42:18 EDT 2025
 	Trap &excl; in XML
 
