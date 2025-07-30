@@ -125,17 +125,39 @@ sub wide_to_html
 
 	$string = HTML::Entities::decode($string);
 	# $string =~ s/ & / &amp; /g;
-	$string =~ s/&ccaron;/č/g;	# I don't think HTML::Entities does this
-	$string =~ s/&zcaron;/ž/g;	# I don't think HTML::Entities does this
-	$string =~ s/&Scaron;/Š/g;	# I don't think HTML::Entities does this
+
+	# I don't think HTML::Entities does these
+	my %entity_map = (
+		'&ccaron' => 'č',
+		'&zcaron' => 'ž',
+		'&Scaron' => 'Š',
+	);
+
+	$string =~ s{
+		# ([\x80-\x{10FFFF}])
+		(.)
+	}{
+		my $cp = $1;
+		exists $entity_map{$cp}
+			? $entity_map{$cp}
+			: $cp
+	}gex;
 
 	# Escape only if it's not already part of an entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		$string =~ s/</&lt;/g;
-		$string =~ s/>/&gt;/g;
-		$string =~ s/"/&quot;/g;
+		%entity_map = (
+			'<' => '&lt;',
+			'>' => '&gt;',
+			'"' => '&quot;',
+		);
+		$string =~ s{(.)}{
+			my $cp = $1;
+			exists $entity_map{$cp}
+				? $entity_map{$cp}
+				: $cp
+		}gex;
 	}
 
 	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
