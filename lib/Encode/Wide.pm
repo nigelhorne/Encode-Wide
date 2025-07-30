@@ -160,19 +160,34 @@ sub wide_to_html
 		}gex;
 	}
 
-	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
-	$string =~ s/\xe2\x80\x9d/&quot;/g;	# ”
 	$string =~ s/“/&quot;/g;	# U+201C
 	$string =~ s/”/&quot;/g;	# U+201D
 
 	# $string =~ s/&db=/&amp;db=/g;
 	# $string =~ s/&id=/&amp;id=/g;
 
-	$string =~ s/\xe2\x80\x93/&ndash;/g;
-	$string =~ s/\xe2\x80\x94/&mdash;/g;
-	$string =~ s/\xe2\x80\x98/&apos;/g;	# ‘
-	$string =~ s/\xe2\x80\x99/&apos;/g;	# ’
-	$string =~ s/\xe2\x80\xA6/.../g;	# …
+	# Table of byte-sequences->entities
+	my @byte_map = (
+		["\xe2\x80\x9c", '&quot;'],	# “
+		["\xe2\x80\x9d", '&quot;'],	# ”
+		["\xe2\x80\x93", '&ndash;'],
+		["\xe2\x80\x94", '&mdash;'],
+		["\xe2\x80\x98", '&apos;'],	# ‘
+		["\xe2\x80\x99", '&apos;'],	# ’
+		["\xe2\x80\xA6", '...']	# …
+	);
+
+	# Build an alternation sorted by longest sequence first
+	my $pattern = join '|',
+		map { quotemeta($_->[0]) }
+		sort { length $b->[0] <=> length $a->[0] }
+		@byte_map;
+
+	$string =~ s/($pattern)/do {
+		my $bytes = $1;
+		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
+		$pair->[1];
+	}/ge;
 
 	unless($params->{'keep_apos'}) {
 		# We can't combine since each char in the multi-byte matches, not the entire multi-byte
