@@ -263,6 +263,9 @@ sub wide_to_html
 		["\xe2\x80\x9d", '&quot;'],
 		["\xe2\x80\xa6", '...'],
 		["\xe2\x97\x8f", '&#x25CF;'],	# ●
+		["\N{U+00A0}", ' '],
+		["\N{U+00A3}", '&pound;'],
+		["\N{U+00A9}", '&copy;'],
 	);
 
 	# Build an alternation sorted by longest sequence first
@@ -277,9 +280,6 @@ sub wide_to_html
 		$pair->[1];
 	}/ge;
 
-	$string =~ s/\N{U+00A0}/ /g;
-	$string =~ s/\N{U+00A3}/&pound;/g;
-	$string =~ s/\N{U+00A9}/&copy;/g;
 	$string =~ s/\N{U+00AA}/&ordf;/g;	# ª
 	$string =~ s/\N{U+00AB}/&quot;/g;	# «
 	$string =~ s/\N{U+00AE}/&reg;/g;
