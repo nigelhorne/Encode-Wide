@@ -266,6 +266,52 @@ sub wide_to_html
 		["\N{U+00A0}", ' '],
 		["\N{U+00A3}", '&pound;'],
 		["\N{U+00A9}", '&copy;'],
+		["\N{U+00AA}", '&ordf;'],	# ª
+		["\N{U+00AB}", '&quot;'],	# «
+		["\N{U+00AE}", '&reg;'],
+		["\N{U+00BB}", '&quot;'],	# »
+		["\N{U+00CE}", '&Icirc;'],	# Î
+		["\N{U+00DE}", '&THORN;'],	# Þ
+		["\N{U+0161}", '&scaron;'],
+		["\N{U+010D}", '&ccaron;'],
+		["\N{U+017E}", '&zcaron;'],
+		["\N{U+00C9}", '&Eacute;'],
+		["\N{U+00D6}", '&Ouml;'],	# Ö
+		["\N{U+00DF}", '&szlig;'],	# ß
+		["\N{U+00E1}", '&aacute;'],	# á
+		["\N{U+00E2}", '&acirc;'],
+		["\N{U+00E4}", '&auml;'],
+		["\N{U+00E5}", '&aring;'],	# å
+		["\N{U+00E7}", '&ccedil;'],	# ç
+		["\N{U+00E8}", '&egrave;'],
+		["\N{U+00E9}", '&eacute;'],
+		["\N{U+00ED}", '&iacute;'],	# í
+		["\N{U+00EE}", '&icirc;'],
+		["\N{U+00EF}", '&iuml;'],	# ï
+		["\N{U+00F0}", '&eth;'],	# ð
+		["\N{U+00F1}", '&ntilde;'],	# ñ
+		["\N{U+00F4}", '&ocirc;'],	# ô
+		["\N{U+00F6}", '&ouml;'],
+		["\N{U+00F8}", '&oslash;'],	# ø
+		["\N{U+00FA}", '&uacute;'],	# ú
+		["\N{U+00FC}", '&uuml;'],	# ü
+		["\N{U+00FE}", '&thorn;'],	# þ
+		["\N{U+00C1}", '&Aacute;'],	# Á
+		["\N{U+00C9}", '&Eacute;'],
+		["\N{U+00CA}", '&ecirc;'],
+		["\N{U+00EB}", '&euml;'],
+		["\N{U+00F3}", '&oacute;'],
+		["\N{U+015B}", '&sacute;'],
+		["\N{U+00FB}", '&ucirc;'],
+		["\N{U+0160}", '&Scaron;'],
+		["\N{U+2013}", '&ndash;'],
+		["\N{U+2014}", '&mdash;'],
+		["\N{U+2018}", '&quot;'],
+		["\N{U+2019}", '&quot;'],
+		["\N{U+201C}", '&quot;'],
+		["\N{U+201D}", '&quot;'],
+		["\N{U+2026}", '...'],	# …
+		["\N{U+25CF}", '&#x25CF;'],	# ●
 	);
 
 	# Build an alternation sorted by longest sequence first
@@ -279,53 +325,6 @@ sub wide_to_html
 		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
 		$pair->[1];
 	}/ge;
-
-	$string =~ s/\N{U+00AA}/&ordf;/g;	# ª
-	$string =~ s/\N{U+00AB}/&quot;/g;	# «
-	$string =~ s/\N{U+00AE}/&reg;/g;
-	$string =~ s/\N{U+00BB}/&quot;/g;	# »
-	$string =~ s/\N{U+00CE}/&Icirc;/g;	# Î
-	$string =~ s/\N{U+00DE}/&THORN;/g;	# Þ
-	$string =~ s/\N{U+0161}/&scaron;/g;
-	$string =~ s/\N{U+010D}/&ccaron;/g;
-	$string =~ s/\N{U+017E}/&zcaron;/g;
-	$string =~ s/\N{U+00C9}/&Eacute;/g;
-	$string =~ s/\N{U+00D6}/&Ouml;/g;	# Ö
-	$string =~ s/\N{U+00DF}/&szlig;/g;	# ß
-	$string =~ s/\N{U+00E1}/&aacute;/g;	# á
-	$string =~ s/\N{U+00E2}/&acirc;/g;
-	$string =~ s/\N{U+00E4}/&auml;/g;
-	$string =~ s/\N{U+00E5}/&aring;/g;	# å
-	$string =~ s/\N{U+00E7}/&ccedil;/g;	# ç
-	$string =~ s/\N{U+00E8}/&egrave;/g;
-	$string =~ s/\N{U+00E9}/&eacute;/g;
-	$string =~ s/\N{U+00ED}/&iacute;/g;	# í
-	$string =~ s/\N{U+00EE}/&icirc;/g;
-	$string =~ s/\N{U+00EF}/&iuml;/g;	# ï
-	$string =~ s/\N{U+00F0}/&eth;/g;	# ð
-	$string =~ s/\N{U+00F1}/&ntilde;/g;	# ñ
-	$string =~ s/\N{U+00F4}/&ocirc;/g;	# ô
-	$string =~ s/\N{U+00F6}/&ouml;/g;
-	$string =~ s/\N{U+00F8}/&oslash;/g;	# ø
-	$string =~ s/\N{U+00FA}/&uacute;/g;	# ú
-	$string =~ s/\N{U+00FC}/&uuml;/g;	# ü
-	$string =~ s/\N{U+00FE}/&thorn;/g;	# þ
-	$string =~ s/\N{U+00C1}/&Aacute;/g;	# Á
-	$string =~ s/\N{U+00C9}/&Eacute;/g;
-	$string =~ s/\N{U+00CA}/&ecirc;/g;
-	$string =~ s/\N{U+00EB}/&euml;/g;
-	$string =~ s/\N{U+00F3}/&oacute;/g;
-	$string =~ s/\N{U+015B}/&sacute;/g;
-	$string =~ s/\N{U+00FB}/&ucirc;/g;
-	$string =~ s/\N{U+0160}/&Scaron;/g;
-	$string =~ s/\N{U+2013}/&ndash;/g;
-	$string =~ s/\N{U+2014}/&mdash;/g;
-	$string =~ s/\N{U+2018}/&quot;/g;
-	$string =~ s/\N{U+2019}/&quot;/g;
-	$string =~ s/\N{U+201C}/&quot;/g;
-	$string =~ s/\N{U+201D}/&quot;/g;
-	$string =~ s/\N{U+2026}/.../g;	# …
-	$string =~ s/\N{U+25CF}/&#x25CF;/g;	# ●
 
 	# utf8::encode($string);
 	# $string =~ s/š/&scaron;/g;
