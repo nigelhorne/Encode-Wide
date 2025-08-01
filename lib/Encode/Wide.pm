@@ -216,12 +216,53 @@ sub wide_to_html
 	}
 
 	@byte_map = (
+		["\xc2\xa0", ' '],	# Non breaking space
 		["\xc2\xa3", '&pound;'],
 		["\xc2\xa9", '&copy;'],
 		["\xc2\xae", '&reg;'],
 		["\xc3\xa2", '&acirc;'],
 		["\xc3\xa4", '&auml;'],
 		["\xc3\xa9", '&eacute;'],
+		["\xc2\xaa", '&ordf;'],	# ª
+		["\xc2\xab", '&quot;'],	# «
+		["\xc2\xbb", '&quot;'],	# »
+		["\xc3\x81", '&Aacute;'],	# Á
+		["\xc3\x83", '&Icirc;'],	# Î
+		["\xc3\x9e", '&THORN;'],	# Þ
+		["\xc3\xa0", '&agrave;'],	# à
+		["\xc3\xa1", '&aacute;'],	# á
+		["\xc3\xad", '&iacute;'],	# í
+		["\xc3\xb0", '&eth;'],	# ð
+		["\xc3\xba", '&uacute;'],	# ú
+		["\xc3\xb4", '&ocirc;'],	# ô
+		["\xc3\xb6", '&ouml;'],
+		["\xc3\xb8", '&oslash;'],	# ø
+		["\xc5\xa1", '&scaron;'],
+		["\xc4\x8d", '&ccaron;'],
+		["\xc5\xbe", '&zcaron;'],
+		["\xc3\xa5", '&aring;'],	# å
+		["\xc3\xa7", '&ccedil;'],
+		["\xc3\xaf", '&iuml;'],	# ï
+		["\xc3\xb3", '&oacute;'],
+		["\xc3\x96", '&Ouml;'], # Ö
+		["\xc3\xa8", '&egrave;'],
+		["\xc3\x89", '&Eacute;'],
+		["\xc3\x9f", '&szlig;'],
+		["\xc3\xaa", '&ecirc;'],
+		["\xc3\xab", '&euml;'],
+		["\xc3\xae", '&icirc;'],
+		["\xc3\xbb", '&ucirc;'],
+		["\xc3\xbc", '&uuml;'], # ü
+		["\xc3\xbe", '&thorn;'],	# þ
+		["\xc5\x9b", '&sacute;'],
+		["\xc5\xa0", '&Scaron;'],
+		["\xe2\x80\x93", '&ndash;'],
+		["\xe2\x80\x94", '&mdash;'],
+		["\xc3\xb1", '&ntilde;'],	# ñ
+		["\xe2\x80\x9c", '&quot;'],
+		["\xe2\x80\x9d", '&quot;'],
+		["\xe2\x80\xa6", '...'],
+		["\xe2\x97\x8f", '&#x25CF;'],	# ●
 	);
 
 	# Build an alternation sorted by longest sequence first
@@ -235,48 +276,6 @@ sub wide_to_html
 		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
 		$pair->[1];
 	}/ge;
-
-	$string =~ s/\xc2\xa0/ /g;	# Non breaking space
-	$string =~ s/\xc2\xaa/&ordf;/g;	# ª
-	$string =~ s/\xc2\xab/&quot;/g;	# «
-	$string =~ s/\xc2\xbb/&quot;/g;	# »
-	$string =~ s/\xc3\x81/&Aacute;/g;	# Á
-	$string =~ s/\xc3\x83/&Icirc;/g;	# Î
-	$string =~ s/\xc3\x9e/&THORN;/g;	# Þ
-	$string =~ s/\xc3\xa0/&agrave;/g;	# à
-	$string =~ s/\xc3\xa1/&aacute;/g;	# á
-	$string =~ s/\xc3\xad/&iacute;/g;	# í
-	$string =~ s/\xc3\xb0/&eth;/g;	# ð
-	$string =~ s/\xc3\xba/&uacute;/g;	# ú
-	$string =~ s/\xc3\xb4/&ocirc;/g;	# ô
-	$string =~ s/\xc3\xb6/&ouml;/g;
-	$string =~ s/\xc3\xb8/&oslash;/g;	# ø
-	$string =~ s/\xc5\xa1/&scaron;/g;
-	$string =~ s/\xc4\x8d/&ccaron;/g;
-	$string =~ s/\xc5\xbe/&zcaron;/g;
-	$string =~ s/\xc3\xa5/&aring;/g;	# å
-	$string =~ s/\xc3\xa7/&ccedil;/g;
-	$string =~ s/\xc3\xaf/&iuml;/g;	# ï
-	$string =~ s/\xc3\xb3/&oacute;/g;
-	$string =~ s/\xc3\x96/&Ouml;/g; # Ö
-	$string =~ s/\xc3\xa8/&egrave;/g;
-	$string =~ s/\xc3\x89/&Eacute;/g;
-	$string =~ s/\xc3\x9f/&szlig;/g;
-	$string =~ s/\xc3\xaa/&ecirc;/g;
-	$string =~ s/\xc3\xab/&euml;/g;
-	$string =~ s/\xc3\xae/&icirc;/g;
-	$string =~ s/\xc3\xbb/&ucirc;/g;
-	$string =~ s/\xc3\xbc/&uuml;/g; # ü
-	$string =~ s/\xc3\xbe/&thorn;/g;	# þ
-	$string =~ s/\xc5\x9b/&sacute;/g;
-	$string =~ s/\xc5\xa0/&Scaron;/g;
-	$string =~ s/\xe2\x80\x93/&ndash;/g;
-	$string =~ s/\xe2\x80\x94/&mdash;/g;
-	$string =~ s/\xc3\xb1/&ntilde;/g;	# ñ
-	$string =~ s/\xe2\x80\x9c/&quot;/g;
-	$string =~ s/\xe2\x80\x9d/&quot;/g;
-	$string =~ s/\xe2\x80\xa6/.../g;
-	$string =~ s/\xe2\x97\x8f/&#x25CF;/g;	# ●
 
 	$string =~ s/\N{U+00A0}/ /g;
 	$string =~ s/\N{U+00A3}/&pound;/g;
