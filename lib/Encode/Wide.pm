@@ -371,50 +371,62 @@ sub wide_to_html
 	# $string =~ s/\N{U+0160}/&Scaron;/g;	# FIXME: also above
 	# $string =~ s/\N{U+2013}/-/g;
 
-	$string =~ s/Á/&Aacute;/g;
-	$string =~ s/å/&aring;/g;
-	$string =~ s/ª/&ordf;/g;
-	$string =~ s/š/&scaron;/g;
-	$string =~ s/Š/&Scaron;/g;
-	$string =~ s/č/&ccaron;/g;
-	$string =~ s/ž/&zcaron;/g;
-	$string =~ s/á/&aacute;/g;
-	$string =~ s/â/&acirc;/g;
-	$string =~ s/é/&eacute;/g;
-	$string =~ s/è/&egrave;/g;
-	$string =~ s/ç/&ccedil;/g;
-	$string =~ s/ê/&ecirc;/g;
-	$string =~ s/ë/&euml;/g;
-	$string =~ s/ð/&eth;/g;
-	$string =~ s/í/&iacute;/g;
-	$string =~ s/ï/&iuml;/g;
-	$string =~ s/Î/&Iicrc;/g;
-	$string =~ s/©/&copy;/g;
-	$string =~ s/®/&reg;/g;
-	$string =~ s/ó/&oacute;/g;
-	$string =~ s/ô/&ocirc;/g;
-	$string =~ s/ö/&ouml;/g;
-	$string =~ s/ø/&oslash;/g;
-	$string =~ s/ś/&sacute;/g;
-	$string =~ s/Þ/&THORN;/g;
-	$string =~ s/þ/&thorn;/g;
-	$string =~ s/û/&ucirc;/g;
-	$string =~ s/ü/&uuml;/g;
-	$string =~ s/ú/&uacute;/g;
-	$string =~ s/£/&pound;/g;
-	$string =~ s/ß/&szlig;/g;
-	$string =~ s/–/&ndash;/g;
-	$string =~ s/—/&mdash;/g;
-	$string =~ s/ñ/&ntilde;/g;
-	# See above
-	# $string =~ s/[“”«»]/&quot;/g;
-	$string =~ s/“/&quot;/g;
-	$string =~ s/”/&quot;/g;
-	$string =~ s/«/&quot;/g;
-	$string =~ s/»/&quot;/g;
-	$string =~ s/…/.../g;
-	$string =~ s/●/&#x25CF;/g;
-	$string =~ s/\x80$/ /;
+	@byte_map = (
+		[ 'Á', '&Aacute;' ],
+		[ 'å', '&aring;' ],
+		[ 'ª', '&ordf;' ],
+		[ 'š', '&scaron;' ],
+		[ 'Š', '&Scaron;' ],
+		[ 'č', '&ccaron;' ],
+		[ 'ž', '&zcaron;' ],
+		[ 'á', '&aacute;' ],
+		[ 'â', '&acirc;' ],
+		[ 'é', '&eacute;' ],
+		[ 'è', '&egrave;' ],
+		[ 'ç', '&ccedil;' ],
+		[ 'ê', '&ecirc;' ],
+		[ 'ë', '&euml;' ],
+		[ 'ð', '&eth;' ],
+		[ 'í', '&iacute;' ],
+		[ 'ï', '&iuml;' ],
+		[ 'Î', '&Iicrc;' ],
+		[ '©', '&copy;' ],
+		[ '®', '&reg;' ],
+		[ 'ó', '&oacute;' ],
+		[ 'ô', '&ocirc;' ],
+		[ 'ö', '&ouml;' ],
+		[ 'ø', '&oslash;' ],
+		[ 'ś', '&sacute;' ],
+		[ 'Þ', '&THORN;' ],
+		[ 'þ', '&thorn;' ],
+		[ 'û', '&ucirc;' ],
+		[ 'ü', '&uuml;' ],
+		[ 'ú', '&uacute;' ],
+		[ '£', '&pound;' ],
+		[ 'ß', '&szlig;' ],
+		[ '–', '&ndash;' ],
+		[ '—', '&mdash;' ],
+		[ 'ñ', '&ntilde;' ],
+		[ '“', '&quot;' ],
+		[ '”', '&quot;' ],
+		[ '«', '&quot;' ],
+		[ '»', '&quot;' ],
+		[ '…', '...' ],
+		[ '●', '&#x25CF;' ],
+		[ '\x80$', ' ' ],
+	);
+
+	# Build an alternation sorted by longest sequence first
+	$pattern = join '|',
+		map { quotemeta($_->[0]) }
+		sort { length $b->[0] <=> length $a->[0] }
+		@byte_map;
+
+	$string =~ s/($pattern)/do {
+		my $bytes = $1;
+		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
+		$pair->[1];
+	}/ge;
 
 	# if($string =~ /^Maria\(/) {
 		# # print STDERR (unpack 'H*', $string);
