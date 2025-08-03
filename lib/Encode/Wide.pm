@@ -160,14 +160,13 @@ sub wide_to_html
 		}gex;
 	}
 
-	$string =~ s/“/&quot;/g;	# U+201C
-	$string =~ s/”/&quot;/g;	# U+201D
-
 	# $string =~ s/&db=/&amp;db=/g;
 	# $string =~ s/&id=/&amp;id=/g;
 
 	# Table of byte-sequences->entities
 	my @byte_map = (
+		['“', '&quot;'],	# U+201C
+		['”', '&quot;'],	# U+201D
 		["\xe2\x80\x9c", '&quot;'],	# “
 		["\xe2\x80\x9d", '&quot;'],	# ”
 		["\xe2\x80\x93", '&ndash;'],
@@ -177,17 +176,7 @@ sub wide_to_html
 		["\xe2\x80\xA6", '...']	# …
 	);
 
-	# Build an alternation sorted by longest sequence first
-	my $pattern = join '|',
-		map { quotemeta($_->[0]) }
-		sort { length $b->[0] <=> length $a->[0] }
-		@byte_map;
-
-	$string =~ s/($pattern)/do {
-		my $bytes = $1;
-		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
-		$pair->[1];
-	}/ge;
+	$string = _sub_map(\$string, \@byte_map);
 
 	unless($params->{'keep_apos'}) {
 		# We can't combine since each char in the multi-byte matches, not the entire multi-byte
@@ -314,17 +303,7 @@ sub wide_to_html
 		["\N{U+25CF}", '&#x25CF;'],	# ●
 	);
 
-	# Build an alternation sorted by longest sequence first
-	$pattern = join '|',
-		map { quotemeta($_->[0]) }
-		sort { length $b->[0] <=> length $a->[0] }
-		@byte_map;
-
-	$string =~ s/($pattern)/do {
-		my $bytes = $1;
-		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
-		$pair->[1];
-	}/ge;
+	$string = _sub_map(\$string, \@byte_map);
 
 	# utf8::encode($string);
 	# $string =~ s/š/&scaron;/g;
@@ -416,17 +395,7 @@ sub wide_to_html
 		[ '\x80$', ' ' ],
 	);
 
-	# Build an alternation sorted by longest sequence first
-	$pattern = join '|',
-		map { quotemeta($_->[0]) }
-		sort { length $b->[0] <=> length $a->[0] }
-		@byte_map;
-
-	$string =~ s/($pattern)/do {
-		my $bytes = $1;
-		my ($pair) = grep { $_->[0] eq $bytes } @byte_map;
-		$pair->[1];
-	}/ge;
+	$string = _sub_map(\$string, \@byte_map);
 
 	# if($string =~ /^Maria\(/) {
 		# # print STDERR (unpack 'H*', $string);
@@ -807,6 +776,26 @@ sub wide_to_xml
 			}gex;	# e=evaluate, g=global, x=extended
 		die "BUG: wide_to_xml($string)";
 	}
+	return $string;
+}
+
+sub _sub_map
+{
+	my $string = ${$_[0]};
+	my $byte_map = $_[1];
+
+	# Build an alternation sorted by longest sequence first
+	my $pattern = join '|',
+		map { quotemeta($_->[0]) }
+		sort { length $b->[0] <=> length $a->[0] }
+		@{$byte_map};
+
+	$string =~ s/($pattern)/do {
+		my $bytes = $1;
+		my ($pair) = grep { $_->[0] eq $bytes } @{$byte_map};
+		$pair->[1];
+	}/ge;
+
 	return $string;
 }
 
