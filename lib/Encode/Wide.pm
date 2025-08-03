@@ -465,6 +465,7 @@ sub wide_to_xml
 	# print STDERR __LINE__, ": ($string)\n";
 
 	# $string =~ s/&amp;/&/g;
+
 	# I don't think HTML::Entities does these
 	my %entity_map = (
 		'&ccaron' => 'č',
