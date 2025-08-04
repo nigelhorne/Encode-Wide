@@ -487,13 +487,7 @@ sub wide_to_xml
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		# $string =~ s/</&lt;/g;
-		# $string =~ s/>/&gt;/g;
-		# $string =~ s/"/&quot;/g;
-		# $string =~ s/“/&quot;/g;	# U+201C
-		# $string =~ s/”/&quot;/g;	# U+201D
-
-		my %replacements = (
+		%entity_map = (
 			'<' => '&lt;',
 			'>' => '&gt;',
 			'"' => '&quot;',
@@ -501,7 +495,12 @@ sub wide_to_xml
 			'”' => '&quot;',	# U+201D
 		);
 
-		$string =~ s/([<>“”"])/$replacements{$1} || $1/eg;
+		$string =~ s{(.)}{
+			my $cp = $1;
+			exists $entity_map{$cp}
+				? $entity_map{$cp}
+				: $cp
+		}gex;
 	}
 
 	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
