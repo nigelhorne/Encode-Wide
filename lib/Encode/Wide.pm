@@ -8,7 +8,7 @@ use warnings;
 
 use Exporter qw(import);
 use HTML::Entities;
-use Params::Get;
+use Params::Get 0.13;
 use Term::ANSIColor;
 
 our @EXPORT_OK = qw(wide_to_html wide_to_xml);
@@ -503,21 +503,27 @@ sub wide_to_xml
 		}gex;
 	}
 
-	$string =~ s/\xe2\x80\x9c/&quot;/g;	# “
-	$string =~ s/\xe2\x80\x9d/&quot;/g;	# ”
-	$string =~ s/“/&quot;/g;	# U+201C
-	$string =~ s/”/&quot;/g;	# U+201D
-
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/’/&apos;/g;
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/\x98/&apos;/g;
-	$string =~ s/\xe2\x80\x93/-/g;	# ndash
-	$string =~ s/\xe2\x80\x94/-/g;	# mdash
-	$string =~ s/\xe2\x80\x98/&apos;/g;	# ‘
-	$string =~ s/\xe2\x80\x99/&apos;/g;	# ’
-	$string =~ s/\xe2\x80\xA6/.../g;	# …
+
+	# Table of byte-sequences->entities
+	my @byte_map = (
+		[ "\xe2\x80\x9c", '&quot;' ],	# “
+		[ "\xe2\x80\x9d", '&quot;' ],	# ”
+		[ "“", '&quot;' ],	# U+201C
+		[ "”", '&quot;' ],	# U+201D
+		[ "\xe2\x80\x93", '-' ],	# ndash
+		[ "\xe2\x80\x94", '-' ],	# mdash
+		[ "\xe2\x80\x98", '&apos;' ],	# ‘
+		[ "\xe2\x80\x99", '&apos;' ],	# ’
+		[ "\xe2\x80\xA6", '...' ],	# …
+	);
+
+	$string = _sub_map(\$string, \@byte_map);
+
 	# $string =~ s/['‘’‘\x98]/&apos;/g;
 	$string =~ s/'/&apos;/g;
 	$string =~ s/‘/&apos;/g;
@@ -817,7 +823,7 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 AUTHOR
 
-Nigel Horne <njh@nigelhorne.com>
+Nigel Horne, C<< <njh at nigelhorne.com> >>
 
 =head1 LICENCE AND COPYRIGHT
 

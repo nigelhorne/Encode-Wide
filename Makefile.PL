@@ -24,7 +24,7 @@ WriteMakefile(
 	}, PREREQ_PM    => {
 		'Exporter'       => 0,
 		'HTML::Entities' => 0,
-		'Params::Get' => 0,
+		'Params::Get' => 0.13,
 		'Term::ANSIColor' => 0,
 	},  TEST_REQUIRES => {
 		'Test::DescribeMe' => 0,
@@ -47,9 +47,10 @@ WriteMakefile(
 				# license    => 'http://dev.perl.org/licenses/',
 			}, bugtracker => {
 				mailto => 'bug-Encode-Wide@rt.cpan.org',
-				url => 'https://github.com/nigelhorne/Encode-Wide/issues',
-				# web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Encode-Wide',
-				web => 'https://github.com/nigelhorne/Encode-Wide/issues'
+				url => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Encode-Wide',
+				web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Encode-Wide',
+				# url => 'https://github.com/nigelhorne/Encode-Wide/issues',
+				# web => 'https://github.com/nigelhorne/Encode-Wide/issues'
 			}
 		},
 	},
