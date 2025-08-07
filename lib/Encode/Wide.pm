@@ -128,9 +128,9 @@ sub wide_to_html
 
 	# I don't think HTML::Entities does these
 	my %entity_map = (
-		'&ccaron' => 'č',
-		'&zcaron' => 'ž',
-		'&Scaron' => 'Š',
+		'&ccaron;' => 'č',
+		'&zcaron;' => 'ž',
+		'&Scaron;' => 'Š',
 	);
 
 	$string =~ s{
@@ -468,9 +468,9 @@ sub wide_to_xml
 
 	# I don't think HTML::Entities does these
 	my %entity_map = (
-		'&ccaron' => 'č',
-		'&zcaron' => 'ž',
-		'&Scaron' => 'Š',
+		'&ccaron;' => 'č',
+		'&zcaron;' => 'ž',
+		'&Scaron;' => 'Š',
 	);
 
 	$string =~ s{
@@ -508,28 +508,39 @@ sub wide_to_xml
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/‘/&apos;/g;
 	# $string =~ s/\x98/&apos;/g;
+	# $string =~ s/['‘’‘\x98]/&apos;/g;
 
 	# Table of byte-sequences->entities
 	my @byte_map = (
 		[ "\xe2\x80\x9c", '&quot;' ],	# “
 		[ "\xe2\x80\x9d", '&quot;' ],	# ”
-		[ "“", '&quot;' ],	# U+201C
-		[ "”", '&quot;' ],	# U+201D
+		[ '“', '&quot;' ],	# U+201C
+		[ '”', '&quot;' ],	# U+201D
 		[ "\xe2\x80\x93", '-' ],	# ndash
 		[ "\xe2\x80\x94", '-' ],	# mdash
 		[ "\xe2\x80\x98", '&apos;' ],	# ‘
 		[ "\xe2\x80\x99", '&apos;' ],	# ’
 		[ "\xe2\x80\xA6", '...' ],	# …
+		[ "'", '&apos;' ],
+		[ '‘', '&apos;' ],
+		[ '’', '&apos;' ],
+		[ '‘', '&apos;' ],
+		[ "\x98", '&apos;' ],
 	);
 
 	$string = _sub_map(\$string, \@byte_map);
 
-	# $string =~ s/['‘’‘\x98]/&apos;/g;
-	$string =~ s/'/&apos;/g;
-	$string =~ s/‘/&apos;/g;
-	$string =~ s/’/&apos;/g;
-	$string =~ s/‘/&apos;/g;
-	$string =~ s/\x98/&apos;/g;
+	# I don't think HTML::Entities does these
+	my %entity_map = (
+		'&copy;' => '&#x0A9;',
+	);
+
+	$string =~ s{(.)}{
+		my $cp = $1;
+		exists $entity_map{$cp}
+			? $entity_map{$cp}
+			: $cp
+	}gex;
 
 	$string =~ s/&copy;/&#x0A9;/g;
 	$string =~ s/&Aacute;/&#x0C1;/g;	# Á
