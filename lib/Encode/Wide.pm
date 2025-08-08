@@ -720,16 +720,21 @@ sub wide_to_xml
 	# utf8::decode($string);
 
 	# $string =~ s/['\x98]/&#039;/g;
-	$string =~ s/'/&#039;/g;
-	$string =~ s/\x98/&#039;/g;
-	$string =~ s/©/&#x0A9;/g;
-	$string =~ s/ª/&#x0AA;/g;
-	$string =~ s/®/&#x0AE;/g;
-	$string =~ s/å/&#x0E5;/g;
-	$string =~ s/š/&#x161;/g;
-	$string =~ s/č/&#x10D;/g;
-	$string =~ s/ž/&#x17E;/g;
-	$string =~ s/£/&#x0A3;/g;
+	@byte_map = (
+		["'", '&#039;'],
+		["\x98", '&#039;'],
+		['©', '&#x0A9;'],
+		['ª', '&#x0AA;'],
+		['®', '&#x0AE;'],
+		['å', '&#x0E5;'],
+		['š', '&#x161;'],
+		['č', '&#x10D;'],
+		['ž', '&#x17E;'],
+		['£', '&#x0A3;'],
+	);
+
+	$string = _sub_map(\$string, \@byte_map);
+
 	$string =~ s/á/&#x0E1;/g;	# á
 	$string =~ s/â/&#x0E2;/g;
 	$string =~ s/ä/&#x0E4;/g;	# ä
