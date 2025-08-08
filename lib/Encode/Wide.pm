@@ -586,7 +586,12 @@ sub wide_to_xml
 	# print STDERR (sprintf '%v02X', $string);
 	# print STDERR "\n";
 
-	$string =~ s/\xc2\xa0/ /g;	# Non breaking space
+	@byte_map = (
+		["\xc2\xa0", ' '],	# Non breaking space
+	);
+
+	$string = _sub_map(\$string, \@byte_map);
+
 	$string =~ s/\xc2\xa3/&#x0A3;/g;	# £
 	$string =~ s/\xc2\xa9/&#x0A9;/g;
 	$string =~ s/\xc2\xaa/&#x0AA;/g;	# ª
