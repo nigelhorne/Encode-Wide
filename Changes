@@ -1,6 +1,6 @@
 Revision history for Encode::Wide
 
-0.05
+0.05	Fri Aug  8 16:57:40 EDT 2025
 	Use tables to reduce the scanning of the input
 	Allow the input to be a ref to a string
 

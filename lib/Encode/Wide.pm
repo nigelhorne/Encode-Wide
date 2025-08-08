@@ -31,11 +31,11 @@ Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-s
 
 =head1 VERSION
 
-0.04
+0.05
 
 =cut
 
-our $VERSION = 0.04;
+our $VERSION = 0.05;
 
 =head1 SYNOPSIS
 
