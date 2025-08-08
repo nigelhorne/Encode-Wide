@@ -530,7 +530,7 @@ sub wide_to_xml
 
 	$string = _sub_map(\$string, \@byte_map);
 
-	my %entity_map = (
+	%entity_map = (
 		'&copy;' => '&#x0A9;',
 		'&Aacute;' => '&#x0C1;',	# Á
 		'&ccaron;' => '&#x10D;',
