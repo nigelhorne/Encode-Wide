@@ -50,9 +50,13 @@ our $VERSION = 0.04;
 =head1 DESCRIPTION
 
 Encode::Wide provides functions for converting wide (Unicode) characters into ASCII-safe
-formats suitable for embedding in HTML or XML documents. It is especially useful
-when dealing with text containing accented or typographic characters that need
+formats suitable for embedding in HTML or XML documents.
+It is especially useful when dealing with text containing accented or typographic characters that need
 to be safely represented in markup.
+
+Other modules exist to do this,
+however they tend to have assumptions on the input,
+whereas this should work with UTF-8, Unicode, or anything that's common.
 
 The module offers two exportable functions:
 
@@ -113,6 +117,10 @@ sub wide_to_html
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
 		die 'BUG: wide_to_html() string not set';
+	}
+
+	if(ref($string) eq 'SCALAR') {
+		$string = ${$string};
 	}
 
 	# print STDERR __LINE__, ": ($string)";
@@ -450,6 +458,10 @@ sub wide_to_xml
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
 		die 'BUG: string not set';
+	}
+
+	if(ref($string) eq 'SCALAR') {
+		$string = ${$string};
 	}
 
 	# print STDERR __LINE__, ": ($string)";
