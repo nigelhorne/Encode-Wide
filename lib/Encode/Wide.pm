@@ -634,9 +634,6 @@ sub wide_to_xml
 		["\xe2\x80\xa6", '...'],
 		["\xe2\x97\x8f", '&#x25CF;'],	# ●
 		["\xe3\xb1", '&#x0F1;'],	# ntilde ñ - what's this one?
-	);
-
-	$string = _sub_map(\$string, \@byte_map);
 
 	# $string =~ s/\xe4\x8d/&#x10D;/g;	# ? ACOM strangeness
 	# $string =~ s/\N{U+0161}/&#x161;/g;
@@ -644,60 +641,63 @@ sub wide_to_xml
 	# $string =~ s/\N{U+00E9}/&#x0E9;/g;
 	# $string =~ s/\N{U+017E}/&#x17E;/g;
 
-	$string =~ s/\N{U+00A0}/ /g;
-	$string =~ s/\N{U+010D}/&#x10D;/g;
-	$string =~ s/\N{U+00AB}/&quot;/g;	# «
-	$string =~ s/\N{U+00AE}/&#x0AE;/g;	# ®
-	$string =~ s/\N{U+00C1}/&#x0C1;/g;	# Á
-	$string =~ s/\N{U+00CE}/&#x0CE;/g;	# Î
-	$string =~ s/\N{U+00DE}/&#x0DE;/g;	# Þ
-	$string =~ s/\N{U+00E4}/&#x0E4;/g;	# ä
-	$string =~ s/\N{U+00E5}/&#x0E5;/g;	# å
-	$string =~ s/\N{U+00EA}/&#x0EA;/g;
-	$string =~ s/\N{U+00ED}/&#x0ED;/g;
-	$string =~ s/\N{U+00EE}/&#x0EE;/g;
-	$string =~ s/\N{U+00FE}/&#x0FE;/g;	# þ
-	$string =~ s/\N{U+00C9}/&#x0C9;/g;
-	$string =~ s/\N{U+017E}/&#x17E;/g;	# ž
-	$string =~ s/\N{U+00D6}/&#x0D6;/g;	# Ö
-	$string =~ s/\N{U+00DF}/&#x0DF;/g;	# ß
-	$string =~ s/\N{U+00E1}/&#x0E1;/g;	# á - aacute
-	$string =~ s/\N{U+00E2}/&#x0E2;/g;
-	$string =~ s/\N{U+00E8}/&#x0E8;/g;	# è
-	$string =~ s/\N{U+00EF}/&#x0EF;/g;	# ï
-	$string =~ s/\N{U+00F0}/&#x0F0;/g;	# ð
-	$string =~ s/\N{U+00F1}/&#x0F1;/g;	# ñ
-	$string =~ s/\N{U+00F3}/&#x0F3;/g;	# ó
-	$string =~ s/\N{U+00F4}/&#x0F4;/g;	# ô
-	$string =~ s/\N{U+00F6}/&#x0F6;/g;	# ö
-	$string =~ s/\N{U+00F8}/&#x0F8;/g;	# ø
-	$string =~ s/\N{U+00FA}/&#x0FA;/g;	# ú
-	$string =~ s/\N{U+00FC}/&#x0FC;/g;	# ü
-	$string =~ s/\N{U+015B}/&#x15B;/g;	# ś
+		["\N{U+00A0}", ' '],
+		["\N{U+010D}", '&#x10D;'],
+		["\N{U+00AB}", '&quot;'],	# «
+		["\N{U+00AE}", '&#x0AE;'],	# ®
+		["\N{U+00C1}", '&#x0C1;'],	# Á
+		["\N{U+00CE}", '&#x0CE;'],	# Î
+		["\N{U+00DE}", '&#x0DE;'],	# Þ
+		["\N{U+00E4}", '&#x0E4;'],	# ä
+		["\N{U+00E5}", '&#x0E5;'],	# å
+		["\N{U+00EA}", '&#x0EA;'],
+		["\N{U+00ED}", '&#x0ED;'],
+		["\N{U+00EE}", '&#x0EE;'],
+		["\N{U+00FE}", '&#x0FE;'],	# þ
+		["\N{U+00C9}", '&#x0C9;'],
+		["\N{U+017E}", '&#x17E;'],	# ž
+		["\N{U+00D6}", '&#x0D6;'],	# Ö
+		["\N{U+00DF}", '&#x0DF;'],	# ß
+		["\N{U+00E1}", '&#x0E1;'],	# á - aacute
+		["\N{U+00E2}", '&#x0E2;'],
+		["\N{U+00E8}", '&#x0E8;'],	# è
+		["\N{U+00EF}", '&#x0EF;'],	# ï
+		["\N{U+00F0}", '&#x0F0;'],	# ð
+		["\N{U+00F1}", '&#x0F1;'],	# ñ
+		["\N{U+00F3}", '&#x0F3;'],	# ó
+		["\N{U+00F4}", '&#x0F4;'],	# ô
+		["\N{U+00F6}", '&#x0F6;'],	# ö
+		["\N{U+00F8}", '&#x0F8;'],	# ø
+		["\N{U+00FA}", '&#x0FA;'],	# ú
+		["\N{U+00FC}", '&#x0FC;'],	# ü
+		["\N{U+015B}", '&#x15B;'],	# ś
 	# print STDERR __LINE__, ": ($string)";
 	# print STDERR (sprintf '%v02X', $string);
 	# print STDERR "\n";
-	$string =~ s/\N{U+00E9}/&#x0E9;/g;
+		["\N{U+00E9}", '&#x0E9;'],
 	# print STDERR __LINE__, ": ($string)";
 	# print STDERR (sprintf '%v02X', $string);
 	# print STDERR "\n";
-	$string =~ s/\N{U+00E7}/&#x0E7;/g;	# ç
-	$string =~ s/\N{U+00EB}/&#x0EB;/g;	# ë
-	$string =~ s/\N{U+00FB}/&#x0FB;/g;	# û
-	$string =~ s/\N{U+0160}/&#x160;/g;
-	$string =~ s/\N{U+0161}/&#x161;/g;
-	$string =~ s/\N{U+00A9}/&#x0A9;/g;	# ©
+		["\N{U+00E7}", '&#x0E7;'],	# ç
+		["\N{U+00EB}", '&#x0EB;'],	# ë
+		["\N{U+00FB}", '&#x0FB;'],	# û
+		["\N{U+0160}", '&#x160;'],
+		["\N{U+0161}", '&#x161;'],
+		["\N{U+00A9}", '&#x0A9;'],	# ©
 	# print STDERR __LINE__, ": ($string)";
 	# print STDERR (sprintf '%v02X', $string);
 	# print STDERR "\n";
-	$string =~ s/\N{U+2013}/-/g;
-	$string =~ s/\N{U+2014}/-/g;
-	$string =~ s/\N{U+2018}/&quot;/g;
-	$string =~ s/\N{U+2019}/&quot;/g;
-	$string =~ s/\N{U+201C}/&quot;/g;
-	$string =~ s/\N{U+201D}/&quot;/g;
-	$string =~ s/\N{U+2026}/.../g;	# …
-	$string =~ s/\N{U+25CF}/&#x25CF;/g;	# ●
+		["\N{U+2013}", '-'],
+		["\N{U+2014}", '-'],
+		["\N{U+2018}", '&quot;'],
+		["\N{U+2019}", '&quot;'],
+		["\N{U+201C}", '&quot;'],
+		["\N{U+201D}", '&quot;'],
+		["\N{U+2026}", '...'],	# …
+		["\N{U+25CF}", '&#x25CF;'],	# ●
+	);
+
+	$string = _sub_map(\$string, \@byte_map);
 
 	# utf8::encode($string);
 	# $string =~ s/š/&s#x161;/g;
