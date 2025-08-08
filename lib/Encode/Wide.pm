@@ -588,56 +588,56 @@ sub wide_to_xml
 
 	@byte_map = (
 		["\xc2\xa0", ' '],	# Non breaking space
+		["\xc2\xa3", '&#x0A3;'],	# £
+		["\xc2\xa9", '&#x0A9;'],
+		["\xc2\xaa", '&#x0AA;'],	# ª
+		["\xc2\xab", '&quot;'],	# «
+		["\xc2\xae", '&#x0AE;'],
+		["\xc3\x81", '&#x0C1;'],	# Á
+		["\xc3\x8e", '&#x0CE;'],	# Î
+		["\xc3\xa0", '&#x0E0;'],	# à
+		["\xc3\xa1", '&#x0E1;'],	# á
+		["\xc3\xa5", '&#x0E5;'],	# å
+		["\xc3\xa9", '&#x0E9;'],
+		["\xc3\xaf", '&#x0EF;'],	# ï
+		["\xc3\xb1", '&#x0F1;'],	# ntilde ñ
+		["\xc5\xa1", '&#x161;'],
+		["\xc4\x8d", '&#x10D;'],
+		["\xc5\xbe", '&#x17E;'],	# ž
+		["\xc3\x96", '&#x0D6;'],	# Ö
+		["\xc3\x9e", '&#x0DE;'],	# Þ
+		["\xc3\x9f", '&#x0DF;'],	# ß
+		["\xc3\xa2", '&#x0E2;'],	# â
+		["\xc3\xad", '&#x0ED;'],	# í
+		["\xc3\xa4", '&#x0E4;'],	# ä
+		["\xc3\xa7", '&#x0E7;'],	# ç
+		["\xc3\xb0", '&#x0F0;'],	# ð
+		["\xc3\xb3", '&#x0F3;'],	# ó
+		["\xc3\xb8", '&#x0F8;'],	# ø
+		["\xc3\xbc", '&#x0FC;'],	# ü
+		["\xc3\xbe", '&#x0FE;'],	# þ
+		["\xc3\xa8", '&#x0E8;'],	# è
+		["\xc3\xee", '&#x0EE;'],
+		["\xc3\xb4", '&#x0F4;'],	# ô
+		["\xc3\xb6", '&#x0F6;'],	# ö
+		["\xc3\x89", '&#x0C9;'],
+		["\xc3\xaa", '&#x0EA;'],
+		["\xc3\xab", '&#x0EB;'],	# eumlaut
+		["\xc3\xba", '&#x0FA;'],	# ú
+		["\xc3\xbb", '&#x0BB;'],	# û - ucirc
+		["\xc5\x9b", '&#x15B;'],	# ś - sacute
+		["\xc5\xa0", '&#x160;'],
+		["\xe2\x80\x93", '-'],
+		["\xe2\x80\x94", '-'],
+		["\xe2\x80\x9c", '&quot;'],
+		["\xe2\x80\x9d", '&quot;'],
+		["\xe2\x80\xa6", '...'],
+		["\xe2\x97\x8f", '&#x25CF;'],	# ●
+		["\xe3\xb1", '&#x0F1;'],	# ntilde ñ - what's this one?
 	);
 
 	$string = _sub_map(\$string, \@byte_map);
 
-	$string =~ s/\xc2\xa3/&#x0A3;/g;	# £
-	$string =~ s/\xc2\xa9/&#x0A9;/g;
-	$string =~ s/\xc2\xaa/&#x0AA;/g;	# ª
-	$string =~ s/\xc2\xab/&quot;/g;	# «
-	$string =~ s/\xc2\xae/&#x0AE;/g;
-	$string =~ s/\xc3\x81/&#x0C1;/g;	# Á
-	$string =~ s/\xc3\x8e/&#x0CE;/g;	# Î
-	$string =~ s/\xc3\xa0/&#x0E0;/g;	# à
-	$string =~ s/\xc3\xa1/&#x0E1;/g;	# á
-	$string =~ s/\xc3\xa5/&#x0E5;/g;	# å
-	$string =~ s/\xc3\xa9/&#x0E9;/g;
-	$string =~ s/\xc3\xaf/&#x0EF;/g;	# ï
-	$string =~ s/\xc3\xb1/&#x0F1;/g;	# ntilde ñ
-	$string =~ s/\xc5\xa1/&#x161;/g;
-	$string =~ s/\xc4\x8d/&#x10D;/g;
-	$string =~ s/\xc5\xbe/&#x17E;/g;	# ž
-	$string =~ s/\xc3\x96/&#x0D6;/g;	# Ö
-	$string =~ s/\xc3\x9e/&#x0DE;/g;	# Þ
-	$string =~ s/\xc3\x9f/&#x0DF;/g;	# ß
-	$string =~ s/\xc3\xa2/&#x0E2;/g;	# â
-	$string =~ s/\xc3\xad/&#x0ED;/g;	# í
-	$string =~ s/\xc3\xa4/&#x0E4;/g;	# ä
-	$string =~ s/\xc3\xa7/&#x0E7;/g;	# ç
-	$string =~ s/\xc3\xb0/&#x0F0;/g;	# ð
-	$string =~ s/\xc3\xb3/&#x0F3;/g;	# ó
-	$string =~ s/\xc3\xb8/&#x0F8;/g;	# ø
-	$string =~ s/\xc3\xbc/&#x0FC;/g;	# ü
-	$string =~ s/\xc3\xbe/&#x0FE;/g;	# þ
-	$string =~ s/\xc3\xa8/&#x0E8;/g;	# è
-	$string =~ s/\xc3\xee/&#x0EE;/g;
-	$string =~ s/\xc3\xb4/&#x0F4;/g;	# ô
-	$string =~ s/\xc3\xb6/&#x0F6;/g;	# ö
-	$string =~ s/\xc3\x89/&#x0C9;/g;
-	$string =~ s/\xc3\xaa/&#x0EA;/g;
-	$string =~ s/\xc3\xab/&#x0EB;/g;	# eumlaut
-	$string =~ s/\xc3\xba/&#x0FA;/g;	# ú
-	$string =~ s/\xc3\xbb/&#x0BB;/g;	# û - ucirc
-	$string =~ s/\xc5\x9b/&#x15B;/g;	# ś - sacute
-	$string =~ s/\xc5\xa0/&#x160;/g;
-	$string =~ s/\xe2\x80\x93/-/g;
-	$string =~ s/\xe2\x80\x94/-/g;
-	$string =~ s/\xe2\x80\x9c/&quot;/g;
-	$string =~ s/\xe2\x80\x9d/&quot;/g;
-	$string =~ s/\xe2\x80\xa6/.../g;
-	$string =~ s/\xe2\x97\x8f/&#x25CF;/g;	# ●
-	$string =~ s/\xe3\xb1/&#x0F1;/g;	# ntilde ñ - what's this one?
 	# $string =~ s/\xe4\x8d/&#x10D;/g;	# ? ACOM strangeness
 	# $string =~ s/\N{U+0161}/&#x161;/g;
 	# $string =~ s/\N{U+010D}/&#x10D;/g;
