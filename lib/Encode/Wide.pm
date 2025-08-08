@@ -392,7 +392,7 @@ sub wide_to_html
 		[ '»', '&quot;' ],
 		[ '…', '...' ],
 		[ '●', '&#x25CF;' ],
-		[ '\x80$', ' ' ],
+		[ "\x80\$", ' ' ],
 	);
 
 	$string = _sub_map(\$string, \@byte_map);
@@ -731,42 +731,41 @@ sub wide_to_xml
 		['č', '&#x10D;'],
 		['ž', '&#x17E;'],
 		['£', '&#x0A3;'],
+
+		['á', '&#x0E1;'],	# á
+		['â', '&#x0E2;'],
+		['ä', '&#x0E4;'],	# ä
+		['Á', '&#x0C1;'],	# Á
+		['Ö', '&#x0D6;'],
+		['ß', '&#x0DF;'],
+		['ç', '&#x0E7;'],
+		['è', '&#x0E8;'],
+		['é', '&#x0E9;'],
+		['ê', '&#x0EA;'],
+		['ë', '&#x0EB;'],
+		['í', '&#x0ED;'],
+		['ï', '&#x0EF;'],
+		['Î', '&#x0CE;'],	# Î
+		['Þ', '&#x0DE;'],	# Þ
+		['ð', '&#x0F0;'],	# ð
+		['ø', '&#x0F8;'],	# ø
+		['û', '&#x0FB;'],
+		['ñ', '&#x0F1;'],
+		['ú', '&#x0FA;'],
+		['ü', '&#x0FC;'],
+		['þ', '&#x0FE;'],	# þ
+		['“', '&quot;'],
+		['”', '&quot;'],
+		['«', '&quot;'],
+		['»', '&quot;'],
+		['—', '-'],
+		['–', '-'],
+		['…', '...'],
+		['●', '&#x25CF;'],
+		["\x80\$", ' '],
 	);
 
 	$string = _sub_map(\$string, \@byte_map);
-
-	$string =~ s/á/&#x0E1;/g;	# á
-	$string =~ s/â/&#x0E2;/g;
-	$string =~ s/ä/&#x0E4;/g;	# ä
-	$string =~ s/Á/&#x0C1;/g;	# Á
-	$string =~ s/Ö/&#x0D6;/g;
-	$string =~ s/ß/&#x0DF;/g;
-	$string =~ s/ç/&#x0E7;/g;
-	$string =~ s/è/&#x0E8;/g;
-	$string =~ s/é/&#x0E9;/g;
-	$string =~ s/ê/&#x0EA;/g;
-	$string =~ s/ë/&#x0EB;/g;
-	$string =~ s/í/&#x0ED;/g;
-	$string =~ s/ï/&#x0EF;/g;
-	$string =~ s/Î/&#x0CE;/g;	# Î
-	$string =~ s/Þ/&#x0DE;/g;	# Þ
-	$string =~ s/ð/&#x0F0;/g;	# ð
-	$string =~ s/ø/&#x0F8;/g;	# ø
-	$string =~ s/û/&#x0FB;/g;
-	$string =~ s/ñ/&#x0F1;/g;
-	$string =~ s/ú/&#x0FA;/g;
-	$string =~ s/ü/&#x0FC;/g;
-	$string =~ s/þ/&#x0FE;/g;	# þ
-	# $string =~ s/[“”«»]/&quot;/g;
-	$string =~ s/“/&quot;/g;
-	$string =~ s/”/&quot;/g;
-	$string =~ s/«/&quot;/g;
-	$string =~ s/»/&quot;/g;
-	$string =~ s/—/-/g;
-	$string =~ s/–/-/g;
-	$string =~ s/…/.../g;
-	$string =~ s/●/&#x25CF;/g;
-	$string =~ s/\x80$/ /;
 
 	# if($string =~ /^Maria\(/) {
 		# print STDERR (unpack 'H*', $string);
