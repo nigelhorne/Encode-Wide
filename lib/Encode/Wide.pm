@@ -530,9 +530,45 @@ sub wide_to_xml
 
 	$string = _sub_map(\$string, \@byte_map);
 
-	# I don't think HTML::Entities does these
 	my %entity_map = (
 		'&copy;' => '&#x0A9;',
+		'&Aacute;' => '&#x0C1;',	# Á
+		'&ccaron;' => '&#x10D;',
+		'&agrave;' => '&#x0E0;',	# á
+		'&aacute;' => '&#x0E1;',	# á
+		'&acirc;' => '&#x0E2;',		# â
+		'&auml;' => '&#x0E4;',		# ä
+		'&aring;' => '&#x0E5;',	# å
+		'&ccedil;' => '&#x0E7;',	# ç
+		'&egrave;' => '&#x0E8;',
+		'&eacute;' => '&#x0E9;',
+		'&ecirc;' => '&#x0EA;',
+		'&euml;' => '&#x0EB;',	# euml
+		'&Icirc;' => '&#x0CE;',	# Î
+		'&Eacute;' => '&#x0C9;',
+		'&szlig;' => '&#x0DF;',	# ß
+		'&iacute;' => '&#xED;',	# í
+		'&icirc;' => '&#x0EE;',
+		'&iuml;' => '&#x0EF;',	# ï
+		'&eth;' => '&#x0F0;',	# ð
+		'&uacute;' => '&#0FA;',	# ú
+		'&uuml;' => '&#x0FC;',
+		'&scaron;' => '&#x161;',
+		'&oacute;' => '&#x0F3;',	# ó
+		'&ucirc;' => '&#x0F4;',
+		'&ouml;' => '&#x0F6;',
+		'&ordf;' => '&#x0AA;',	# ª
+		'&oslash;' => '&#x0F8;',	# ø
+		'&zcaron;' => '&#x17E;',
+		'&Scaron;' => '&#x160;',
+		'&THORN;' => '&#x0DE;',	# Þ
+		'&thorn;' => '&#x0FE;',	# þ
+		'&reg;' => '&#x0AE;',
+		'&pound;' => '&#163;',
+		'&ntilde;' => '&#x0F1;',
+		'&mdash;' => '-',
+		'&ndash;' => '-',
+		'&excl;' => '!',
 	);
 
 	$string =~ s{(.)}{
@@ -541,45 +577,6 @@ sub wide_to_xml
 			? $entity_map{$cp}
 			: $cp
 	}gex;
-
-	$string =~ s/&copy;/&#x0A9;/g;
-	$string =~ s/&Aacute;/&#x0C1;/g;	# Á
-	$string =~ s/&ccaron;/&#x10D;/g;
-	$string =~ s/&agrave;/&#x0E0;/g;	# á
-	$string =~ s/&aacute;/&#x0E1;/g;	# á
-	$string =~ s/&acirc;/&#x0E2;/g;		# â
-	$string =~ s/&auml;/&#x0E4;/g;		# ä
-	$string =~ s/&aring;/&#x0E5;/g;	# å
-	$string =~ s/&ccedil;/&#x0E7;/g;	# ç
-	$string =~ s/&egrave;/&#x0E8;/g;
-	$string =~ s/&eacute;/&#x0E9;/g;
-	$string =~ s/&ecirc;/&#x0EA;/g;
-	$string =~ s/&euml;/&#x0EB;/g;	# euml
-	$string =~ s/&Icirc;/&#x0CE;/g;	# Î
-	$string =~ s/&Eacute;/&#x0C9;/g;
-	$string =~ s/&szlig;/&#x0DF;/g;	# ß
-	$string =~ s/&iacute;/&#xED;/g;	# í
-	$string =~ s/&icirc;/&#x0EE;/g;
-	$string =~ s/&iuml;/&#x0EF;/g;	# ï
-	$string =~ s/&eth;/&#x0F0;/g;	# ð
-	$string =~ s/&uacute;/&#0FA;/g;	# ú
-	$string =~ s/&uuml;/&#x0FC;/g;
-	$string =~ s/&scaron;/&#x161;/g;
-	$string =~ s/&oacute;/&#x0F3;/g;	# ó
-	$string =~ s/&ucirc;/&#x0F4;/g;
-	$string =~ s/&ouml;/&#x0F6;/g;
-	$string =~ s/&ordf;/&#x0AA;/g;	# ª
-	$string =~ s/&oslash;/&#x0F8;/g;	# ø
-	$string =~ s/&zcaron;/&#x17E;/g;
-	$string =~ s/&Scaron;/&#x160;/g;
-	$string =~ s/&THORN;/&#x0DE;/g;	# Þ
-	$string =~ s/&thorn;/&#x0FE;/g;	# þ
-	$string =~ s/&reg;/&#x0AE;/g;
-	$string =~ s/&pound;/&#163;/g;
-	$string =~ s/&ntilde;/&#x0F1;/g;
-	$string =~ s/&mdash;/-/g;
-	$string =~ s/&ndash;/-/g;
-	$string =~ s/&excl;/!/g;
 
 	if($string !~ /[^[:ascii:]]/) {
 		return $string;
