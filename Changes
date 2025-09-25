@@ -1,6 +1,6 @@
 Revision history for Encode::Wide
 
-0.06
+0.06	Thu Sep 25 08:28:23 EDT 2025
 	Added the µ character
 	In HTML, Encode ! as &excl;
 	Added the test dashboard

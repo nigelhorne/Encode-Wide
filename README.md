@@ -4,7 +4,7 @@ Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-s
 
 # VERSION
 
-0.05
+0.06
 
 # SYNOPSIS
 
