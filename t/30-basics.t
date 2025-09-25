@@ -10,9 +10,9 @@ use Test::Returns;
 my @tests = (
 	{
 		name	=> 'Plain ASCII unchanged',
-		input   => 'Hello world!',
-		html	=> 'Hello world!',
-		xml	 => 'Hello world!',
+		input   => 'Hello world?',
+		html	=> 'Hello world?',
+		xml	 => 'Hello world?',
 	}, {
 		name	=> 'Non-breaking space',
 		input   => "Hello\x{00A0}world",

@@ -1,7 +1,6 @@
 package Encode::Wide;
 
-# TODO: don't transform anything within <script>...</script>
-# TODO: a lot of this should be table driven
+# TODO: don't transform anything within <script>...</script> in wide_to_html
 
 use strict;
 use warnings;
@@ -181,7 +180,8 @@ sub wide_to_html
 		["\xe2\x80\x94", '&mdash;'],
 		["\xe2\x80\x98", '&apos;'],	# ‘
 		["\xe2\x80\x99", '&apos;'],	# ’
-		["\xe2\x80\xA6", '...']	# …
+		["\xe2\x80\xA6", '...'],	# …
+		['!', '&excl;'],	# Do this early before the ascii check, since it's an ascii character
 	);
 
 	$string = _sub_map(\$string, \@byte_map);
@@ -402,7 +402,6 @@ sub wide_to_html
 		[ '»', '&quot;' ],
 		[ '…', '...' ],
 		[ '●', '&#x25CF;' ],
-		[ '!', '&excl;' ],
 		[ "\x80\$", ' ' ],
 	);
 
