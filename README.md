@@ -65,9 +65,12 @@ Optionally exportable:
 
 # SEE ALSO
 
-[HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities), [Encode](https://metacpan.org/pod/Encode), [XML::Entities](https://metacpan.org/pod/XML%3A%3AEntities), [Unicode::Escape](https://metacpan.org/pod/Unicode%3A%3AEscape).
-
-[https://www.compart.com/en/unicode/](https://www.compart.com/en/unicode/).
+- Test coverage report: [https://nigelhorne.github.io/Encode-Wide/coverage/](https://nigelhorne.github.io/Encode-Wide/coverage/)
+- [HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities)
+- [Encode](https://metacpan.org/pod/Encode)
+- [XML::Entities](https://metacpan.org/pod/XML%3A%3AEntities)
+- [Unicode::Escape](https://metacpan.org/pod/Unicode%3A%3AEscape)
+- [https://www.compart.com/en/unicode/](https://www.compart.com/en/unicode/)
 
 # SUPPORT
 

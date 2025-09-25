@@ -839,9 +839,21 @@ sub _sub_map
 
 =head1 SEE ALSO
 
-L<HTML::Entities>, L<Encode>, L<XML::Entities>, L<Unicode::Escape>.
+=over 4
 
-L<https://www.compart.com/en/unicode/>.
+=item * Test coverage report: L<https://nigelhorne.github.io/Encode-Wide/coverage/>
+
+=item * L<HTML::Entities>
+
+=item * L<Encode>
+
+=item * L<XML::Entities>
+
+=item * L<Unicode::Escape>
+
+=item * L<https://www.compart.com/en/unicode/>
+
+=back
 
 =head1 SUPPORT
 
