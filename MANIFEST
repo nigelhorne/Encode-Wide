@@ -1,4 +1,5 @@
 Changes
+cpanfile
 lib/Encode/Wide.pm
 LICENSE
 Makefile.PL

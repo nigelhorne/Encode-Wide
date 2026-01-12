@@ -115,7 +115,7 @@ sub wide_to_html
 		while((my @call_details = caller($i++))) {
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
-		die 'BUG: wide_to_html() string not set';
+		die 'Usage: wide_to_html() string not set';
 	}
 
 	if(ref($string) eq 'SCALAR') {
@@ -459,7 +459,7 @@ sub wide_to_xml
 		while((my @call_details = caller($i++))) {
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
-		die 'BUG: string not set';
+		die 'Usage: string not set';
 	}
 
 	if(ref($string) eq 'SCALAR') {
