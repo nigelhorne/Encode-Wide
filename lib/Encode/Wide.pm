@@ -236,6 +236,7 @@ sub wide_to_html
 		["\xc3\xb8", '&oslash;'],	# ø
 		["\xc5\xa1", '&scaron;'],
 		["\xc4\x8d", '&ccaron;'],
+		["\xc5\xbd", '&Zcaron;'],
 		["\xc5\xbe", '&zcaron;'],
 		["\xc3\xa5", '&aring;'],	# å
 		["\xc3\xa7", '&ccedil;'],
@@ -272,6 +273,7 @@ sub wide_to_html
 		["\N{U+00DE}", '&THORN;'],	# Þ
 		["\N{U+0161}", '&scaron;'],
 		["\N{U+010D}", '&ccaron;'],
+		["\N{U+017D}", '&Zcaron;'],
 		["\N{U+017E}", '&zcaron;'],
 		["\N{U+00C9}", '&Eacute;'],
 		["\N{U+00D6}", '&Ouml;'],	# Ö
@@ -368,6 +370,7 @@ sub wide_to_html
 		[ 'š', '&scaron;' ],
 		[ 'Š', '&Scaron;' ],
 		[ 'č', '&ccaron;' ],
+		[ 'Ž', '&Zcaron;' ],
 		[ 'ž', '&zcaron;' ],
 		[ 'á', '&aacute;' ],
 		[ 'â', '&acirc;' ],
@@ -620,6 +623,7 @@ sub wide_to_xml
 		["\xc3\xb1", '&#x0F1;'],	# ntilde ñ
 		["\xc5\xa1", '&#x161;'],
 		["\xc4\x8d", '&#x10D;'],
+		["\xc5\xbd", '&#x17D;'],	# Ž
 		["\xc5\xbe", '&#x17E;'],	# ž
 		["\xc3\x96", '&#x0D6;'],	# Ö
 		["\xc3\x9e", '&#x0DE;'],	# Þ
@@ -673,6 +677,7 @@ sub wide_to_xml
 		["\N{U+00EE}", '&#x0EE;'],
 		["\N{U+00FE}", '&#x0FE;'],	# þ
 		["\N{U+00C9}", '&#x0C9;'],
+		["\N{U+017D}", '&#x17D;'],	# Ž
 		["\N{U+017E}", '&#x17E;'],	# ž
 		["\N{U+00D6}", '&#x0D6;'],	# Ö
 		["\N{U+00DF}", '&#x0DF;'],	# ß
@@ -749,6 +754,7 @@ sub wide_to_xml
 		['å', '&#x0E5;'],
 		['š', '&#x161;'],
 		['č', '&#x10D;'],
+		['Ž', '&#x17D;'],
 		['ž', '&#x17E;'],
 		['£', '&#x0A3;'],
 		['µ', '&#x0B5;'],

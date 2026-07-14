@@ -59,6 +59,16 @@ my @tests = (
 		input   => "Acme\x{2122}",
 		html	=> 'Acme&trade;',
 		xml	=> 'Acme&#x2122;',
+	}, {
+		name	=> 'c with caron',
+		input   => "\x{010D}",
+		html	=> '&ccaron;',
+		xml	=> '&#x10D;',
+	}, {
+		name	=> 'Z with caron (capital)',
+		input   => "\x{017D}",
+		html	=> '&Zcaron;',
+		xml	=> '&#x17D;',
 	},
 );
 
