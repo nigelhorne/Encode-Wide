@@ -1,5 +1,9 @@
 Revision history for Encode::Wide
 
+0.07
+	[ Enhancements ]
+	- Added the ™ (trade mark) character for both HTML (&trade;) and XML (&#x2122;)
+
 0.06	Thu Sep 25 08:28:23 EDT 2025
 	Added the µ character
 	In HTML, Encode ! as &excl;

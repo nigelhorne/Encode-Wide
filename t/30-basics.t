@@ -54,6 +54,11 @@ my @tests = (
 		input   => 'You are not right!',
 		html	=> 'You are not right&excl;',
 		xml	=> 'You are not right!',
+	}, {
+		name	=> 'Trade mark symbol',
+		input   => "Acme\x{2122}",
+		html	=> 'Acme&trade;',
+		xml	=> 'Acme&#x2122;',
 	},
 );
 
