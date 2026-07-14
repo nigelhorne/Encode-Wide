@@ -65,7 +65,7 @@ Optionally exportable:
 
 # SEE ALSO
 
-- Test coverage report: [https://nigelhorne.github.io/Encode-Wide/coverage/](https://nigelhorne.github.io/Encode-Wide/coverage/)
+- [Test Dashboard](https://nigelhorne.github.io/Encode-Wide/coverage/)
 - [HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities)
 - [Encode](https://metacpan.org/pod/Encode)
 - [XML::Entities](https://metacpan.org/pod/XML%3A%3AEntities)
@@ -90,11 +90,6 @@ Nigel Horne, `<njh at nigelhorne.com>`
 
 Copyright 2025 Nigel Horne.
 
-Usage is subject to licence terms.
-
-The licence terms of this software are as follows:
-
-- Personal single user, single computer use: GPL2
-- All other users (including Commercial, Charity, Educational, Government)
-  must apply in writing for a licence for use from Nigel Horne at the
-  above e-mail.
+Usage is subject to the GPL2 licence terms.
+If you use it,
+please let me know.

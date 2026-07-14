@@ -1,6 +1,6 @@
 Revision history for Encode::Wide
 
-0.07	Mon Jul 14 15:24:52 EDT 2026
+0.07
 	Added the ™ (trade mark) character for both HTML (&trade;) and XML (&#x2122;)
 	Added regression test for č (&ccaron; / &#x10D;)
 	Added Ž (&Zcaron; / &#x17D;) character support and regression test

@@ -853,7 +853,7 @@ sub _sub_map
 
 =over 4
 
-=item * Test coverage report: L<https://nigelhorne.github.io/Encode-Wide/coverage/>
+=item * L<Test Dashboard|https://nigelhorne.github.io/Encode-Wide/coverage/>
 
 =item * L<HTML::Entities>
 
@@ -885,19 +885,9 @@ Nigel Horne, C<< <njh at nigelhorne.com> >>
 
 Copyright 2025 Nigel Horne.
 
-Usage is subject to licence terms.
-
-The licence terms of this software are as follows:
-
-=over 4
-
-=item * Personal single user, single computer use: GPL2
-
-=item * All other users (including Commercial, Charity, Educational, Government)
-  must apply in writing for a licence for use from Nigel Horne at the
-  above e-mail.
-
-=back
+Usage is subject to the GPL2 licence terms.
+If you use it,
+please let me know.
 
 =cut
 
