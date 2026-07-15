@@ -16,6 +16,7 @@ WriteMakefile(
 	AUTHOR	=> q{Nigel Horne <njh@nigelhorne.com>},
 	VERSION_FROM => 'lib/Encode/Wide.pm',
 	ABSTRACT_FROM => 'lib/Encode/Wide.pm',
+	EXE_FILES => [ 'bin/wide2html', 'bin/wide2xml' ],
 	((defined($ExtUtils::MakeMaker::VERSION) && ($ExtUtils::MakeMaker::VERSION >= 6.3002))
 		? ('LICENSE'=> 'GPL')
 		: ()),

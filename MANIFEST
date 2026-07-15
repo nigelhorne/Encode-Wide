@@ -1,3 +1,5 @@
+bin/wide2html
+bin/wide2xml
 Changes
 cpanfile
 lib/Encode/Wide.pm
