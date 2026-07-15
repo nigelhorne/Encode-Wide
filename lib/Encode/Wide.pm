@@ -133,7 +133,7 @@ sub wide_to_html
 	$string = HTML::Entities::decode($string);
 	# $string =~ s/ & / &amp; /g;
 
-	# I don't think HTML::Entities does these
+	# HTML::Entities::decode doesn't handle these named entities, so decode them manually
 	my %entity_map = (
 		'&ccaron;' => 'č',
 		'&zcaron;' => 'ž',
@@ -141,15 +141,9 @@ sub wide_to_html
 		'&Scaron;' => 'Š',
 	);
 
-	$string =~ s{
-		# ([\x80-\x{10FFFF}])
-		(.)
-	}{
-		my $cp = $1;
-		exists $entity_map{$cp}
-			? $entity_map{$cp}
-			: $cp
-	}gex;
+	# Build an alternation from longest key first to avoid partial matches, then substitute
+	my $entity_re = join '|', map { quotemeta } sort { length($b) <=> length($a) } keys %entity_map;
+	$string =~ s/($entity_re)/$entity_map{$1}/g;
 
 	# Escape only if it's not already part of an entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
@@ -487,7 +481,7 @@ sub wide_to_xml
 
 	# $string =~ s/&amp;/&/g;
 
-	# I don't think HTML::Entities does these
+	# HTML::Entities::decode doesn't handle these named entities, so decode them manually
 	my %entity_map = (
 		'&ccaron;' => 'č',
 		'&zcaron;' => 'ž',
@@ -495,15 +489,9 @@ sub wide_to_xml
 		'&Scaron;' => 'Š',
 	);
 
-	$string =~ s{
-		# ([\x80-\x{10FFFF}])
-		(.)
-	}{
-		my $cp = $1;
-		exists $entity_map{$cp}
-			? $entity_map{$cp}
-			: $cp
-	}gex;
+	# Build an alternation from longest key first to avoid partial matches, then substitute
+	my $entity_re = join '|', map { quotemeta } sort { length($b) <=> length($a) } keys %entity_map;
+	$string =~ s/($entity_re)/$entity_map{$1}/g;
 
 	# Escape only if it's not already part of an entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
@@ -513,7 +501,7 @@ sub wide_to_xml
 			'<' => '&lt;',
 			'>' => '&gt;',
 			'"' => '&quot;',
-			'“' => '&quot;',	# U+201C
+			'”' => '&quot;',	# U+201C
 			'”' => '&quot;',	# U+201D
 		);
 

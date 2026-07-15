@@ -74,6 +74,11 @@ my @tests = (
 		input   => "SURN \x{017D}ganjar",
 		html	=> 'SURN &Zcaron;ganjar',
 		xml	=> 'SURN &#x17D;ganjar',
+	}, {
+		name	=> 'zcaron HTML entity in input decoded to numeric in XML',
+		input   => 'An&zcaron;link',
+		html	=> 'An&zcaron;link',
+		xml	=> 'An&#x17E;link',
 	},
 );
 
