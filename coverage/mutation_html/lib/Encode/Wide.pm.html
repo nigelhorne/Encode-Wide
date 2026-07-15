@@ -831,7 +831,7 @@ Approximate LCSAJ segments: 41<br>
 </span><span class="">  533: 	# $string =~ s/[&#39;&acirc;&#128;&#152;&acirc;&#128;&#153;&acirc;&#128;&#152;\x98]/&amp;apos;/g;
 </span><span class="">  534: 
 </span><span class="">  535: 	# Table of byte-sequences-&gt;entities
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">536 → 603 → 611</span></span>  536: 	my @byte_map = (
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">536 → 604 → 612</span></span>  536: 	my @byte_map = (
 </span><span class="">  537: 		[ &quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#156;
 </span><span class="">  538: 		[ &quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#157;
 </span><span class="">  539: 		[ &#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39; ],	# U+201C
@@ -879,319 +879,320 @@ Approximate LCSAJ segments: 41<br>
 </span><span class="">  581: 		&#39;&amp;ouml;&#39; =&gt; &#39;&amp;#x0F6;&#39;,
 </span><span class="">  582: 		&#39;&amp;ordf;&#39; =&gt; &#39;&amp;#x0AA;&#39;,	# &Acirc;&ordf;
 </span><span class="">  583: 		&#39;&amp;oslash;&#39; =&gt; &#39;&amp;#x0F8;&#39;,	# &Atilde;&cedil;
-</span><span class="">  584: 		&#39;&amp;zcaron;&#39; =&gt; &#39;&amp;#x17E;&#39;,
-</span><span class="">  585: 		&#39;&amp;Scaron;&#39; =&gt; &#39;&amp;#x160;&#39;,
-</span><span class="">  586: 		&#39;&amp;THORN;&#39; =&gt; &#39;&amp;#x0DE;&#39;,	# &Atilde;&#158;
-</span><span class="">  587: 		&#39;&amp;thorn;&#39; =&gt; &#39;&amp;#x0FE;&#39;,	# &Atilde;&frac34;
-</span><span class="">  588: 		&#39;&amp;reg;&#39; =&gt; &#39;&amp;#x0AE;&#39;,
-</span><span class="">  589: 		&#39;&amp;pound;&#39; =&gt; &#39;&amp;#163;&#39;,
-</span><span class="">  590: 		&#39;&amp;ntilde;&#39; =&gt; &#39;&amp;#x0F1;&#39;,
-</span><span class="">  591: 		&#39;&amp;mdash;&#39; =&gt; &#39;-&#39;,
-</span><span class="">  592: 		&#39;&amp;ndash;&#39; =&gt; &#39;-&#39;,
-</span><span class="">  593: 		&#39;&amp;excl;&#39; =&gt; &#39;!&#39;,
-</span><span class="">  594: 	);
-</span><span class="">  595: 
-</span><span class="">  596: 	$string =~ s{(.)}{
-</span><span class="">  597: 		my $cp = $1;
-</span><span class="">  598: 		exists $entity_map{$cp}
-</span><span class="">  599: 			? $entity_map{$cp}
-</span><span class="">  600: 			: $cp
-</span><span class="">  601: 	}gex;
-</span><span class="">  602: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  603: 	if($string !~ /[^[:ascii:]]/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  604: 		return $string;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  605: 	}
-</span><span class="">  606: 
-</span><span class="">  607: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  608: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  609: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  610: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">611 → 812 → 831</span></span>  611: 	@byte_map = (
-</span><span class="">  612: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
-</span><span class="">  613: 		[&quot;\xc2\xa3&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
-</span><span class="">  614: 		[&quot;\xc2\xa9&quot;, &#39;&amp;#x0A9;&#39;],
-</span><span class="">  615: 		[&quot;\xc2\xaa&quot;, &#39;&amp;#x0AA;&#39;],	# &Acirc;&ordf;
-</span><span class="">  616: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  617: 		[&quot;\xc2\xae&quot;, &#39;&amp;#x0AE;&#39;],
-</span><span class="">  618: 		[&quot;\xc3\x81&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  619: 		[&quot;\xc3\x8e&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  620: 		[&quot;\xc3\xa0&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  621: 		[&quot;\xc3\xa1&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  622: 		[&quot;\xc3\xa5&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
-</span><span class="">  623: 		[&quot;\xc3\xa9&quot;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  624: 		[&quot;\xc3\xaf&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
-</span><span class="">  625: 		[&quot;\xc3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn;
-</span><span class="">  626: 		[&quot;\xc5\xa1&quot;, &#39;&amp;#x161;&#39;],
-</span><span class="">  627: 		[&quot;\xc4\x8d&quot;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  628: 		[&quot;\xc5\xbd&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
-</span><span class="">  629: 		[&quot;\xc5\xbe&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
-</span><span class="">  630: 		[&quot;\xc3\x96&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
-</span><span class="">  631: 		[&quot;\xc3\x9e&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  632: 		[&quot;\xc3\x9f&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
-</span><span class="">  633: 		[&quot;\xc3\xa2&quot;, &#39;&amp;#x0E2;&#39;],	# &Atilde;&cent;
-</span><span class="">  634: 		[&quot;\xc3\xad&quot;, &#39;&amp;#x0ED;&#39;],	# &Atilde;&shy;
-</span><span class="">  635: 		[&quot;\xc3\xa4&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  636: 		[&quot;\xc3\xa7&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
-</span><span class="">  637: 		[&quot;\xc3\xb0&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  638: 		[&quot;\xc3\xb3&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
-</span><span class="">  639: 		[&quot;\xc3\xb8&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  640: 		[&quot;\xc3\xbc&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
-</span><span class="">  641: 		[&quot;\xc3\xbe&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  642: 		[&quot;\xc3\xa8&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
-</span><span class="">  643: 		[&quot;\xc3\xee&quot;, &#39;&amp;#x0EE;&#39;],
-</span><span class="">  644: 		[&quot;\xc3\xb4&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
-</span><span class="">  645: 		[&quot;\xc3\xb6&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
-</span><span class="">  646: 		[&quot;\xc3\x89&quot;, &#39;&amp;#x0C9;&#39;],
-</span><span class="">  647: 		[&quot;\xc3\xaa&quot;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  648: 		[&quot;\xc3\xab&quot;, &#39;&amp;#x0EB;&#39;],	# eumlaut
-</span><span class="">  649: 		[&quot;\xc3\xba&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
-</span><span class="">  650: 		[&quot;\xc3\xbb&quot;, &#39;&amp;#x0BB;&#39;],	# &Atilde;&raquo; - ucirc
-</span><span class="">  651: 		[&quot;\xc5\x9b&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155; - sacute
-</span><span class="">  652: 		[&quot;\xc5\xa0&quot;, &#39;&amp;#x160;&#39;],
-</span><span class="">  653: 		[&quot;\xe2\x80\x93&quot;, &#39;-&#39;],
-</span><span class="">  654: 		[&quot;\xe2\x80\x94&quot;, &#39;-&#39;],
-</span><span class="">  655: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  656: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  657: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
-</span><span class="">  658: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  659: 		[&quot;\xe3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn; - what&#39;s this one?
-</span><span class="">  660: 
-</span><span class="">  661: 	# $string =~ s/\xe4\x8d/&amp;#x10D;/g;	# ? ACOM strangeness
-</span><span class="">  662: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
-</span><span class="">  663: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
-</span><span class="">  664: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
-</span><span class="">  665: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
-</span><span class="">  666: 
-</span><span class="">  667: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
-</span><span class="">  668: 		[&quot;\N{U+010D}&quot;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  669: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  670: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;#x0AE;&#39;],	# &Acirc;&reg;
-</span><span class="">  671: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;#x0B5;&#39;],	# &Acirc;&micro;
-</span><span class="">  672: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  673: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  674: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  675: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  676: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
-</span><span class="">  677: 		[&quot;\N{U+00EA}&quot;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  678: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;#x0ED;&#39;],
-</span><span class="">  679: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;#x0EE;&#39;],
-</span><span class="">  680: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  681: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;#x0C9;&#39;],
-</span><span class="">  682: 		[&quot;\N{U+017D}&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
-</span><span class="">  683: 		[&quot;\N{U+017E}&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
-</span><span class="">  684: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
-</span><span class="">  685: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
-</span><span class="">  686: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl; - aacute
-</span><span class="">  687: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;#x0E2;&#39;],
-</span><span class="">  688: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
-</span><span class="">  689: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
-</span><span class="">  690: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  691: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;#x0F1;&#39;],	# &Atilde;&plusmn;
-</span><span class="">  692: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
-</span><span class="">  693: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
-</span><span class="">  694: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
-</span><span class="">  695: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  696: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
-</span><span class="">  697: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
-</span><span class="">  698: 		[&quot;\N{U+015B}&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155;
-</span><span class="">  699: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  700: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  701: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  702: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  703: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  704: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  705: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  706: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
-</span><span class="">  707: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;#x0EB;&#39;],	# &Atilde;&laquo;
-</span><span class="">  708: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;#x0FB;&#39;],	# &Atilde;&raquo;
-</span><span class="">  709: 		[&quot;\N{U+0160}&quot;, &#39;&amp;#x160;&#39;],
-</span><span class="">  710: 		[&quot;\N{U+0161}&quot;, &#39;&amp;#x161;&#39;],
-</span><span class="">  711: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;#x0A9;&#39;],	# &Acirc;&copy;
-</span><span class="">  712: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  713: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  714: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  715: 		[&quot;\N{U+2013}&quot;, &#39;-&#39;],
-</span><span class="">  716: 		[&quot;\N{U+2014}&quot;, &#39;-&#39;],
-</span><span class="">  717: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  718: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  719: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  720: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  721: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
-</span><span class="">  722: 		[&quot;\N{U+2122}&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent;
-</span><span class="">  723: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent; UTF-8
-</span><span class="">  724: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  725: 	);
-</span><span class="">  726: 
-</span><span class="">  727: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  728: 
-</span><span class="">  729: 	# utf8::encode($string);
-</span><span class="">  730: 	# $string =~ s/&Aring;&iexcl;/&amp;s#x161;/g;
-</span><span class="">  731: 	# $string =~ s/&Auml;&#141;/&amp;#x10D;/g;
-</span><span class="">  732: 	# $string =~ s/&Aring;&frac34;/&amp;z#x17E;/g;
-</span><span class="">  733: 	# $string =~ s/&Atilde;&copy;/&amp;#x0E9;/g;
-</span><span class="">  734: 	# $string =~ s/&Atilde;&#150;/&amp;#x0D6;/g;
-</span><span class="">  735: 	# $string =~ s/&Atilde;&sect;/&amp;#x0E7;/g;
-</span><span class="">  736: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
-</span><span class="">  737: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
-</span><span class="">  738: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
-</span><span class="">  739: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
-</span><span class="">  740: 	# $string =~ s/\N{U+00D6}/&amp;#x0D6;/g;	# &Atilde;&#150;
-</span><span class="">  741: 	# $string =~ s/\N{U+00E7}/&amp;#x0E7;/g;	# &Atilde;&sect;
-</span><span class="">  742: 
-</span><span class="">  743: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  744: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  745: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  746: 
-</span><span class="">  747: 	# utf8::decode($string);
-</span><span class="">  748: 
-</span><span class="">  749: 	# $string =~ s/[&#39;\x98]/&amp;#039;/g;
-</span><span class="">  750: 	@byte_map = (
-</span><span class="">  751: 		[&quot;&#39;&quot;, &#39;&amp;#039;&#39;],
-</span><span class="">  752: 		[&quot;\x98&quot;, &#39;&amp;#039;&#39;],
-</span><span class="">  753: 		[&#39;&Acirc;&copy;&#39;, &#39;&amp;#x0A9;&#39;],
-</span><span class="">  754: 		[&#39;&Acirc;&ordf;&#39;, &#39;&amp;#x0AA;&#39;],
-</span><span class="">  755: 		[&#39;&Acirc;&reg;&#39;, &#39;&amp;#x0AE;&#39;],
-</span><span class="">  756: 		[&#39;&Atilde;&yen;&#39;, &#39;&amp;#x0E5;&#39;],
-</span><span class="">  757: 		[&#39;&Aring;&iexcl;&#39;, &#39;&amp;#x161;&#39;],
-</span><span class="">  758: 		[&#39;&Auml;&#141;&#39;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  759: 		[&#39;&Aring;&frac12;&#39;, &#39;&amp;#x17D;&#39;],
-</span><span class="">  760: 		[&#39;&Aring;&frac34;&#39;, &#39;&amp;#x17E;&#39;],
-</span><span class="">  761: 		[&#39;&Acirc;&pound;&#39;, &#39;&amp;#x0A3;&#39;],
-</span><span class="">  762: 		[&#39;&Acirc;&micro;&#39;, &#39;&amp;#x0B5;&#39;],
-</span><span class="">  763: 		[&#39;&Atilde;&iexcl;&#39;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  764: 		[&#39;&Atilde;&cent;&#39;, &#39;&amp;#x0E2;&#39;],
-</span><span class="">  765: 		[&#39;&Atilde;&curren;&#39;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  766: 		[&#39;&Atilde;&#129;&#39;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  767: 		[&#39;&Atilde;&#150;&#39;, &#39;&amp;#x0D6;&#39;],
-</span><span class="">  768: 		[&#39;&Atilde;&#159;&#39;, &#39;&amp;#x0DF;&#39;],
-</span><span class="">  769: 		[&#39;&Atilde;&sect;&#39;, &#39;&amp;#x0E7;&#39;],
-</span><span class="">  770: 		[&#39;&Atilde;&uml;&#39;, &#39;&amp;#x0E8;&#39;],
-</span><span class="">  771: 		[&#39;&Atilde;&copy;&#39;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  772: 		[&#39;&Atilde;&ordf;&#39;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  773: 		[&#39;&Atilde;&laquo;&#39;, &#39;&amp;#x0EB;&#39;],
-</span><span class="">  774: 		[&#39;&Atilde;&shy;&#39;, &#39;&amp;#x0ED;&#39;],
-</span><span class="">  775: 		[&#39;&Atilde;&macr;&#39;, &#39;&amp;#x0EF;&#39;],
-</span><span class="">  776: 		[&#39;&Atilde;&#142;&#39;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  777: 		[&#39;&Atilde;&#158;&#39;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  778: 		[&#39;&Atilde;&deg;&#39;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  779: 		[&#39;&Atilde;&cedil;&#39;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  780: 		[&#39;&Atilde;&raquo;&#39;, &#39;&amp;#x0FB;&#39;],
-</span><span class="">  781: 		[&#39;&Atilde;&plusmn;&#39;, &#39;&amp;#x0F1;&#39;],
-</span><span class="">  782: 		[&#39;&Atilde;&ordm;&#39;, &#39;&amp;#x0FA;&#39;],
-</span><span class="">  783: 		[&#39;&Atilde;&frac14;&#39;, &#39;&amp;#x0FC;&#39;],
-</span><span class="">  784: 		[&#39;&Atilde;&frac34;&#39;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  785: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  786: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  787: 		[&#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  788: 		[&#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  789: 		[&#39;&acirc;&#128;&#148;&#39;, &#39;-&#39;],
-</span><span class="">  790: 		[&#39;&acirc;&#128;&#147;&#39;, &#39;-&#39;],
-</span><span class="">  791: 		[&#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39;],
-</span><span class="">  792: 		[&#39;&acirc;&#132;&cent;&#39;, &#39;&amp;#x2122;&#39;],
-</span><span class="">  793: 		[&#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39;],
-</span><span class="">  794: 		[&quot;\x80\$&quot;, &#39; &#39;],
-</span><span class="">  795: 	);
-</span><span class="">  796: 
-</span><span class="">  797: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  798: 
-</span><span class="">  799: 	# if($string =~ /^Maria\(/) {
-</span><span class="">  800: 		# print STDERR (unpack &#39;H*&#39;, $string);
-</span><span class="">  801: 		# print STDERR __LINE__, &#39;: &#39;;
-</span><span class="">  802: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  803: 		# print STDERR &quot;\n&quot;;
-</span><span class="">  804: 		# my $i = 0;
-</span><span class="">  805: 		# while((my @call_details = caller($i++))) {
-</span><span class="">  806: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  807: 		# }
-</span><span class="">  808: 		# die $string;
-</span><span class="">  809: 	# }
-</span><span class="">  810: 
-</span><span class="">  811: 	# print STDERR __LINE__, &quot;: ($string)\n&quot;;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  812: 	if($string =~ /[^[:ascii:]]/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  813: 		print STDERR (unpack &#39;H*&#39;, $string);
-</span><span class="">  814: 		print STDERR __LINE__, &#39;: &#39;;
-</span><span class="">  815: 		print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  816: 		print STDERR &quot;\n&quot;;
-</span><span class="">  817: 		my $i = 0;
-</span><span class="">  818: 		while((my @call_details = caller($i++))) {
-</span><span class="">  819: 			print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  820: 		}
-</span><span class="">  821: 		$complain-&gt;(&quot;TODO: wide_to_xml($string)&quot;) if($complain);
-</span><span class="">  822: 		warn &quot;TODO: wide_to_xml($string)&quot;;
-</span><span class="">  823: 		# $string =~ s/[^[:ascii:]]/XXXXX/g;
-</span><span class="">  824: 		$string =~ s{
-</span><span class="">  825: 				([^[:ascii:]])
-</span><span class="">  826: 			}{
-</span><span class="">  827: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
-</span><span class="">  828: 			}gex;	# e=evaluate, g=global, x=extended
-</span><span class="">  829: 		die &quot;BUG: wide_to_xml($string)&quot;;
-</span><span class="">  830: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  831: 	return $string;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  832: }
-</span><span class="">  833: 
-</span><span class="">  834: sub _sub_map
-</span><span class="">  835: {
-</span><span class="">  836: 	my $string = ${$_[0]};
-</span><span class="">  837: 	my $byte_map = $_[1];
-</span><span class="">  838: 
-</span><span class="">  839: 	# Build an alternation sorted by longest sequence first
-</span><span class="">  840: 	my $pattern = join &#39;|&#39;,
-</span><span class="">  841: 		map { quotemeta($_-&gt;[0]) }
-</span><span class="">  842: 		sort { length $b-&gt;[0] &lt;=&gt; length $a-&gt;[0] }
-</span><span class="">  843: 		@{$byte_map};
-</span><span class="">  844: 
-</span><span class="">  845: 	$string =~ s/($pattern)/do {
-</span><span class="">  846: 		my $bytes = $1;
-</span><span class="">  847: 		my ($pair) = grep { $_-&gt;[0] eq $bytes } @{$byte_map};
-</span><span class="">  848: 		$pair-&gt;[1];
-</span><span class="">  849: 	}/ge;
-</span><span class="">  850: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  851: 	return $string;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  852: }
-</span><span class="">  853: 
-</span><span class="">  854: =head1 SEE ALSO
-</span><span class="">  855: 
-</span><span class="">  856: =over 4
-</span><span class="">  857: 
-</span><span class="">  858: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Encode-Wide/coverage/&gt;
-</span><span class="">  859: 
-</span><span class="">  860: =item * L&lt;HTML::Entities&gt;
-</span><span class="">  861: 
-</span><span class="">  862: =item * L&lt;Encode&gt;
-</span><span class="">  863: 
-</span><span class="">  864: =item * L&lt;XML::Entities&gt;
-</span><span class="">  865: 
-</span><span class="">  866: =item * L&lt;Unicode::Escape&gt;
-</span><span class="">  867: 
-</span><span class="">  868: =item * L&lt;https://www.compart.com/en/unicode/&gt;
-</span><span class="">  869: 
-</span><span class="">  870: =back
-</span><span class="">  871: 
-</span><span class="">  872: =head1 SUPPORT
-</span><span class="">  873: 
-</span><span class="">  874: This module is provided as-is without any warranty.
-</span><span class="">  875: 
-</span><span class="">  876: Please report any bugs or feature requests to C&lt;bug-encode-wide at rt.cpan.org&gt;,
-</span><span class="">  877: or through the web interface at
-</span><span class="">  878: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide&gt;.
-</span><span class="">  879: I will be notified, and then you&#39;ll
-</span><span class="">  880: automatically be notified of progress on your bug as I make changes.
-</span><span class="">  881: 
-</span><span class="">  882: =head1 AUTHOR
-</span><span class="">  883: 
-</span><span class="">  884: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
-</span><span class="">  885: 
-</span><span class="">  886: =head1 LICENCE AND COPYRIGHT
-</span><span class="">  887: 
-</span><span class="">  888: Copyright 2025 Nigel Horne.
-</span><span class="">  889: 
-</span><span class="">  890: Usage is subject to the GPL2 licence terms.
-</span><span class="">  891: If you use it,
-</span><span class="">  892: please let me know.
-</span><span class="">  893: 
-</span><span class="">  894: =cut
-</span><span class="">  895: 
-</span><span class="">  896: 1;
+</span><span class="">  584: 		&#39;&amp;Zcaron;&#39; =&gt; &#39;&amp;#x17D;&#39;,
+</span><span class="">  585: 		&#39;&amp;zcaron;&#39; =&gt; &#39;&amp;#x17E;&#39;,
+</span><span class="">  586: 		&#39;&amp;Scaron;&#39; =&gt; &#39;&amp;#x160;&#39;,
+</span><span class="">  587: 		&#39;&amp;THORN;&#39; =&gt; &#39;&amp;#x0DE;&#39;,	# &Atilde;&#158;
+</span><span class="">  588: 		&#39;&amp;thorn;&#39; =&gt; &#39;&amp;#x0FE;&#39;,	# &Atilde;&frac34;
+</span><span class="">  589: 		&#39;&amp;reg;&#39; =&gt; &#39;&amp;#x0AE;&#39;,
+</span><span class="">  590: 		&#39;&amp;pound;&#39; =&gt; &#39;&amp;#163;&#39;,
+</span><span class="">  591: 		&#39;&amp;ntilde;&#39; =&gt; &#39;&amp;#x0F1;&#39;,
+</span><span class="">  592: 		&#39;&amp;mdash;&#39; =&gt; &#39;-&#39;,
+</span><span class="">  593: 		&#39;&amp;ndash;&#39; =&gt; &#39;-&#39;,
+</span><span class="">  594: 		&#39;&amp;excl;&#39; =&gt; &#39;!&#39;,
+</span><span class="">  595: 	);
+</span><span class="">  596: 
+</span><span class="">  597: 	$string =~ s{(.)}{
+</span><span class="">  598: 		my $cp = $1;
+</span><span class="">  599: 		exists $entity_map{$cp}
+</span><span class="">  600: 			? $entity_map{$cp}
+</span><span class="">  601: 			: $cp
+</span><span class="">  602: 	}gex;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  603: 
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  604: 	if($string !~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  605: 		return $string;
+</span><span class="">  606: 	}
+</span><span class="">  607: 
+</span><span class="">  608: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  609: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  610: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  611: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">612 → 813 → 832</span></span>  612: 	@byte_map = (
+</span><span class="">  613: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
+</span><span class="">  614: 		[&quot;\xc2\xa3&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
+</span><span class="">  615: 		[&quot;\xc2\xa9&quot;, &#39;&amp;#x0A9;&#39;],
+</span><span class="">  616: 		[&quot;\xc2\xaa&quot;, &#39;&amp;#x0AA;&#39;],	# &Acirc;&ordf;
+</span><span class="">  617: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  618: 		[&quot;\xc2\xae&quot;, &#39;&amp;#x0AE;&#39;],
+</span><span class="">  619: 		[&quot;\xc3\x81&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  620: 		[&quot;\xc3\x8e&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  621: 		[&quot;\xc3\xa0&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  622: 		[&quot;\xc3\xa1&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  623: 		[&quot;\xc3\xa5&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
+</span><span class="">  624: 		[&quot;\xc3\xa9&quot;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  625: 		[&quot;\xc3\xaf&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
+</span><span class="">  626: 		[&quot;\xc3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn;
+</span><span class="">  627: 		[&quot;\xc5\xa1&quot;, &#39;&amp;#x161;&#39;],
+</span><span class="">  628: 		[&quot;\xc4\x8d&quot;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  629: 		[&quot;\xc5\xbd&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
+</span><span class="">  630: 		[&quot;\xc5\xbe&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
+</span><span class="">  631: 		[&quot;\xc3\x96&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
+</span><span class="">  632: 		[&quot;\xc3\x9e&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  633: 		[&quot;\xc3\x9f&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
+</span><span class="">  634: 		[&quot;\xc3\xa2&quot;, &#39;&amp;#x0E2;&#39;],	# &Atilde;&cent;
+</span><span class="">  635: 		[&quot;\xc3\xad&quot;, &#39;&amp;#x0ED;&#39;],	# &Atilde;&shy;
+</span><span class="">  636: 		[&quot;\xc3\xa4&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  637: 		[&quot;\xc3\xa7&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
+</span><span class="">  638: 		[&quot;\xc3\xb0&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  639: 		[&quot;\xc3\xb3&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
+</span><span class="">  640: 		[&quot;\xc3\xb8&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  641: 		[&quot;\xc3\xbc&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
+</span><span class="">  642: 		[&quot;\xc3\xbe&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  643: 		[&quot;\xc3\xa8&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
+</span><span class="">  644: 		[&quot;\xc3\xee&quot;, &#39;&amp;#x0EE;&#39;],
+</span><span class="">  645: 		[&quot;\xc3\xb4&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
+</span><span class="">  646: 		[&quot;\xc3\xb6&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
+</span><span class="">  647: 		[&quot;\xc3\x89&quot;, &#39;&amp;#x0C9;&#39;],
+</span><span class="">  648: 		[&quot;\xc3\xaa&quot;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  649: 		[&quot;\xc3\xab&quot;, &#39;&amp;#x0EB;&#39;],	# eumlaut
+</span><span class="">  650: 		[&quot;\xc3\xba&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
+</span><span class="">  651: 		[&quot;\xc3\xbb&quot;, &#39;&amp;#x0BB;&#39;],	# &Atilde;&raquo; - ucirc
+</span><span class="">  652: 		[&quot;\xc5\x9b&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155; - sacute
+</span><span class="">  653: 		[&quot;\xc5\xa0&quot;, &#39;&amp;#x160;&#39;],
+</span><span class="">  654: 		[&quot;\xe2\x80\x93&quot;, &#39;-&#39;],
+</span><span class="">  655: 		[&quot;\xe2\x80\x94&quot;, &#39;-&#39;],
+</span><span class="">  656: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  657: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  658: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
+</span><span class="">  659: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  660: 		[&quot;\xe3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn; - what&#39;s this one?
+</span><span class="">  661: 
+</span><span class="">  662: 	# $string =~ s/\xe4\x8d/&amp;#x10D;/g;	# ? ACOM strangeness
+</span><span class="">  663: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
+</span><span class="">  664: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
+</span><span class="">  665: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
+</span><span class="">  666: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
+</span><span class="">  667: 
+</span><span class="">  668: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
+</span><span class="">  669: 		[&quot;\N{U+010D}&quot;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  670: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  671: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;#x0AE;&#39;],	# &Acirc;&reg;
+</span><span class="">  672: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;#x0B5;&#39;],	# &Acirc;&micro;
+</span><span class="">  673: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  674: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  675: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  676: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  677: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
+</span><span class="">  678: 		[&quot;\N{U+00EA}&quot;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  679: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;#x0ED;&#39;],
+</span><span class="">  680: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;#x0EE;&#39;],
+</span><span class="">  681: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  682: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;#x0C9;&#39;],
+</span><span class="">  683: 		[&quot;\N{U+017D}&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
+</span><span class="">  684: 		[&quot;\N{U+017E}&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
+</span><span class="">  685: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
+</span><span class="">  686: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
+</span><span class="">  687: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl; - aacute
+</span><span class="">  688: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;#x0E2;&#39;],
+</span><span class="">  689: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
+</span><span class="">  690: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
+</span><span class="">  691: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  692: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;#x0F1;&#39;],	# &Atilde;&plusmn;
+</span><span class="">  693: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
+</span><span class="">  694: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
+</span><span class="">  695: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
+</span><span class="">  696: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  697: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
+</span><span class="">  698: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
+</span><span class="">  699: 		[&quot;\N{U+015B}&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155;
+</span><span class="">  700: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  701: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  702: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  703: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  704: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  705: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  706: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  707: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
+</span><span class="">  708: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;#x0EB;&#39;],	# &Atilde;&laquo;
+</span><span class="">  709: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;#x0FB;&#39;],	# &Atilde;&raquo;
+</span><span class="">  710: 		[&quot;\N{U+0160}&quot;, &#39;&amp;#x160;&#39;],
+</span><span class="">  711: 		[&quot;\N{U+0161}&quot;, &#39;&amp;#x161;&#39;],
+</span><span class="">  712: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;#x0A9;&#39;],	# &Acirc;&copy;
+</span><span class="">  713: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  714: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  715: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  716: 		[&quot;\N{U+2013}&quot;, &#39;-&#39;],
+</span><span class="">  717: 		[&quot;\N{U+2014}&quot;, &#39;-&#39;],
+</span><span class="">  718: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  719: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  720: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  721: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  722: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
+</span><span class="">  723: 		[&quot;\N{U+2122}&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent;
+</span><span class="">  724: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent; UTF-8
+</span><span class="">  725: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  726: 	);
+</span><span class="">  727: 
+</span><span class="">  728: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  729: 
+</span><span class="">  730: 	# utf8::encode($string);
+</span><span class="">  731: 	# $string =~ s/&Aring;&iexcl;/&amp;s#x161;/g;
+</span><span class="">  732: 	# $string =~ s/&Auml;&#141;/&amp;#x10D;/g;
+</span><span class="">  733: 	# $string =~ s/&Aring;&frac34;/&amp;z#x17E;/g;
+</span><span class="">  734: 	# $string =~ s/&Atilde;&copy;/&amp;#x0E9;/g;
+</span><span class="">  735: 	# $string =~ s/&Atilde;&#150;/&amp;#x0D6;/g;
+</span><span class="">  736: 	# $string =~ s/&Atilde;&sect;/&amp;#x0E7;/g;
+</span><span class="">  737: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
+</span><span class="">  738: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
+</span><span class="">  739: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
+</span><span class="">  740: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
+</span><span class="">  741: 	# $string =~ s/\N{U+00D6}/&amp;#x0D6;/g;	# &Atilde;&#150;
+</span><span class="">  742: 	# $string =~ s/\N{U+00E7}/&amp;#x0E7;/g;	# &Atilde;&sect;
+</span><span class="">  743: 
+</span><span class="">  744: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  745: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  746: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  747: 
+</span><span class="">  748: 	# utf8::decode($string);
+</span><span class="">  749: 
+</span><span class="">  750: 	# $string =~ s/[&#39;\x98]/&amp;#039;/g;
+</span><span class="">  751: 	@byte_map = (
+</span><span class="">  752: 		[&quot;&#39;&quot;, &#39;&amp;#039;&#39;],
+</span><span class="">  753: 		[&quot;\x98&quot;, &#39;&amp;#039;&#39;],
+</span><span class="">  754: 		[&#39;&Acirc;&copy;&#39;, &#39;&amp;#x0A9;&#39;],
+</span><span class="">  755: 		[&#39;&Acirc;&ordf;&#39;, &#39;&amp;#x0AA;&#39;],
+</span><span class="">  756: 		[&#39;&Acirc;&reg;&#39;, &#39;&amp;#x0AE;&#39;],
+</span><span class="">  757: 		[&#39;&Atilde;&yen;&#39;, &#39;&amp;#x0E5;&#39;],
+</span><span class="">  758: 		[&#39;&Aring;&iexcl;&#39;, &#39;&amp;#x161;&#39;],
+</span><span class="">  759: 		[&#39;&Auml;&#141;&#39;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  760: 		[&#39;&Aring;&frac12;&#39;, &#39;&amp;#x17D;&#39;],
+</span><span class="">  761: 		[&#39;&Aring;&frac34;&#39;, &#39;&amp;#x17E;&#39;],
+</span><span class="">  762: 		[&#39;&Acirc;&pound;&#39;, &#39;&amp;#x0A3;&#39;],
+</span><span class="">  763: 		[&#39;&Acirc;&micro;&#39;, &#39;&amp;#x0B5;&#39;],
+</span><span class="">  764: 		[&#39;&Atilde;&iexcl;&#39;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  765: 		[&#39;&Atilde;&cent;&#39;, &#39;&amp;#x0E2;&#39;],
+</span><span class="">  766: 		[&#39;&Atilde;&curren;&#39;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  767: 		[&#39;&Atilde;&#129;&#39;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  768: 		[&#39;&Atilde;&#150;&#39;, &#39;&amp;#x0D6;&#39;],
+</span><span class="">  769: 		[&#39;&Atilde;&#159;&#39;, &#39;&amp;#x0DF;&#39;],
+</span><span class="">  770: 		[&#39;&Atilde;&sect;&#39;, &#39;&amp;#x0E7;&#39;],
+</span><span class="">  771: 		[&#39;&Atilde;&uml;&#39;, &#39;&amp;#x0E8;&#39;],
+</span><span class="">  772: 		[&#39;&Atilde;&copy;&#39;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  773: 		[&#39;&Atilde;&ordf;&#39;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  774: 		[&#39;&Atilde;&laquo;&#39;, &#39;&amp;#x0EB;&#39;],
+</span><span class="">  775: 		[&#39;&Atilde;&shy;&#39;, &#39;&amp;#x0ED;&#39;],
+</span><span class="">  776: 		[&#39;&Atilde;&macr;&#39;, &#39;&amp;#x0EF;&#39;],
+</span><span class="">  777: 		[&#39;&Atilde;&#142;&#39;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  778: 		[&#39;&Atilde;&#158;&#39;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  779: 		[&#39;&Atilde;&deg;&#39;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  780: 		[&#39;&Atilde;&cedil;&#39;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  781: 		[&#39;&Atilde;&raquo;&#39;, &#39;&amp;#x0FB;&#39;],
+</span><span class="">  782: 		[&#39;&Atilde;&plusmn;&#39;, &#39;&amp;#x0F1;&#39;],
+</span><span class="">  783: 		[&#39;&Atilde;&ordm;&#39;, &#39;&amp;#x0FA;&#39;],
+</span><span class="">  784: 		[&#39;&Atilde;&frac14;&#39;, &#39;&amp;#x0FC;&#39;],
+</span><span class="">  785: 		[&#39;&Atilde;&frac34;&#39;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  786: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  787: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  788: 		[&#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  789: 		[&#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  790: 		[&#39;&acirc;&#128;&#148;&#39;, &#39;-&#39;],
+</span><span class="">  791: 		[&#39;&acirc;&#128;&#147;&#39;, &#39;-&#39;],
+</span><span class="">  792: 		[&#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39;],
+</span><span class="">  793: 		[&#39;&acirc;&#132;&cent;&#39;, &#39;&amp;#x2122;&#39;],
+</span><span class="">  794: 		[&#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39;],
+</span><span class="">  795: 		[&quot;\x80\$&quot;, &#39; &#39;],
+</span><span class="">  796: 	);
+</span><span class="">  797: 
+</span><span class="">  798: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  799: 
+</span><span class="">  800: 	# if($string =~ /^Maria\(/) {
+</span><span class="">  801: 		# print STDERR (unpack &#39;H*&#39;, $string);
+</span><span class="">  802: 		# print STDERR __LINE__, &#39;: &#39;;
+</span><span class="">  803: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  804: 		# print STDERR &quot;\n&quot;;
+</span><span class="">  805: 		# my $i = 0;
+</span><span class="">  806: 		# while((my @call_details = caller($i++))) {
+</span><span class="">  807: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  808: 		# }
+</span><span class="">  809: 		# die $string;
+</span><span class="">  810: 	# }
+</span><span class="">  811: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  812: 	# print STDERR __LINE__, &quot;: ($string)\n&quot;;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  813: 	if($string =~ /[^[:ascii:]]/) {
+</span><span class="">  814: 		print STDERR (unpack &#39;H*&#39;, $string);
+</span><span class="">  815: 		print STDERR __LINE__, &#39;: &#39;;
+</span><span class="">  816: 		print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  817: 		print STDERR &quot;\n&quot;;
+</span><span class="">  818: 		my $i = 0;
+</span><span class="">  819: 		while((my @call_details = caller($i++))) {
+</span><span class="">  820: 			print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  821: 		}
+</span><span class="">  822: 		$complain-&gt;(&quot;TODO: wide_to_xml($string)&quot;) if($complain);
+</span><span class="">  823: 		warn &quot;TODO: wide_to_xml($string)&quot;;
+</span><span class="">  824: 		# $string =~ s/[^[:ascii:]]/XXXXX/g;
+</span><span class="">  825: 		$string =~ s{
+</span><span class="">  826: 				([^[:ascii:]])
+</span><span class="">  827: 			}{
+</span><span class="">  828: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
+</span><span class="">  829: 			}gex;	# e=evaluate, g=global, x=extended
+</span><span class="">  830: 		die &quot;BUG: wide_to_xml($string)&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  831: 	}
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  832: 	return $string;
+</span><span class="">  833: }
+</span><span class="">  834: 
+</span><span class="">  835: sub _sub_map
+</span><span class="">  836: {
+</span><span class="">  837: 	my $string = ${$_[0]};
+</span><span class="">  838: 	my $byte_map = $_[1];
+</span><span class="">  839: 
+</span><span class="">  840: 	# Build an alternation sorted by longest sequence first
+</span><span class="">  841: 	my $pattern = join &#39;|&#39;,
+</span><span class="">  842: 		map { quotemeta($_-&gt;[0]) }
+</span><span class="">  843: 		sort { length $b-&gt;[0] &lt;=&gt; length $a-&gt;[0] }
+</span><span class="">  844: 		@{$byte_map};
+</span><span class="">  845: 
+</span><span class="">  846: 	$string =~ s/($pattern)/do {
+</span><span class="">  847: 		my $bytes = $1;
+</span><span class="">  848: 		my ($pair) = grep { $_-&gt;[0] eq $bytes } @{$byte_map};
+</span><span class="">  849: 		$pair-&gt;[1];
+</span><span class="">  850: 	}/ge;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  851: 
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  852: 	return $string;
+</span><span class="">  853: }
+</span><span class="">  854: 
+</span><span class="">  855: =head1 SEE ALSO
+</span><span class="">  856: 
+</span><span class="">  857: =over 4
+</span><span class="">  858: 
+</span><span class="">  859: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Encode-Wide/coverage/&gt;
+</span><span class="">  860: 
+</span><span class="">  861: =item * L&lt;HTML::Entities&gt;
+</span><span class="">  862: 
+</span><span class="">  863: =item * L&lt;Encode&gt;
+</span><span class="">  864: 
+</span><span class="">  865: =item * L&lt;XML::Entities&gt;
+</span><span class="">  866: 
+</span><span class="">  867: =item * L&lt;Unicode::Escape&gt;
+</span><span class="">  868: 
+</span><span class="">  869: =item * L&lt;https://www.compart.com/en/unicode/&gt;
+</span><span class="">  870: 
+</span><span class="">  871: =back
+</span><span class="">  872: 
+</span><span class="">  873: =head1 SUPPORT
+</span><span class="">  874: 
+</span><span class="">  875: This module is provided as-is without any warranty.
+</span><span class="">  876: 
+</span><span class="">  877: Please report any bugs or feature requests to C&lt;bug-encode-wide at rt.cpan.org&gt;,
+</span><span class="">  878: or through the web interface at
+</span><span class="">  879: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide&gt;.
+</span><span class="">  880: I will be notified, and then you&#39;ll
+</span><span class="">  881: automatically be notified of progress on your bug as I make changes.
+</span><span class="">  882: 
+</span><span class="">  883: =head1 AUTHOR
+</span><span class="">  884: 
+</span><span class="">  885: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
+</span><span class="">  886: 
+</span><span class="">  887: =head1 LICENCE AND COPYRIGHT
+</span><span class="">  888: 
+</span><span class="">  889: Copyright 2025 Nigel Horne.
+</span><span class="">  890: 
+</span><span class="">  891: Usage is subject to the GPL2 licence terms.
+</span><span class="">  892: If you use it,
+</span><span class="">  893: please let me know.
+</span><span class="">  894: 
+</span><span class="">  895: =cut
+</span><span class="">  896: 
+</span><span class="">  897: 1;
 </span></pre>
 
 <script>
