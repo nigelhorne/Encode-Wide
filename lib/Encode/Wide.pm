@@ -103,6 +103,93 @@ Optionally exportable:
 
 =cut
 
+=head2 wide_to_html
+
+=head3 Purpose
+
+Convert a Unicode / UTF-8 string into a pure-ASCII HTML fragment by replacing
+every non-ASCII character with its named HTML entity (e.g. C<&eacute;>) where
+one exists, or a hexadecimal numeric entity (e.g. C<&#xNNNN;>) otherwise.
+Bare ampersands, angle brackets, and double-quotes are also escaped so the
+result is safe to embed in an HTML attribute or body.
+
+=head3 Arguments
+
+Named parameters (or a single positional string as the first argument):
+
+=over 4
+
+=item C<string> (required)
+
+The text to encode.  May be a plain scalar or a reference to a scalar.
+Must be defined; passing C<undef> causes the function to C<die>.
+
+=item C<keep_hrefs> (optional, default 0)
+
+When true, C<< < >>, C<< > >>, and C<< " >> are B<not> escaped,
+so that literal HTML hyperlinks embedded in the input survive intact.
+
+=item C<keep_apos> (optional, default 0)
+
+When true, apostrophes (C<'>) are B<not> converted to C<&apos;>.
+Useful when the result will appear inside a JavaScript string literal.
+
+=item C<complain> (optional)
+
+A code reference invoked with a descriptive message if the pipeline
+encounters a character it cannot encode.  The function then C<die>s with
+a C<BUG:> prefix regardless.
+
+=back
+
+=head3 Returns
+
+A defined scalar string containing only ASCII characters (code points 0x00–0x7F).
+
+=head3 Side Effects
+
+Prints diagnostic information to STDERR and invokes the C<complain> callback
+when an unhandled character is detected.  Dies with C<"BUG: wide_to_html(...)">
+in that case.
+
+=head3 Usage Example
+
+    use Encode::Wide qw(wide_to_html);
+
+    my $safe = wide_to_html(string => "na\x{EF}ve caf\x{E9}");
+    # => 'na&iuml;ve caf&eacute;'
+
+    my $href_safe = wide_to_html(string => '<a href="x">caf\x{E9}</a>', keep_hrefs => 1);
+    # => '<a href="x">caf&eacute;</a>'
+
+=head3 API SPECIFICATION
+
+=head4 Input
+
+    {
+        string     => { type => SCALAR | SCALARREF, required => 1, defined => 1 },
+        keep_hrefs => { type => BOOLEAN, optional => 1, default => 0 },
+        keep_apos  => { type => BOOLEAN, optional => 1, default => 0 },
+        complain   => { type => CODEREF,  optional => 1 },
+    }
+
+=head4 Output
+
+    { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
+
+=head3 FORMAL SPECIFICATION
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    keep_apos = 0  ⟹ ∄ bare apostrophe in S'
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: wide_to_html() string not set")
+
+=cut
+
 sub wide_to_html
 {
 	my $params = Params::Get::get_params('string', @_);
@@ -277,6 +364,7 @@ sub wide_to_html
 		["\N{U+00E2}", '&acirc;'],
 		["\N{U+00E4}", '&auml;'],
 		["\N{U+00E5}", '&aring;'],	# å
+		["\N{U+00E0}", '&agrave;'],	# à
 		["\N{U+00E7}", '&ccedil;'],	# ç
 		["\N{U+00E8}", '&egrave;'],
 		["\N{U+00E9}", '&eacute;'],
@@ -367,6 +455,7 @@ sub wide_to_html
 		[ 'č', '&ccaron;' ],
 		[ 'Ž', '&Zcaron;' ],
 		[ 'ž', '&zcaron;' ],
+		[ 'à', '&agrave;' ],	# à
 		[ 'á', '&aacute;' ],
 		[ 'â', '&acirc;' ],
 		[ 'é', '&eacute;' ],
@@ -445,6 +534,86 @@ sub wide_to_html
 
 	return $string;
 }
+
+=head2 wide_to_xml
+
+=head3 Purpose
+
+Convert a Unicode / UTF-8 string into a pure-ASCII XML fragment by replacing
+every non-ASCII character with a hexadecimal numeric entity (e.g. C<&#x00E9;>).
+Unlike HTML, XML does not support most named entities, so only numeric forms
+are used.  Em-dashes and en-dashes are folded to a plain ASCII hyphen (C<->).
+Bare ampersands, angle brackets, and double-quotes are escaped for XML safety.
+
+=head3 Arguments
+
+Named parameters (or a single positional string as the first argument):
+
+=over 4
+
+=item C<string> (required)
+
+The text to encode.  May be a plain scalar or a reference to a scalar.
+Must be defined; passing C<undef> causes the function to C<die>.
+
+=item C<keep_hrefs> (optional, default 0)
+
+When true, C<< < >>, C<< > >>, and C<< " >> are B<not> escaped.
+
+=item C<complain> (optional)
+
+A code reference invoked with a descriptive message if an unhandled character
+is encountered.  The function then C<die>s with a C<BUG:> prefix regardless.
+
+=back
+
+=head3 Returns
+
+A defined scalar string containing only ASCII characters (code points 0x00–0x7F).
+
+=head3 Side Effects
+
+Prints diagnostic information to STDERR and invokes the C<complain> callback
+when an unhandled character is detected.  Dies with C<"BUG: wide_to_xml(...)">
+in that case.
+
+=head3 Usage Example
+
+    use Encode::Wide qw(wide_to_xml);
+
+    my $safe = wide_to_xml(string => "SURN \x{017D}ganjar");
+    # => 'SURN &#x17D;ganjar'
+
+    my $href_safe = wide_to_xml(string => '<tag attr="val">', keep_hrefs => 1);
+    # => '<tag attr="val">'
+
+=head3 API SPECIFICATION
+
+=head4 Input
+
+    {
+        string     => { type => SCALAR | SCALARREF, required => 1, defined => 1 },
+        keep_hrefs => { type => BOOLEAN, optional => 1, default => 0 },
+        complain   => { type => CODEREF,  optional => 1 },
+    }
+
+=head4 Output
+
+    { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
+
+=head3 FORMAL SPECIFICATION
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    U+2013 ∈ S ⟹ "-" ∈ S' ∧ "–" ∉ S'                (en-dash collapsed)
+    U+2014 ∈ S ⟹ "-" ∈ S' ∧ "—" ∉ S'                (em-dash collapsed)
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: string not set")
+
+=cut
 
 # See https://www.compart.com/en/unicode/U+0161 etc.
 #	https://www.compart.com/en/unicode/U+00EB
@@ -661,6 +830,7 @@ sub wide_to_xml
 		["\N{U+00C1}", '&#x0C1;'],	# Á
 		["\N{U+00CE}", '&#x0CE;'],	# Î
 		["\N{U+00DE}", '&#x0DE;'],	# Þ
+		["\N{U+00E0}", '&#x0E0;'],	# à
 		["\N{U+00E4}", '&#x0E4;'],	# ä
 		["\N{U+00E5}", '&#x0E5;'],	# å
 		["\N{U+00EA}", '&#x0EA;'],
@@ -749,6 +919,7 @@ sub wide_to_xml
 		['ž', '&#x17E;'],
 		['£', '&#x0A3;'],
 		['µ', '&#x0B5;'],
+		['à', '&#x0E0;'],	# à
 		['á', '&#x0E1;'],	# á
 		['â', '&#x0E2;'],
 		['ä', '&#x0E4;'],	# ä
