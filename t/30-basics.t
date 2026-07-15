@@ -69,6 +69,11 @@ my @tests = (
 		input   => "\x{017D}",
 		html	=> '&Zcaron;',
 		xml	=> '&#x17D;',
+	}, {
+		name	=> 'Z with caron in word (XML uses numeric entity)',
+		input   => "SURN \x{017D}ganjar",
+		html	=> 'SURN &Zcaron;ganjar',
+		xml	=> 'SURN &#x17D;ganjar',
 	},
 );
 
