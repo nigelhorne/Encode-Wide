@@ -1,10 +1,14 @@
 Revision history for Encode::Wide
 
 0.07
+	[ Enhancements ]
 	Added the ™ (trade mark) character for both HTML (&trade;) and XML (&#x2122;)
 	Added regression test for č (&ccaron; / &#x10D;)
 	Added Ž (&Zcaron; / &#x17D;) character support and regression test
 	Added bin/wide2html and bin/wide2xml command-line scripts
+
+	[ Bug Fixes ]
+	Fixed entity_map pre-decode (&ccaron;, &zcaron; etc.) which was silently ignored due to single-character regex
 
 0.06	Thu Sep 25 08:28:23 EDT 2025
 	Added the µ character

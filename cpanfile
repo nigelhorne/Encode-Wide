@@ -10,6 +10,7 @@ requires 'Term::ANSIColor';
 on 'configure' => sub {
 	requires 'ExtUtils::MakeMaker', '6.64';
 };
+
 on 'test' => sub {
 	requires 'File::Glob';
 	requires 'File::Slurp';
@@ -22,6 +23,7 @@ on 'test' => sub {
 	requires 'Test::Needs';
 	requires 'Test::Returns';
 };
+
 on 'develop' => sub {
 	requires 'Devel::Cover';
 	requires 'Perl::Critic';
