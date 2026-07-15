@@ -490,6 +490,7 @@ sub wide_to_xml
 	my %entity_map = (
 		'&ccaron;' => 'č',
 		'&zcaron;' => 'ž',
+		'&Zcaron;' => 'Ž',
 		'&Scaron;' => 'Š',
 	);
 
