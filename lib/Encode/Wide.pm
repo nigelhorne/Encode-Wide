@@ -581,6 +581,7 @@ sub wide_to_xml
 		'&ouml;' => '&#x0F6;',
 		'&ordf;' => '&#x0AA;',	# ª
 		'&oslash;' => '&#x0F8;',	# ø
+		'&Zcaron;' => '&#x17D;',
 		'&zcaron;' => '&#x17E;',
 		'&Scaron;' => '&#x160;',
 		'&THORN;' => '&#x0DE;',	# Þ
