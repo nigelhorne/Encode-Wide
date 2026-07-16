@@ -246,8 +246,8 @@ pre details.mutant-details ul {
 <strong>Structural Coverage (Approximate)</strong><p>
 TER1 (Statement): 100.00%<br>
 TER2 (Branch): 100.00%<br>
-TER3 (LCSAJ): 100.0% (12/12)<br>
-Approximate LCSAJ segments: 39<br>
+TER3 (LCSAJ): 100.0% (14/14)<br>
+Approximate LCSAJ segments: 33<br>
 </div>
 
     <div class="legend">
@@ -319,1062 +319,1082 @@ Approximate LCSAJ segments: 39<br>
 </span><span class="">   27: 	qr/$pat/;
 </span><span class="">   28: };
 </span><span class="">   29: 
-</span><span class="">   30: # Encode to HTML whatever the non-ASCII encoding scheme has been chosen
-</span><span class="">   31: # Can&#39;t use HTML:Entities::encode since that doesn&#39;t seem to cope with
-</span><span class="">   32: #	all encodings and misses some characters
-</span><span class="">   33: #
-</span><span class="">   34: # See https://www.compart.com/en/unicode/U+0161 etc.
-</span><span class="">   35: #	https://www.compart.com/en/unicode/U+00EB
+</span><span class="">   30: # Module-level HTML escape map eliminates the /e eval flag in keep_hrefs substitutions
+</span><span class="">   31: my %_HTML_ESCAPE = ( &#39;&lt;&#39; =&gt; &#39;&amp;lt;&#39;, &#39;&gt;&#39; =&gt; &#39;&amp;gt;&#39;, &#39;&quot;&#39; =&gt; &#39;&amp;quot;&#39; );
+</span><span class="">   32: 
+</span><span class="">   33: # Encode to HTML whatever the non-ASCII encoding scheme has been chosen
+</span><span class="">   34: # Can&#39;t use HTML:Entities::encode since that doesn&#39;t seem to cope with
+</span><span class="">   35: #	all encodings and misses some characters
 </span><span class="">   36: #
-</span><span class="">   37: # keep_hrefs =&gt; 1 means ensure hyperlinks still work
-</span><span class="">   38: # keep_apos =&gt; 1 means keep apostrophes, useful within &lt;script&gt;
-</span><span class="">   39: 
-</span><span class="">   40: =head1 NAME
-</span><span class="">   41: 
-</span><span class="">   42: Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities
-</span><span class="">   43: 
-</span><span class="">   44: =head1 VERSION
-</span><span class="">   45: 
-</span><span class="">   46: 0.06
-</span><span class="">   47: 
-</span><span class="">   48: =cut
-</span><span class="">   49: 
-</span><span class="">   50: our $VERSION = 0.06;
-</span><span class="">   51: 
-</span><span class="">   52: =encoding UTF-8
-</span><span class="">   53: 
-</span><span class="">   54: =head1 SYNOPSIS
-</span><span class="">   55: 
-</span><span class="">   56:     use Encode::Wide qw(wide_to_html wide_to_xml);
-</span><span class="">   57: 
-</span><span class="">   58:     my $html = wide_to_html(string =&gt; &quot;Caf&Atilde;&copy; d&Atilde;&copy;j&Atilde;&nbsp; vu &acirc;&#128;&#147; na&Atilde;&macr;ve fa&Atilde;&sect;ade&quot;);
-</span><span class="">   59:     # returns: &#39;Caf&amp;eacute; d&amp;eacute;j&amp;agrave; vu &amp;ndash; na&amp;iuml;ve fa&amp;ccedil;ade&#39;
+</span><span class="">   37: # See https://www.compart.com/en/unicode/U+0161 etc.
+</span><span class="">   38: #	https://www.compart.com/en/unicode/U+00EB
+</span><span class="">   39: #
+</span><span class="">   40: # keep_hrefs =&gt; 1 means ensure hyperlinks still work
+</span><span class="">   41: # keep_apos =&gt; 1 means keep apostrophes, useful within &lt;script&gt;
+</span><span class="">   42: 
+</span><span class="">   43: =head1 NAME
+</span><span class="">   44: 
+</span><span class="">   45: Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities
+</span><span class="">   46: 
+</span><span class="">   47: =head1 VERSION
+</span><span class="">   48: 
+</span><span class="">   49: 0.06
+</span><span class="">   50: 
+</span><span class="">   51: =cut
+</span><span class="">   52: 
+</span><span class="">   53: our $VERSION = 0.06;
+</span><span class="">   54: 
+</span><span class="">   55: =encoding UTF-8
+</span><span class="">   56: 
+</span><span class="">   57: =head1 SYNOPSIS
+</span><span class="">   58: 
+</span><span class="">   59:     use Encode::Wide qw(wide_to_html wide_to_xml);
 </span><span class="">   60: 
-</span><span class="">   61:     my $xml = wide_to_xml(string =&gt; &quot;Caf&Atilde;&copy; d&Atilde;&copy;j&Atilde;&nbsp; vu &acirc;&#128;&#147; na&Atilde;&macr;ve fa&Atilde;&sect;ade&quot;);
-</span><span class="">   62:     # returns: &#39;Caf&amp;#xE9; d&amp;#xE9;j&amp;#xE0; vu &amp;#x2013; na&amp;#xEF;ve fa&amp;#xE7;ade&#39;
+</span><span class="">   61:     my $html = wide_to_html(string =&gt; &quot;Caf&Atilde;&copy; d&Atilde;&copy;j&Atilde;&nbsp; vu &acirc;&#128;&#147; na&Atilde;&macr;ve fa&Atilde;&sect;ade&quot;);
+</span><span class="">   62:     # returns: &#39;Caf&amp;eacute; d&amp;eacute;j&amp;agrave; vu &amp;ndash; na&amp;iuml;ve fa&amp;ccedil;ade&#39;
 </span><span class="">   63: 
-</span><span class="">   64: =head1 DESCRIPTION
-</span><span class="">   65: 
-</span><span class="">   66: Encode::Wide provides functions for converting wide (Unicode) characters into ASCII-safe
-</span><span class="">   67: formats suitable for embedding in HTML or XML documents.
-</span><span class="">   68: It is especially useful when dealing with text containing accented or typographic characters that need
-</span><span class="">   69: to be safely represented in markup.
-</span><span class="">   70: 
-</span><span class="">   71: Other modules exist to do this,
-</span><span class="">   72: however they tend to have assumptions on the input,
-</span><span class="">   73: whereas this should work with UTF-8, Unicode, or anything that&#39;s common.
-</span><span class="">   74: 
-</span><span class="">   75: The module offers two exportable functions:
-</span><span class="">   76: 
-</span><span class="">   77: =over 4
-</span><span class="">   78: 
-</span><span class="">   79: =item * C&lt;wide_to_html(string =&gt; $text)&gt;
-</span><span class="">   80: 
-</span><span class="">   81: Converts all non-ASCII characters in the input string to their named HTML entities if available,
-</span><span class="">   82: or hexadecimal numeric entities otherwise.
-</span><span class="">   83: Common characters such as `&Atilde;&copy;`, `&Atilde;&nbsp;`, `&amp;`, `&lt;`, `&gt;` are
-</span><span class="">   84: converted to their standard HTML representations like `&amp;eacute;`, `&amp;agrave;`, `&amp;amp;`, etc.
-</span><span class="">   85: 
-</span><span class="">   86: =item * C&lt;wide_to_xml(string =&gt; $text)&gt;
-</span><span class="">   87: 
-</span><span class="">   88: Converts all non-ASCII characters in the input string to hexadecimal numeric entities.
-</span><span class="">   89: Unlike HTML, XML does not support many named entities, so this function ensures compliance
-</span><span class="">   90: by using numeric representations such as `&amp;#xE9;` for `&Atilde;&copy;`.
-</span><span class="">   91: 
-</span><span class="">   92: =back
-</span><span class="">   93: 
-</span><span class="">   94: =head1 PARAMETERS
-</span><span class="">   95: 
-</span><span class="">   96: Both functions accept a named parameter:
-</span><span class="">   97: 
-</span><span class="">   98: =over 4
-</span><span class="">   99: 
-</span><span class="">  100: =item * C&lt;string&gt; &acirc;&#128;&#148; The Unicode string to convert.
-</span><span class="">  101: 
-</span><span class="">  102: =back
-</span><span class="">  103: 
-</span><span class="">  104: =head1 ENCODING
-</span><span class="">  105: 
-</span><span class="">  106: Input strings are expected to be valid UTF-8 or Unicode.
-</span><span class="">  107: If a byte string is passed, the module will attempt to decode it appropriately.
-</span><span class="">  108: Output is guaranteed to be pure ASCII.
-</span><span class="">  109: 
-</span><span class="">  110: =head1 EXPORT
-</span><span class="">  111: 
-</span><span class="">  112: None by default.
-</span><span class="">  113: 
-</span><span class="">  114: Optionally exportable:
-</span><span class="">  115: 
-</span><span class="">  116:     wide_to_html
-</span><span class="">  117:     wide_to_xml
+</span><span class="">   64:     my $xml = wide_to_xml(string =&gt; &quot;Caf&Atilde;&copy; d&Atilde;&copy;j&Atilde;&nbsp; vu &acirc;&#128;&#147; na&Atilde;&macr;ve fa&Atilde;&sect;ade&quot;);
+</span><span class="">   65:     # returns: &#39;Caf&amp;#xE9; d&amp;#xE9;j&amp;#xE0; vu &amp;#x2013; na&amp;#xEF;ve fa&amp;#xE7;ade&#39;
+</span><span class="">   66: 
+</span><span class="">   67: =head1 DESCRIPTION
+</span><span class="">   68: 
+</span><span class="">   69: Encode::Wide provides functions for converting wide (Unicode) characters into ASCII-safe
+</span><span class="">   70: formats suitable for embedding in HTML or XML documents.
+</span><span class="">   71: It is especially useful when dealing with text containing accented or typographic characters that need
+</span><span class="">   72: to be safely represented in markup.
+</span><span class="">   73: 
+</span><span class="">   74: Other modules exist to do this,
+</span><span class="">   75: however they tend to have assumptions on the input,
+</span><span class="">   76: whereas this should work with UTF-8, Unicode, or anything that&#39;s common.
+</span><span class="">   77: 
+</span><span class="">   78: The module offers two exportable functions:
+</span><span class="">   79: 
+</span><span class="">   80: =over 4
+</span><span class="">   81: 
+</span><span class="">   82: =item * C&lt;wide_to_html(string =&gt; $text)&gt;
+</span><span class="">   83: 
+</span><span class="">   84: Converts all non-ASCII characters in the input string to their named HTML entities if available,
+</span><span class="">   85: or hexadecimal numeric entities otherwise.
+</span><span class="">   86: Common characters such as `&Atilde;&copy;`, `&Atilde;&nbsp;`, `&amp;`, `&lt;`, `&gt;` are
+</span><span class="">   87: converted to their standard HTML representations like `&amp;eacute;`, `&amp;agrave;`, `&amp;amp;`, etc.
+</span><span class="">   88: 
+</span><span class="">   89: =item * C&lt;wide_to_xml(string =&gt; $text)&gt;
+</span><span class="">   90: 
+</span><span class="">   91: Converts all non-ASCII characters in the input string to hexadecimal numeric entities.
+</span><span class="">   92: Unlike HTML, XML does not support many named entities, so this function ensures compliance
+</span><span class="">   93: by using numeric representations such as `&amp;#xE9;` for `&Atilde;&copy;`.
+</span><span class="">   94: 
+</span><span class="">   95: =back
+</span><span class="">   96: 
+</span><span class="">   97: =head1 PARAMETERS
+</span><span class="">   98: 
+</span><span class="">   99: Both functions accept a named parameter:
+</span><span class="">  100: 
+</span><span class="">  101: =over 4
+</span><span class="">  102: 
+</span><span class="">  103: =item * C&lt;string&gt; &acirc;&#128;&#148; The Unicode string to convert.
+</span><span class="">  104: 
+</span><span class="">  105: =back
+</span><span class="">  106: 
+</span><span class="">  107: =head1 ENCODING
+</span><span class="">  108: 
+</span><span class="">  109: Input strings are expected to be valid UTF-8 or Unicode.
+</span><span class="">  110: If a byte string is passed, the module will attempt to decode it appropriately.
+</span><span class="">  111: Output is guaranteed to be pure ASCII.
+</span><span class="">  112: 
+</span><span class="">  113: =head1 EXPORT
+</span><span class="">  114: 
+</span><span class="">  115: None by default.
+</span><span class="">  116: 
+</span><span class="">  117: Optionally exportable:
 </span><span class="">  118: 
-</span><span class="">  119: =cut
-</span><span class="">  120: 
-</span><span class="">  121: =head2 wide_to_html
-</span><span class="">  122: 
-</span><span class="">  123: =head3 Purpose
-</span><span class="">  124: 
-</span><span class="">  125: Convert a Unicode / UTF-8 string into a pure-ASCII HTML fragment by replacing
-</span><span class="">  126: every non-ASCII character with its named HTML entity (e.g. C&lt;&amp;eacute;&gt;) where
-</span><span class="">  127: one exists, or a hexadecimal numeric entity (e.g. C&lt;&amp;#xNNNN;&gt;) otherwise.
-</span><span class="">  128: Bare ampersands, angle brackets, and double-quotes are also escaped so the
-</span><span class="">  129: result is safe to embed in an HTML attribute or body.
-</span><span class="">  130: 
-</span><span class="">  131: =head3 Arguments
-</span><span class="">  132: 
-</span><span class="">  133: Named parameters (or a single positional string as the first argument):
-</span><span class="">  134: 
-</span><span class="">  135: =over 4
-</span><span class="">  136: 
-</span><span class="">  137: =item C&lt;string&gt; (required)
-</span><span class="">  138: 
-</span><span class="">  139: The text to encode.  May be a plain scalar or a reference to a scalar.
-</span><span class="">  140: Must be defined; passing C&lt;undef&gt; causes the function to C&lt;die&gt;.
+</span><span class="">  119:     wide_to_html
+</span><span class="">  120:     wide_to_xml
+</span><span class="">  121: 
+</span><span class="">  122: =cut
+</span><span class="">  123: 
+</span><span class="">  124: =head2 wide_to_html
+</span><span class="">  125: 
+</span><span class="">  126: =head3 Purpose
+</span><span class="">  127: 
+</span><span class="">  128: Convert a Unicode / UTF-8 string into a pure-ASCII HTML fragment by replacing
+</span><span class="">  129: every non-ASCII character with its named HTML entity (e.g. C&lt;&amp;eacute;&gt;) where
+</span><span class="">  130: one exists, or a hexadecimal numeric entity (e.g. C&lt;&amp;#xNNNN;&gt;) otherwise.
+</span><span class="">  131: Bare ampersands, angle brackets, and double-quotes are also escaped so the
+</span><span class="">  132: result is safe to embed in an HTML attribute or body.
+</span><span class="">  133: 
+</span><span class="">  134: =head3 Arguments
+</span><span class="">  135: 
+</span><span class="">  136: Named parameters (or a single positional string as the first argument):
+</span><span class="">  137: 
+</span><span class="">  138: =over 4
+</span><span class="">  139: 
+</span><span class="">  140: =item C&lt;string&gt; (required)
 </span><span class="">  141: 
-</span><span class="">  142: =item C&lt;keep_hrefs&gt; (optional, default 0)
-</span><span class="">  143: 
-</span><span class="">  144: When true, C&lt;&lt; &lt; &gt;&gt;, C&lt;&lt; &gt; &gt;&gt;, and C&lt;&lt; &quot; &gt;&gt; are B&lt;not&gt; escaped,
-</span><span class="">  145: so that literal HTML hyperlinks embedded in the input survive intact.
+</span><span class="">  142: The text to encode.  May be a plain scalar or a reference to a scalar.
+</span><span class="">  143: Must be defined; passing C&lt;undef&gt; causes the function to C&lt;die&gt;.
+</span><span class="">  144: 
+</span><span class="">  145: =item C&lt;keep_hrefs&gt; (optional, default 0)
 </span><span class="">  146: 
-</span><span class="">  147: =item C&lt;keep_apos&gt; (optional, default 0)
-</span><span class="">  148: 
-</span><span class="">  149: When true, apostrophes (C&lt;&#39;&gt;) are B&lt;not&gt; converted to C&lt;&amp;apos;&gt;.
-</span><span class="">  150: Useful when the result will appear inside a JavaScript string literal.
+</span><span class="">  147: When true, C&lt;&lt; &lt; &gt;&gt;, C&lt;&lt; &gt; &gt;&gt;, and C&lt;&lt; &quot; &gt;&gt; are B&lt;not&gt; escaped,
+</span><span class="">  148: so that literal HTML hyperlinks embedded in the input survive intact.
+</span><span class="">  149: 
+</span><span class="">  150: =item C&lt;keep_apos&gt; (optional, default 0)
 </span><span class="">  151: 
-</span><span class="">  152: =item C&lt;complain&gt; (optional)
-</span><span class="">  153: 
-</span><span class="">  154: A code reference invoked with a descriptive message if the pipeline
-</span><span class="">  155: encounters a character it cannot encode.  The function then C&lt;die&gt;s with
-</span><span class="">  156: a C&lt;BUG:&gt; prefix regardless.
-</span><span class="">  157: 
-</span><span class="">  158: =back
-</span><span class="">  159: 
-</span><span class="">  160: =head3 Returns
-</span><span class="">  161: 
-</span><span class="">  162: A defined scalar string containing only ASCII characters (code points 0x00&acirc;&#128;&#147;0x7F).
-</span><span class="">  163: 
-</span><span class="">  164: =head3 Side Effects
-</span><span class="">  165: 
-</span><span class="">  166: Invokes the C&lt;complain&gt; callback with a message when an unhandled character is
-</span><span class="">  167: detected, then dies with a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  152: When true, apostrophes (C&lt;&#39;&gt;) are B&lt;not&gt; converted to C&lt;&amp;apos;&gt;.
+</span><span class="">  153: Useful when the result will appear inside a JavaScript string literal.
+</span><span class="">  154: 
+</span><span class="">  155: =item C&lt;complain&gt; (optional)
+</span><span class="">  156: 
+</span><span class="">  157: A code reference invoked with a descriptive message if the pipeline
+</span><span class="">  158: encounters a character it cannot encode.  The function then C&lt;die&gt;s with
+</span><span class="">  159: a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  160: 
+</span><span class="">  161: =back
+</span><span class="">  162: 
+</span><span class="">  163: =head3 Returns
+</span><span class="">  164: 
+</span><span class="">  165: A defined scalar string containing only ASCII characters (code points 0x00&acirc;&#128;&#147;0x7F).
+</span><span class="">  166: 
+</span><span class="">  167: =head3 Side Effects
 </span><span class="">  168: 
-</span><span class="">  169: =head3 Usage Example
-</span><span class="">  170: 
-</span><span class="">  171:     use Encode::Wide qw(wide_to_html);
-</span><span class="">  172: 
-</span><span class="">  173:     my $safe = wide_to_html(string =&gt; &quot;na\x{EF}ve caf\x{E9}&quot;);
-</span><span class="">  174:     # =&gt; &#39;na&amp;iuml;ve caf&amp;eacute;&#39;
+</span><span class="">  169: Invokes the C&lt;complain&gt; callback with a message when an unhandled character is
+</span><span class="">  170: detected, then dies with a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  171: 
+</span><span class="">  172: =head3 Usage Example
+</span><span class="">  173: 
+</span><span class="">  174:     use Encode::Wide qw(wide_to_html);
 </span><span class="">  175: 
-</span><span class="">  176:     my $href_safe = wide_to_html(string =&gt; &#39;&lt;a href=&quot;x&quot;&gt;caf\x{E9}&lt;/a&gt;&#39;, keep_hrefs =&gt; 1);
-</span><span class="">  177:     # =&gt; &#39;&lt;a href=&quot;x&quot;&gt;caf&amp;eacute;&lt;/a&gt;&#39;
+</span><span class="">  176:     my $safe = wide_to_html(string =&gt; &quot;na\x{EF}ve caf\x{E9}&quot;);
+</span><span class="">  177:     # =&gt; &#39;na&amp;iuml;ve caf&amp;eacute;&#39;
 </span><span class="">  178: 
-</span><span class="">  179: =head3 API SPECIFICATION
-</span><span class="">  180: 
-</span><span class="">  181: =head4 Input
-</span><span class="">  182: 
-</span><span class="">  183:     {
-</span><span class="">  184:         string     =&gt; { type =&gt; SCALAR | SCALARREF, required =&gt; 1, defined =&gt; 1 },
-</span><span class="">  185:         keep_hrefs =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
-</span><span class="">  186:         keep_apos  =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
-</span><span class="">  187:         complain   =&gt; { type =&gt; CODEREF,  optional =&gt; 1 },
-</span><span class="">  188:     }
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  189: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  190: =head4 Output
-</span><span class="">  191: 
-</span><span class="">  192:     { type =&gt; SCALAR, constraint =&gt; sub { $_[0] !~ /[^[:ascii:]]/ } }
-</span><span class="">  193: 
-</span><span class="">  194: =head3 MESSAGES
-</span><span class="">  195: 
-</span><span class="">  196: =over 4
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  197: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  198: =item C&lt;Usage: wide_to_html() string not set&gt;
-</span><span class="">  199: 
-</span><span class="">  200: Fatal.  C&lt;string&gt; argument was C&lt;undef&gt;.  Pass a defined scalar or scalar-ref.
-</span><span class="">  201: 
-</span><span class="">  202: =item C&lt;TODO: wide_to_html(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
-</span><span class="">  203: 
-</span><span class="">  204: Warning (via C&lt;carp&gt;).  A character survived all encoding passes and
-</span><span class="">  205: C&lt;encode_entities_numeric&gt;.  The argument shows hex-escaped codepoints.
-</span><span class="">  206: Add the missing character to the byte_map or file a bug.
-</span><span class="">  207: 
-</span><span class="">  208: =item C&lt;BUG: wide_to_html(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
-</span><span class="">  209: 
-</span><span class="">  210: Fatal (via C&lt;croak&gt;).  Same condition as the TODO warning above.
-</span><span class="">  211: This should never occur in normal use; it signals a gap in the character tables.
+</span><span class="">  179:     my $href_safe = wide_to_html(string =&gt; &#39;&lt;a href=&quot;x&quot;&gt;caf\x{E9}&lt;/a&gt;&#39;, keep_hrefs =&gt; 1);
+</span><span class="">  180:     # =&gt; &#39;&lt;a href=&quot;x&quot;&gt;caf&amp;eacute;&lt;/a&gt;&#39;
+</span><span class="">  181: 
+</span><span class="">  182: =head3 API SPECIFICATION
+</span><span class="">  183: 
+</span><span class="">  184: =head4 Input
+</span><span class="">  185: 
+</span><span class="">  186:     {
+</span><span class="">  187:         string     =&gt; { type =&gt; SCALAR | SCALARREF, required =&gt; 1, defined =&gt; 1 },
+</span><span class="">  188:         keep_hrefs =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
+</span><span class="">  189:         keep_apos  =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
+</span><span class="">  190:         complain   =&gt; { type =&gt; CODEREF,  optional =&gt; 1 },
+</span><span class="">  191:     }
+</span><span class="">  192: 
+</span><span class="">  193: =head4 Output
+</span><span class="">  194: 
+</span><span class="">  195:     { type =&gt; SCALAR, constraint =&gt; sub { $_[0] !~ /[^[:ascii:]]/ } }
+</span><span class="">  196: 
+</span><span class="">  197: =head3 MESSAGES
+</span><span class="">  198: 
+</span><span class="">  199: =over 4
+</span><span class="">  200: 
+</span><span class="">  201: =item C&lt;Usage: wide_to_html() string not set&gt;
+</span><span class="">  202: 
+</span><span class="">  203: Fatal.  C&lt;string&gt; argument was C&lt;undef&gt;.  Pass a defined scalar or scalar-ref.
+</span><span class="">  204: 
+</span><span class="">  205: =item C&lt;TODO: wide_to_html(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
+</span><span class="">  206: 
+</span><span class="">  207: Warning (via C&lt;carp&gt;).  A character survived all encoding passes and
+</span><span class="">  208: C&lt;encode_entities_numeric&gt;.  The argument shows hex-escaped codepoints.
+</span><span class="">  209: Add the missing character to the byte_map or file a bug.
+</span><span class="">  210: 
+</span><span class="">  211: =item C&lt;BUG: wide_to_html(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
 </span><span class="">  212: 
-</span><span class="">  213: =back
-</span><span class="">  214: 
-</span><span class="">  215: =head3 PSEUDOCODE
-</span><span class="">  216: 
-</span><span class="">  217:     1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
-</span><span class="">  218:     2. Escape bare &amp; not part of an entity
-</span><span class="">  219:     3. Unless keep_hrefs: escape &lt;, &gt;, &quot;
-</span><span class="">  220:     4. First byte_map pass: typographic chars, exclamation mark
-</span><span class="">  221:     5. Unless keep_apos: encode apostrophe variants to &amp;apos;
-</span><span class="">  222:     6. Early return if string is now pure ASCII
-</span><span class="">  223:     7. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
-</span><span class="">  224:     8. Third byte_map pass: literal Unicode source chars
-</span><span class="">  225:     9. Fallback: HTML::Entities::encode_entities_numeric for any remaining non-ASCII
-</span><span class="">  226:    10. If non-ASCII still remains: invoke complain callback, carp, croak BUG
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  227: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  228: =cut
-</span><span class="">  229: 
-</span><span class="">  230: sub wide_to_html
-</span><span class="">  231: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">232 → 237 → 241</span></span>  232: 	my $params = Params::Get::get_params(&#39;string&#39;, @_);
-</span><span class="">  233: 
-</span><span class="">  234: 	my $string = $params-&gt;{&#39;string&#39;};
-</span><span class="">  235: 	my $complain = $params-&gt;{&#39;complain&#39;};
+</span><span class="">  213: Fatal (via C&lt;croak&gt;).  Same condition as the TODO warning above.
+</span><span class="">  214: This should never occur in normal use; it signals a gap in the character tables.
+</span><span class="">  215: 
+</span><span class="">  216: =back
+</span><span class="">  217: 
+</span><span class="">  218: =head3 PSEUDOCODE
+</span><span class="">  219: 
+</span><span class="">  220:     1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
+</span><span class="">  221:     2. Escape bare &amp; not part of an entity
+</span><span class="">  222:     3. Unless keep_hrefs: escape &lt;, &gt;, &quot;
+</span><span class="">  223:     4. First byte_map pass: typographic chars, exclamation mark
+</span><span class="">  224:     5. Unless keep_apos: encode apostrophe variants to &amp;apos;
+</span><span class="">  225:     6. Early return if string is now pure ASCII
+</span><span class="">  226:     7. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
+</span><span class="">  227:     8. Third byte_map pass: literal Unicode source chars
+</span><span class="">  228:     9. Fallback: HTML::Entities::encode_entities_numeric for any remaining non-ASCII
+</span><span class="">  229:    10. If non-ASCII still remains: invoke complain callback, carp, croak BUG
+</span><span class="">  230: 
+</span><span class="">  231: =cut
+</span><span class="">  232: 
+</span><span class="">  233: sub wide_to_html
+</span><span class="">  234: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">235 → 240 → 244</span></span>  235: 	my $params = Params::Get::get_params(&#39;string&#39;, @_);
 </span><span class="">  236: 
-</span><span class="">  237: 	if(!defined($string)) {
-</span><span class="">  238: 		croak &#39;Usage: wide_to_html() string not set&#39;;
-</span><span class="">  239: 	}
-</span><span class="">  240: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">241 → 241 → 253</span></span>  241: 	if(ref($string) eq &#39;SCALAR&#39;) {
-</span><span class="">  242: 		$string = ${$string};
-</span><span class="">  243: 	}
-</span><span class="">  244: 
-</span><span class="">  245: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  246: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  247: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  248: 	# my $i = 0;
-</span><span class="">  249: 	# while((my @call_details = caller($i++))) {
-</span><span class="">  250: 		# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  251: 	# }
-</span><span class="">  252: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">253 → 261 → 270</span></span>  253: 	$string = HTML::Entities::decode($string);
-</span><span class="">  254: 
-</span><span class="">  255: 	# Decode the four named entities HTML::Entities::decode misses
-</span><span class="">  256: 	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
-</span><span class="">  257: 
-</span><span class="">  258: 	# Escape bare &amp; not already part of a valid entity
-</span><span class="">  259: 	$string =~ s/&amp;(?![A-Za-z#0-9]+;)/&amp;amp;/g;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  260: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  261: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
-</span><span class="">  262: 		# Escape the three characters that break HTML attribute or body contexts
-</span><span class="">  263: 		$string =~ s/([&lt;&gt;&quot;])/$1 eq &#39;&lt;&#39; ? &#39;&amp;lt;&#39; : $1 eq &#39;&gt;&#39; ? &#39;&amp;gt;&#39; : &#39;&amp;quot;&#39;/ge;
-</span><span class="">  264: 	}
+</span><span class="">  237: 	my $string = $params-&gt;{&#39;string&#39;};
+</span><span class="">  238: 	my $complain = $params-&gt;{&#39;complain&#39;};
+</span><span class="">  239: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  240: 	if(!defined($string)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  241: 		croak &#39;Usage: wide_to_html() string not set&#39;;
+</span><span class="">  242: 	}
+</span><span class="">  243: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">244 → 244 → 263</span></span>  244: 	if(ref($string) eq &#39;SCALAR&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  245: 		$string = ${$string};
+</span><span class="">  246: 	}
+</span><span class="">  247: 
+</span><span class="">  248: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  249: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  250: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  251: 	# my $i = 0;
+</span><span class="">  252: 	# while((my @call_details = caller($i++))) {
+</span><span class="">  253: 		# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  254: 	# }
+</span><span class="">  255: 
+</span><span class="">  256: 	# SECURITY: skip entity-decoding when keep_hrefs is set.  Calling
+</span><span class="">  257: 	# HTML::Entities::decode before the keep_hrefs gate converts encoded
+</span><span class="">  258: 	# payloads like &amp;lt;script&amp;gt; to raw &lt;script&gt;, which then bypass
+</span><span class="">  259: 	# re-escaping and produce XSS output.  When the caller asserts the input
+</span><span class="">  260: 	# contains trusted HTML (keep_hrefs =&gt; 1) we treat the text as-is and
+</span><span class="">  261: 	# only encode wide characters; entity-normalisation is then the caller&#39;s
+</span><span class="">  262: 	# responsibility.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">263 → 263 → 273</span></span>  263: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  264: 		$string = HTML::Entities::decode($string);
 </span><span class="">  265: 
-</span><span class="">  266: 	# $string =~ s/&amp;db=/&amp;amp;db=/g;
-</span><span class="">  267: 	# $string =~ s/&amp;id=/&amp;amp;id=/g;
-</span><span class="">  268: 
-</span><span class="">  269: 	# Table of byte-sequences-&gt;entities
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">270 → 285 → 300</span></span>  270: 	my @byte_map = (
-</span><span class="">  271: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],	# U+201C
-</span><span class="">  272: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],	# U+201D
-</span><span class="">  273: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],	# &acirc;&#128;&#156;
-</span><span class="">  274: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],	# &acirc;&#128;&#157;
-</span><span class="">  275: 		[&quot;\xe2\x80\x93&quot;, &#39;&amp;ndash;&#39;],
-</span><span class="">  276: 		[&quot;\xe2\x80\x94&quot;, &#39;&amp;mdash;&#39;],
-</span><span class="">  277: 		[&quot;\xe2\x80\x98&quot;, &#39;&amp;apos;&#39;],	# &acirc;&#128;&#152;
-</span><span class="">  278: 		[&quot;\xe2\x80\x99&quot;, &#39;&amp;apos;&#39;],	# &acirc;&#128;&#153;
-</span><span class="">  279: 		[&quot;\xe2\x80\xA6&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
-</span><span class="">  280: 		[&#39;!&#39;, &#39;&amp;excl;&#39;],	# Do this early before the ascii check, since it&#39;s an ascii character
-</span><span class="">  281: 	);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  282: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  283: 	$string = _sub_map(\$string, \@byte_map);
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  284: 
-</span><span class="">  285: 	unless($params-&gt;{&#39;keep_apos&#39;}) {
-</span><span class="">  286: 		# Multi-byte curly apostrophes can&acirc;&#128;&#153;t be combined in a char-class, so use a hash
-</span><span class="">  287: 		my %apos_map = (
-</span><span class="">  288: 			&quot;&#39;&quot;            =&gt; &#39;&amp;apos;&#39;,
-</span><span class="">  289: 			&quot;\x{2018}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+2018 left single quotation mark
-</span><span class="">  290: 			&quot;\x{2019}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+2019 right single quotation mark
-</span><span class="">  291: 			&quot;\x{0060}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+0060 grave accent used as apostrophe
-</span><span class="">  292: 			&quot;\x98&quot;     =&gt; &#39;&amp;apos;&#39;,
-</span><span class="">  293: 		);
-</span><span class="">  294: 
-</span><span class="">  295: 		$string =~ s{(.)}{
-</span><span class="">  296: 			exists $apos_map{$1} ? $apos_map{$1} : $1
-</span><span class="">  297: 		}gex;
-</span><span class="">  298: 	}
+</span><span class="">  266: 		# Decode the four named entities HTML::Entities::decode misses
+</span><span class="">  267: 		$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+</span><span class="">  268: 	}
+</span><span class="">  269: 
+</span><span class="">  270: 	# Escape bare &amp; not already part of a valid entity.
+</span><span class="">  271: 	# Possessive ++ on the char class prevents O(n^2) backtracking (ReDoS)
+</span><span class="">  272: 	# when the input contains &amp; not followed by a semicolon-terminated name.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">273 → 275 → 285</span></span>  273: 	$string =~ s/&amp;(?![A-Za-z#0-9]++;)/&amp;amp;/g;
+</span><span class="">  274: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  275: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  276: 		# Escape the three characters that break HTML attribute or body contexts.
+</span><span class="">  277: 		# Module-level %_HTML_ESCAPE eliminates the /e eval flag.
+</span><span class="">  278: 		$string =~ s/([&lt;&gt;&quot;])/$_HTML_ESCAPE{$1}/g;
+</span><span class="">  279: 	}
+</span><span class="">  280: 
+</span><span class="">  281: 	# $string =~ s/&amp;db=/&amp;amp;db=/g;
+</span><span class="">  282: 	# $string =~ s/&amp;id=/&amp;amp;id=/g;
+</span><span class="">  283: 
+</span><span class="">  284: 	# Table of byte-sequences-&gt;entities
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">285 → 300 → 314</span></span>  285: 	my @byte_map = (
+</span><span class="">  286: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],	# U+201C
+</span><span class="">  287: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],	# U+201D
+</span><span class="">  288: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],	# &acirc;&#128;&#156;
+</span><span class="">  289: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],	# &acirc;&#128;&#157;
+</span><span class="">  290: 		[&quot;\xe2\x80\x93&quot;, &#39;&amp;ndash;&#39;],
+</span><span class="">  291: 		[&quot;\xe2\x80\x94&quot;, &#39;&amp;mdash;&#39;],
+</span><span class="">  292: 		[&quot;\xe2\x80\x98&quot;, &#39;&amp;apos;&#39;],	# &acirc;&#128;&#152;
+</span><span class="">  293: 		[&quot;\xe2\x80\x99&quot;, &#39;&amp;apos;&#39;],	# &acirc;&#128;&#153;
+</span><span class="">  294: 		[&quot;\xe2\x80\xA6&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
+</span><span class="">  295: 		[&#39;!&#39;, &#39;&amp;excl;&#39;],	# Do this early before the ascii check, since it&#39;s an ascii character
+</span><span class="">  296: 	);
+</span><span class="">  297: 
+</span><span class="">  298: 	$string = _sub_map(\$string, \@byte_map);
 </span><span class="">  299: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">300 → 300 → 304</span></span>  300: 	if($string !~ /[^[:ascii:]]/) {
-</span><span class="">  301: 		return $string;
-</span><span class="">  302: 	}
-</span><span class="">  303: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">304 → 520 → 535</span></span>  304: 	@byte_map = (
-</span><span class="">  305: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
-</span><span class="">  306: 		[&quot;\xc2\xa3&quot;, &#39;&amp;pound;&#39;],
-</span><span class="">  307: 		[&quot;\xc2\xa9&quot;, &#39;&amp;copy;&#39;],
-</span><span class="">  308: 		[&quot;\xc2\xae&quot;, &#39;&amp;reg;&#39;],
-</span><span class="">  309: 		[&quot;\xc3\xa2&quot;, &#39;&amp;acirc;&#39;],
-</span><span class="">  310: 		[&quot;\xc3\xa4&quot;, &#39;&amp;auml;&#39;],
-</span><span class="">  311: 		[&quot;\xc3\xa9&quot;, &#39;&amp;eacute;&#39;],
-</span><span class="">  312: 		[&quot;\xc2\xaa&quot;, &#39;&amp;ordf;&#39;],	# &Acirc;&ordf;
-</span><span class="">  313: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  314: 		[&quot;\xc2\xbb&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&raquo;
-</span><span class="">  315: 		[&quot;\xc3\x81&quot;, &#39;&amp;Aacute;&#39;],	# &Atilde;&#129;
-</span><span class="">  316: 		[&quot;\xc3\x83&quot;, &#39;&amp;Icirc;&#39;],	# &Atilde;&#142;
-</span><span class="">  317: 		[&quot;\xc3\x9e&quot;, &#39;&amp;THORN;&#39;],	# &Atilde;&#158;
-</span><span class="">  318: 		[&quot;\xc3\xa0&quot;, &#39;&amp;agrave;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  319: 		[&quot;\xc3\xa1&quot;, &#39;&amp;aacute;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  320: 		[&quot;\xc3\xad&quot;, &#39;&amp;iacute;&#39;],	# &Atilde;&shy;
-</span><span class="">  321: 		[&quot;\xc3\xb0&quot;, &#39;&amp;eth;&#39;],	# &Atilde;&deg;
-</span><span class="">  322: 		[&quot;\xc3\xba&quot;, &#39;&amp;uacute;&#39;],	# &Atilde;&ordm;
-</span><span class="">  323: 		[&quot;\xc3\xb4&quot;, &#39;&amp;ocirc;&#39;],	# &Atilde;&acute;
-</span><span class="">  324: 		[&quot;\xc3\xb6&quot;, &#39;&amp;ouml;&#39;],
-</span><span class="">  325: 		[&quot;\xc3\xb8&quot;, &#39;&amp;oslash;&#39;],	# &Atilde;&cedil;
-</span><span class="">  326: 		[&quot;\xc5\xa1&quot;, &#39;&amp;scaron;&#39;],
-</span><span class="">  327: 		[&quot;\xc4\x8d&quot;, &#39;&amp;ccaron;&#39;],
-</span><span class="">  328: 		[&quot;\xc5\xbd&quot;, &#39;&amp;Zcaron;&#39;],
-</span><span class="">  329: 		[&quot;\xc5\xbe&quot;, &#39;&amp;zcaron;&#39;],
-</span><span class="">  330: 		[&quot;\xc3\xa5&quot;, &#39;&amp;aring;&#39;],	# &Atilde;&yen;
-</span><span class="">  331: 		[&quot;\xc3\xa7&quot;, &#39;&amp;ccedil;&#39;],
-</span><span class="">  332: 		[&quot;\xc3\xaf&quot;, &#39;&amp;iuml;&#39;],	# &Atilde;&macr;
-</span><span class="">  333: 		[&quot;\xc3\xb3&quot;, &#39;&amp;oacute;&#39;],
-</span><span class="">  334: 		[&quot;\xc3\x96&quot;, &#39;&amp;Ouml;&#39;], # &Atilde;&#150;
-</span><span class="">  335: 		[&quot;\xc3\xa8&quot;, &#39;&amp;egrave;&#39;],
-</span><span class="">  336: 		[&quot;\xc3\x89&quot;, &#39;&amp;Eacute;&#39;],
-</span><span class="">  337: 		[&quot;\xc3\x9f&quot;, &#39;&amp;szlig;&#39;],
-</span><span class="">  338: 		[&quot;\xc3\xaa&quot;, &#39;&amp;ecirc;&#39;],
-</span><span class="">  339: 		[&quot;\xc3\xab&quot;, &#39;&amp;euml;&#39;],
-</span><span class="">  340: 		[&quot;\xc3\xae&quot;, &#39;&amp;icirc;&#39;],
-</span><span class="">  341: 		[&quot;\xc3\xbb&quot;, &#39;&amp;ucirc;&#39;],
-</span><span class="">  342: 		[&quot;\xc3\xbc&quot;, &#39;&amp;uuml;&#39;], # &Atilde;&frac14;
-</span><span class="">  343: 		[&quot;\xc3\xbe&quot;, &#39;&amp;thorn;&#39;],	# &Atilde;&frac34;
-</span><span class="">  344: 		[&quot;\xc5\x9b&quot;, &#39;&amp;sacute;&#39;],
-</span><span class="">  345: 		[&quot;\xc5\xa0&quot;, &#39;&amp;Scaron;&#39;],
-</span><span class="">  346: 		[&quot;\xe2\x80\x93&quot;, &#39;&amp;ndash;&#39;],
-</span><span class="">  347: 		[&quot;\xe2\x80\x94&quot;, &#39;&amp;mdash;&#39;],
-</span><span class="">  348: 		[&quot;\xc3\xb1&quot;, &#39;&amp;ntilde;&#39;],	# &Atilde;&plusmn;
-</span><span class="">  349: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  350: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  351: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
-</span><span class="">  352: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  353: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
-</span><span class="">  354: 		[&quot;\N{U+00A3}&quot;, &#39;&amp;pound;&#39;],
-</span><span class="">  355: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;copy;&#39;],
-</span><span class="">  356: 		[&quot;\N{U+00AA}&quot;, &#39;&amp;ordf;&#39;],	# &Acirc;&ordf;
-</span><span class="">  357: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  358: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;reg;&#39;],
-</span><span class="">  359: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;micro;&#39;],	# &Acirc;&micro;
-</span><span class="">  360: 		[&quot;\N{U+00BB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&raquo;
-</span><span class="">  361: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;Icirc;&#39;],	# &Atilde;&#142;
-</span><span class="">  362: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;THORN;&#39;],	# &Atilde;&#158;
-</span><span class="">  363: 		[&quot;\N{U+0161}&quot;, &#39;&amp;scaron;&#39;],
-</span><span class="">  364: 		[&quot;\N{U+010D}&quot;, &#39;&amp;ccaron;&#39;],
-</span><span class="">  365: 		[&quot;\N{U+017D}&quot;, &#39;&amp;Zcaron;&#39;],
-</span><span class="">  366: 		[&quot;\N{U+017E}&quot;, &#39;&amp;zcaron;&#39;],
-</span><span class="">  367: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;Eacute;&#39;],
-</span><span class="">  368: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;Ouml;&#39;],	# &Atilde;&#150;
-</span><span class="">  369: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;szlig;&#39;],	# &Atilde;&#159;
-</span><span class="">  370: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;aacute;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  371: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;acirc;&#39;],
-</span><span class="">  372: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;auml;&#39;],
-</span><span class="">  373: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;aring;&#39;],	# &Atilde;&yen;
-</span><span class="">  374: 		[&quot;\N{U+00E0}&quot;, &#39;&amp;agrave;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  375: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;ccedil;&#39;],	# &Atilde;&sect;
-</span><span class="">  376: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;egrave;&#39;],
-</span><span class="">  377: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;eacute;&#39;],
-</span><span class="">  378: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;iacute;&#39;],	# &Atilde;&shy;
-</span><span class="">  379: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;icirc;&#39;],
-</span><span class="">  380: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;iuml;&#39;],	# &Atilde;&macr;
-</span><span class="">  381: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;eth;&#39;],	# &Atilde;&deg;
-</span><span class="">  382: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;ntilde;&#39;],	# &Atilde;&plusmn;
-</span><span class="">  383: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;ocirc;&#39;],	# &Atilde;&acute;
-</span><span class="">  384: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;ouml;&#39;],
-</span><span class="">  385: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;oslash;&#39;],	# &Atilde;&cedil;
-</span><span class="">  386: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;uacute;&#39;],	# &Atilde;&ordm;
-</span><span class="">  387: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;uuml;&#39;],	# &Atilde;&frac14;
-</span><span class="">  388: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;thorn;&#39;],	# &Atilde;&frac34;
-</span><span class="">  389: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;Aacute;&#39;],	# &Atilde;&#129;
-</span><span class="">  390: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;Eacute;&#39;],
-</span><span class="">  391: 		[&quot;\N{U+00CA}&quot;, &#39;&amp;ecirc;&#39;],
-</span><span class="">  392: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;euml;&#39;],
-</span><span class="">  393: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;oacute;&#39;],
-</span><span class="">  394: 		[&quot;\N{U+015B}&quot;, &#39;&amp;sacute;&#39;],
-</span><span class="">  395: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;ucirc;&#39;],
-</span><span class="">  396: 		[&quot;\N{U+0160}&quot;, &#39;&amp;Scaron;&#39;],
-</span><span class="">  397: 		[&quot;\N{U+2013}&quot;, &#39;&amp;ndash;&#39;],
-</span><span class="">  398: 		[&quot;\N{U+2014}&quot;, &#39;&amp;mdash;&#39;],
-</span><span class="">  399: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  400: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  401: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  402: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  403: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
-</span><span class="">  404: 		[&quot;\N{U+2122}&quot;, &#39;&amp;trade;&#39;],	# &acirc;&#132;&cent;
-</span><span class="">  405: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;trade;&#39;],	# &acirc;&#132;&cent; UTF-8
-</span><span class="">  406: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  407: 	);
-</span><span class="">  408: 
-</span><span class="">  409: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  410: 
-</span><span class="">  411: 	# utf8::encode($string);
-</span><span class="">  412: 	# $string =~ s/&Aring;&iexcl;/&amp;scaron;/g;
-</span><span class="">  413: 	# $string =~ s/&Auml;&#141;/&amp;ccaron;/g;
-</span><span class="">  414: 	# $string =~ s/&Aring;&frac34;/&amp;zcaron;/g;
-</span><span class="">  415: 	# $string =~ s/&Atilde;&copy;/&amp;eacute;/g;
-</span><span class="">  416: 	# $string =~ s/&Atilde;&sect;/&amp;ccedil;/g;
-</span><span class="">  417: 	# $string =~ s/\N{U+0161}/&amp;scaron;/g;
-</span><span class="">  418: 	# $string =~ s/\N{U+010D}/&amp;ccaron;/g;
-</span><span class="">  419: 	# $string =~ s/\N{U+017E}/&amp;zcaron;/g;
-</span><span class="">  420: 	# $string =~ s/\N{U+00E9}/&amp;eacute;/g;
-</span><span class="">  421: 	# $string =~ s/\N{U+00D6}/&amp;Ouml;/g;	# &Atilde;&#150;
-</span><span class="">  422: 	# $string =~ s/\N{U+00E7}/&amp;ccedil;/g;	# &Atilde;&sect;
-</span><span class="">  423: 	# $string =~ s/\N{U+00E8}/&amp;egrave;/g;
-</span><span class="">  424: 	# $string =~ s/\N{U+00E9}/&amp;Eacute;/g;
-</span><span class="">  425: 
-</span><span class="">  426: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  427: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  428: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  429: 
-</span><span class="">  430: 	# utf8::decode($string);
-</span><span class="">  431: 
-</span><span class="">  432: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  433: 	# # print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  434: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  435: 
-</span><span class="">  436: 	# $string =~ s/\xe4\x8d/&amp;ccaron;/g;	# ? ACOM strangeness
-</span><span class="">  437: 	# $string =~ s/\N{U+0161}/&amp;scaron;/g;
-</span><span class="">  438: 	# $string =~ s/\N{U+010D}/&amp;ccaron;/g;
-</span><span class="">  439: 	# $string =~ s/\N{U+00A9}/&amp;copy;/g;
-</span><span class="">  440: 	# $string =~ s/\N{U+00AE}/&amp;reg;/g;
-</span><span class="">  441: 	# $string =~ s/\N{U+00E2}/&amp;acirc;/g;
-</span><span class="">  442: 	# $string =~ s/\N{U+00E4}/&amp;auml;/g;
-</span><span class="">  443: 	# $string =~ s/\N{U+00E8}/&amp;egrave;/g;
-</span><span class="">  444: 	# $string =~ s/\N{U+00E9}/&amp;eacute;/g;
-</span><span class="">  445: 	# $string =~ s/\N{U+00EB}/&amp;euml;/g;
-</span><span class="">  446: 	# $string =~ s/\N{U+00F3}/&amp;oacute;/g;
-</span><span class="">  447: 	# $string =~ s/\N{U+00FB}/&amp;ucirc;/g;
-</span><span class="">  448: 	# $string =~ s/\N{U+017E}/&amp;zcaron;/g;
-</span><span class="">  449: 	# $string =~ s/\N{U+00D6}/&amp;Ouml;/g;	# &Atilde;&#150;
-</span><span class="">  450: 	# $string =~ s/\N{U+00E7}/&amp;ccedil;/g;	# &Atilde;&sect;
-</span><span class="">  451: 	# $string =~ s/\N{U+00C9}/&amp;Eacute;/g;
-</span><span class="">  452: 	# $string =~ s/\N{U+00CA}/&amp;ecirc;/g;
-</span><span class="">  453: 	# $string =~ s/\N{U+0160}/&amp;Scaron;/g;	# FIXME: also above
-</span><span class="">  454: 	# $string =~ s/\N{U+2013}/-/g;
-</span><span class="">  455: 
-</span><span class="">  456: 	@byte_map = (
-</span><span class="">  457: 		[ &#39;&Atilde;&#129;&#39;, &#39;&amp;Aacute;&#39; ],
-</span><span class="">  458: 		[ &#39;&Atilde;&yen;&#39;, &#39;&amp;aring;&#39; ],
-</span><span class="">  459: 		[ &#39;&Acirc;&ordf;&#39;, &#39;&amp;ordf;&#39; ],
-</span><span class="">  460: 		[ &#39;&Aring;&iexcl;&#39;, &#39;&amp;scaron;&#39; ],
-</span><span class="">  461: 		[ &#39;&Aring;&nbsp;&#39;, &#39;&amp;Scaron;&#39; ],
-</span><span class="">  462: 		[ &#39;&Auml;&#141;&#39;, &#39;&amp;ccaron;&#39; ],
-</span><span class="">  463: 		[ &#39;&Aring;&frac12;&#39;, &#39;&amp;Zcaron;&#39; ],
-</span><span class="">  464: 		[ &#39;&Aring;&frac34;&#39;, &#39;&amp;zcaron;&#39; ],
-</span><span class="">  465: 		[ &#39;&Atilde;&nbsp;&#39;, &#39;&amp;agrave;&#39; ],	# &Atilde;&nbsp;
-</span><span class="">  466: 		[ &#39;&Atilde;&iexcl;&#39;, &#39;&amp;aacute;&#39; ],
-</span><span class="">  467: 		[ &#39;&Atilde;&cent;&#39;, &#39;&amp;acirc;&#39; ],
-</span><span class="">  468: 		[ &#39;&Atilde;&copy;&#39;, &#39;&amp;eacute;&#39; ],
-</span><span class="">  469: 		[ &#39;&Atilde;&uml;&#39;, &#39;&amp;egrave;&#39; ],
-</span><span class="">  470: 		[ &#39;&Atilde;&sect;&#39;, &#39;&amp;ccedil;&#39; ],
-</span><span class="">  471: 		[ &#39;&Atilde;&ordf;&#39;, &#39;&amp;ecirc;&#39; ],
-</span><span class="">  472: 		[ &#39;&Atilde;&laquo;&#39;, &#39;&amp;euml;&#39; ],
-</span><span class="">  473: 		[ &#39;&Atilde;&deg;&#39;, &#39;&amp;eth;&#39; ],
-</span><span class="">  474: 		[ &#39;&Atilde;&shy;&#39;, &#39;&amp;iacute;&#39; ],
-</span><span class="">  475: 		[ &#39;&Atilde;&macr;&#39;, &#39;&amp;iuml;&#39; ],
-</span><span class="">  476: 		[ &#39;&Atilde;&#142;&#39;, &#39;&amp;Icirc;&#39; ],
-</span><span class="">  477: 		[ &#39;&Acirc;&copy;&#39;, &#39;&amp;copy;&#39; ],
-</span><span class="">  478: 		[ &#39;&Acirc;&reg;&#39;, &#39;&amp;reg;&#39; ],
-</span><span class="">  479: 		[ &#39;&Atilde;&sup3;&#39;, &#39;&amp;oacute;&#39; ],
-</span><span class="">  480: 		[ &#39;&Atilde;&acute;&#39;, &#39;&amp;ocirc;&#39; ],
-</span><span class="">  481: 		[ &#39;&Atilde;&para;&#39;, &#39;&amp;ouml;&#39; ],
-</span><span class="">  482: 		[ &#39;&Atilde;&cedil;&#39;, &#39;&amp;oslash;&#39; ],
-</span><span class="">  483: 		[ &#39;&Aring;&#155;&#39;, &#39;&amp;sacute;&#39; ],
-</span><span class="">  484: 		[ &#39;&Atilde;&#158;&#39;, &#39;&amp;THORN;&#39; ],
-</span><span class="">  485: 		[ &#39;&Atilde;&frac34;&#39;, &#39;&amp;thorn;&#39; ],
-</span><span class="">  486: 		[ &#39;&Atilde;&raquo;&#39;, &#39;&amp;ucirc;&#39; ],
-</span><span class="">  487: 		[ &#39;&Atilde;&frac14;&#39;, &#39;&amp;uuml;&#39; ],
-</span><span class="">  488: 		[ &#39;&Atilde;&ordm;&#39;, &#39;&amp;uacute;&#39; ],
-</span><span class="">  489: 		[ &#39;&Acirc;&micro;&#39;, &#39;&amp;micro;&#39;],
-</span><span class="">  490: 		[ &#39;&Acirc;&pound;&#39;, &#39;&amp;pound;&#39; ],
-</span><span class="">  491: 		[ &#39;&Atilde;&#159;&#39;, &#39;&amp;szlig;&#39; ],
-</span><span class="">  492: 		[ &#39;&acirc;&#128;&#147;&#39;, &#39;&amp;ndash;&#39; ],
-</span><span class="">  493: 		[ &#39;&acirc;&#128;&#148;&#39;, &#39;&amp;mdash;&#39; ],
-</span><span class="">  494: 		[ &#39;&Atilde;&plusmn;&#39;, &#39;&amp;ntilde;&#39; ],
-</span><span class="">  495: 		[ &#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39; ],
-</span><span class="">  496: 		[ &#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39; ],
-</span><span class="">  497: 		[ &#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39; ],
-</span><span class="">  498: 		[ &#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39; ],
-</span><span class="">  499: 		[ &#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39; ],
-</span><span class="">  500: 		[ &#39;&acirc;&#132;&cent;&#39;, &#39;&amp;trade;&#39; ],
-</span><span class="">  501: 		[ &#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39; ],
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  502: 		[ &quot;\x80\$&quot;, &#39; &#39; ],
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  503: 	);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  504: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  505: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  506: 
-</span><span class="">  507: 	# if($string =~ /^Maria\(/) {
-</span><span class="">  508: 		# # print STDERR (unpack &#39;H*&#39;, $string);
-</span><span class="">  509: 		# print STDERR __LINE__, &#39;: &#39;;
-</span><span class="">  510: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  511: 		# print STDERR &quot;\n&quot;;
-</span><span class="">  512: 		# my $i = 0;
-</span><span class="">  513: 		# while((my @call_details = caller($i++))) {
-</span><span class="">  514: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  515: 		# }
-</span><span class="">  516: 		# # die $string;
-</span><span class="">  517: 	# }
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  300: 	unless($params-&gt;{&#39;keep_apos&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  301: 		# Multi-byte curly apostrophes can&acirc;&#128;&#153;t be combined in a char-class, so use
+</span><span class="">  302: 		# an alternation regex built from the key set &acirc;&#128;&#148; no /e eval needed.
+</span><span class="">  303: 		my %apos_map = (
+</span><span class="">  304: 			&quot;&#39;&quot;            =&gt; &#39;&amp;apos;&#39;,
+</span><span class="">  305: 			&quot;\x{2018}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+2018 left single quotation mark
+</span><span class="">  306: 			&quot;\x{2019}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+2019 right single quotation mark
+</span><span class="">  307: 			&quot;\x{0060}&quot; =&gt; &#39;&amp;apos;&#39;,	# U+0060 grave accent used as apostrophe
+</span><span class="">  308: 			&quot;\x98&quot;     =&gt; &#39;&amp;apos;&#39;,
+</span><span class="">  309: 		);
+</span><span class="">  310: 		my $apos_re = join &#39;|&#39;, map { quotemeta } keys %apos_map;
+</span><span class="">  311: 		$string =~ s/($apos_re)/$apos_map{$1}/g;
+</span><span class="">  312: 	}
+</span><span class="">  313: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">314 → 314 → 318</span></span>  314: 	if($string !~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  315: 		return $string;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  316: 	}
+</span><span class="">  317: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">318 → 534 → 549</span></span>  318: 	@byte_map = (
+</span><span class="">  319: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
+</span><span class="">  320: 		[&quot;\xc2\xa3&quot;, &#39;&amp;pound;&#39;],
+</span><span class="">  321: 		[&quot;\xc2\xa9&quot;, &#39;&amp;copy;&#39;],
+</span><span class="">  322: 		[&quot;\xc2\xae&quot;, &#39;&amp;reg;&#39;],
+</span><span class="">  323: 		[&quot;\xc3\xa2&quot;, &#39;&amp;acirc;&#39;],
+</span><span class="">  324: 		[&quot;\xc3\xa4&quot;, &#39;&amp;auml;&#39;],
+</span><span class="">  325: 		[&quot;\xc3\xa9&quot;, &#39;&amp;eacute;&#39;],
+</span><span class="">  326: 		[&quot;\xc2\xaa&quot;, &#39;&amp;ordf;&#39;],	# &Acirc;&ordf;
+</span><span class="">  327: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  328: 		[&quot;\xc2\xbb&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&raquo;
+</span><span class="">  329: 		[&quot;\xc3\x81&quot;, &#39;&amp;Aacute;&#39;],	# &Atilde;&#129;
+</span><span class="">  330: 		[&quot;\xc3\x83&quot;, &#39;&amp;Icirc;&#39;],	# &Atilde;&#142;
+</span><span class="">  331: 		[&quot;\xc3\x9e&quot;, &#39;&amp;THORN;&#39;],	# &Atilde;&#158;
+</span><span class="">  332: 		[&quot;\xc3\xa0&quot;, &#39;&amp;agrave;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  333: 		[&quot;\xc3\xa1&quot;, &#39;&amp;aacute;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  334: 		[&quot;\xc3\xad&quot;, &#39;&amp;iacute;&#39;],	# &Atilde;&shy;
+</span><span class="">  335: 		[&quot;\xc3\xb0&quot;, &#39;&amp;eth;&#39;],	# &Atilde;&deg;
+</span><span class="">  336: 		[&quot;\xc3\xba&quot;, &#39;&amp;uacute;&#39;],	# &Atilde;&ordm;
+</span><span class="">  337: 		[&quot;\xc3\xb4&quot;, &#39;&amp;ocirc;&#39;],	# &Atilde;&acute;
+</span><span class="">  338: 		[&quot;\xc3\xb6&quot;, &#39;&amp;ouml;&#39;],
+</span><span class="">  339: 		[&quot;\xc3\xb8&quot;, &#39;&amp;oslash;&#39;],	# &Atilde;&cedil;
+</span><span class="">  340: 		[&quot;\xc5\xa1&quot;, &#39;&amp;scaron;&#39;],
+</span><span class="">  341: 		[&quot;\xc4\x8d&quot;, &#39;&amp;ccaron;&#39;],
+</span><span class="">  342: 		[&quot;\xc5\xbd&quot;, &#39;&amp;Zcaron;&#39;],
+</span><span class="">  343: 		[&quot;\xc5\xbe&quot;, &#39;&amp;zcaron;&#39;],
+</span><span class="">  344: 		[&quot;\xc3\xa5&quot;, &#39;&amp;aring;&#39;],	# &Atilde;&yen;
+</span><span class="">  345: 		[&quot;\xc3\xa7&quot;, &#39;&amp;ccedil;&#39;],
+</span><span class="">  346: 		[&quot;\xc3\xaf&quot;, &#39;&amp;iuml;&#39;],	# &Atilde;&macr;
+</span><span class="">  347: 		[&quot;\xc3\xb3&quot;, &#39;&amp;oacute;&#39;],
+</span><span class="">  348: 		[&quot;\xc3\x96&quot;, &#39;&amp;Ouml;&#39;], # &Atilde;&#150;
+</span><span class="">  349: 		[&quot;\xc3\xa8&quot;, &#39;&amp;egrave;&#39;],
+</span><span class="">  350: 		[&quot;\xc3\x89&quot;, &#39;&amp;Eacute;&#39;],
+</span><span class="">  351: 		[&quot;\xc3\x9f&quot;, &#39;&amp;szlig;&#39;],
+</span><span class="">  352: 		[&quot;\xc3\xaa&quot;, &#39;&amp;ecirc;&#39;],
+</span><span class="">  353: 		[&quot;\xc3\xab&quot;, &#39;&amp;euml;&#39;],
+</span><span class="">  354: 		[&quot;\xc3\xae&quot;, &#39;&amp;icirc;&#39;],
+</span><span class="">  355: 		[&quot;\xc3\xbb&quot;, &#39;&amp;ucirc;&#39;],
+</span><span class="">  356: 		[&quot;\xc3\xbc&quot;, &#39;&amp;uuml;&#39;], # &Atilde;&frac14;
+</span><span class="">  357: 		[&quot;\xc3\xbe&quot;, &#39;&amp;thorn;&#39;],	# &Atilde;&frac34;
+</span><span class="">  358: 		[&quot;\xc5\x9b&quot;, &#39;&amp;sacute;&#39;],
+</span><span class="">  359: 		[&quot;\xc5\xa0&quot;, &#39;&amp;Scaron;&#39;],
+</span><span class="">  360: 		[&quot;\xe2\x80\x93&quot;, &#39;&amp;ndash;&#39;],
+</span><span class="">  361: 		[&quot;\xe2\x80\x94&quot;, &#39;&amp;mdash;&#39;],
+</span><span class="">  362: 		[&quot;\xc3\xb1&quot;, &#39;&amp;ntilde;&#39;],	# &Atilde;&plusmn;
+</span><span class="">  363: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  364: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  365: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
+</span><span class="">  366: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  367: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
+</span><span class="">  368: 		[&quot;\N{U+00A3}&quot;, &#39;&amp;pound;&#39;],
+</span><span class="">  369: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;copy;&#39;],
+</span><span class="">  370: 		[&quot;\N{U+00AA}&quot;, &#39;&amp;ordf;&#39;],	# &Acirc;&ordf;
+</span><span class="">  371: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  372: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;reg;&#39;],
+</span><span class="">  373: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;micro;&#39;],	# &Acirc;&micro;
+</span><span class="">  374: 		[&quot;\N{U+00BB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&raquo;
+</span><span class="">  375: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;Icirc;&#39;],	# &Atilde;&#142;
+</span><span class="">  376: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;THORN;&#39;],	# &Atilde;&#158;
+</span><span class="">  377: 		[&quot;\N{U+0161}&quot;, &#39;&amp;scaron;&#39;],
+</span><span class="">  378: 		[&quot;\N{U+010D}&quot;, &#39;&amp;ccaron;&#39;],
+</span><span class="">  379: 		[&quot;\N{U+017D}&quot;, &#39;&amp;Zcaron;&#39;],
+</span><span class="">  380: 		[&quot;\N{U+017E}&quot;, &#39;&amp;zcaron;&#39;],
+</span><span class="">  381: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;Eacute;&#39;],
+</span><span class="">  382: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;Ouml;&#39;],	# &Atilde;&#150;
+</span><span class="">  383: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;szlig;&#39;],	# &Atilde;&#159;
+</span><span class="">  384: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;aacute;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  385: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;acirc;&#39;],
+</span><span class="">  386: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;auml;&#39;],
+</span><span class="">  387: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;aring;&#39;],	# &Atilde;&yen;
+</span><span class="">  388: 		[&quot;\N{U+00E0}&quot;, &#39;&amp;agrave;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  389: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;ccedil;&#39;],	# &Atilde;&sect;
+</span><span class="">  390: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;egrave;&#39;],
+</span><span class="">  391: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;eacute;&#39;],
+</span><span class="">  392: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;iacute;&#39;],	# &Atilde;&shy;
+</span><span class="">  393: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;icirc;&#39;],
+</span><span class="">  394: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;iuml;&#39;],	# &Atilde;&macr;
+</span><span class="">  395: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;eth;&#39;],	# &Atilde;&deg;
+</span><span class="">  396: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;ntilde;&#39;],	# &Atilde;&plusmn;
+</span><span class="">  397: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;ocirc;&#39;],	# &Atilde;&acute;
+</span><span class="">  398: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;ouml;&#39;],
+</span><span class="">  399: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;oslash;&#39;],	# &Atilde;&cedil;
+</span><span class="">  400: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;uacute;&#39;],	# &Atilde;&ordm;
+</span><span class="">  401: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;uuml;&#39;],	# &Atilde;&frac14;
+</span><span class="">  402: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;thorn;&#39;],	# &Atilde;&frac34;
+</span><span class="">  403: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;Aacute;&#39;],	# &Atilde;&#129;
+</span><span class="">  404: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;Eacute;&#39;],
+</span><span class="">  405: 		[&quot;\N{U+00CA}&quot;, &#39;&amp;ecirc;&#39;],
+</span><span class="">  406: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;euml;&#39;],
+</span><span class="">  407: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;oacute;&#39;],
+</span><span class="">  408: 		[&quot;\N{U+015B}&quot;, &#39;&amp;sacute;&#39;],
+</span><span class="">  409: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;ucirc;&#39;],
+</span><span class="">  410: 		[&quot;\N{U+0160}&quot;, &#39;&amp;Scaron;&#39;],
+</span><span class="">  411: 		[&quot;\N{U+2013}&quot;, &#39;&amp;ndash;&#39;],
+</span><span class="">  412: 		[&quot;\N{U+2014}&quot;, &#39;&amp;mdash;&#39;],
+</span><span class="">  413: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  414: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  415: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  416: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  417: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
+</span><span class="">  418: 		[&quot;\N{U+2122}&quot;, &#39;&amp;trade;&#39;],	# &acirc;&#132;&cent;
+</span><span class="">  419: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;trade;&#39;],	# &acirc;&#132;&cent; UTF-8
+</span><span class="">  420: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  421: 	);
+</span><span class="">  422: 
+</span><span class="">  423: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  424: 
+</span><span class="">  425: 	# utf8::encode($string);
+</span><span class="">  426: 	# $string =~ s/&Aring;&iexcl;/&amp;scaron;/g;
+</span><span class="">  427: 	# $string =~ s/&Auml;&#141;/&amp;ccaron;/g;
+</span><span class="">  428: 	# $string =~ s/&Aring;&frac34;/&amp;zcaron;/g;
+</span><span class="">  429: 	# $string =~ s/&Atilde;&copy;/&amp;eacute;/g;
+</span><span class="">  430: 	# $string =~ s/&Atilde;&sect;/&amp;ccedil;/g;
+</span><span class="">  431: 	# $string =~ s/\N{U+0161}/&amp;scaron;/g;
+</span><span class="">  432: 	# $string =~ s/\N{U+010D}/&amp;ccaron;/g;
+</span><span class="">  433: 	# $string =~ s/\N{U+017E}/&amp;zcaron;/g;
+</span><span class="">  434: 	# $string =~ s/\N{U+00E9}/&amp;eacute;/g;
+</span><span class="">  435: 	# $string =~ s/\N{U+00D6}/&amp;Ouml;/g;	# &Atilde;&#150;
+</span><span class="">  436: 	# $string =~ s/\N{U+00E7}/&amp;ccedil;/g;	# &Atilde;&sect;
+</span><span class="">  437: 	# $string =~ s/\N{U+00E8}/&amp;egrave;/g;
+</span><span class="">  438: 	# $string =~ s/\N{U+00E9}/&amp;Eacute;/g;
+</span><span class="">  439: 
+</span><span class="">  440: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  441: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  442: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  443: 
+</span><span class="">  444: 	# utf8::decode($string);
+</span><span class="">  445: 
+</span><span class="">  446: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  447: 	# # print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  448: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  449: 
+</span><span class="">  450: 	# $string =~ s/\xe4\x8d/&amp;ccaron;/g;	# ? ACOM strangeness
+</span><span class="">  451: 	# $string =~ s/\N{U+0161}/&amp;scaron;/g;
+</span><span class="">  452: 	# $string =~ s/\N{U+010D}/&amp;ccaron;/g;
+</span><span class="">  453: 	# $string =~ s/\N{U+00A9}/&amp;copy;/g;
+</span><span class="">  454: 	# $string =~ s/\N{U+00AE}/&amp;reg;/g;
+</span><span class="">  455: 	# $string =~ s/\N{U+00E2}/&amp;acirc;/g;
+</span><span class="">  456: 	# $string =~ s/\N{U+00E4}/&amp;auml;/g;
+</span><span class="">  457: 	# $string =~ s/\N{U+00E8}/&amp;egrave;/g;
+</span><span class="">  458: 	# $string =~ s/\N{U+00E9}/&amp;eacute;/g;
+</span><span class="">  459: 	# $string =~ s/\N{U+00EB}/&amp;euml;/g;
+</span><span class="">  460: 	# $string =~ s/\N{U+00F3}/&amp;oacute;/g;
+</span><span class="">  461: 	# $string =~ s/\N{U+00FB}/&amp;ucirc;/g;
+</span><span class="">  462: 	# $string =~ s/\N{U+017E}/&amp;zcaron;/g;
+</span><span class="">  463: 	# $string =~ s/\N{U+00D6}/&amp;Ouml;/g;	# &Atilde;&#150;
+</span><span class="">  464: 	# $string =~ s/\N{U+00E7}/&amp;ccedil;/g;	# &Atilde;&sect;
+</span><span class="">  465: 	# $string =~ s/\N{U+00C9}/&amp;Eacute;/g;
+</span><span class="">  466: 	# $string =~ s/\N{U+00CA}/&amp;ecirc;/g;
+</span><span class="">  467: 	# $string =~ s/\N{U+0160}/&amp;Scaron;/g;	# FIXME: also above
+</span><span class="">  468: 	# $string =~ s/\N{U+2013}/-/g;
+</span><span class="">  469: 
+</span><span class="">  470: 	@byte_map = (
+</span><span class="">  471: 		[ &#39;&Atilde;&#129;&#39;, &#39;&amp;Aacute;&#39; ],
+</span><span class="">  472: 		[ &#39;&Atilde;&yen;&#39;, &#39;&amp;aring;&#39; ],
+</span><span class="">  473: 		[ &#39;&Acirc;&ordf;&#39;, &#39;&amp;ordf;&#39; ],
+</span><span class="">  474: 		[ &#39;&Aring;&iexcl;&#39;, &#39;&amp;scaron;&#39; ],
+</span><span class="">  475: 		[ &#39;&Aring;&nbsp;&#39;, &#39;&amp;Scaron;&#39; ],
+</span><span class="">  476: 		[ &#39;&Auml;&#141;&#39;, &#39;&amp;ccaron;&#39; ],
+</span><span class="">  477: 		[ &#39;&Aring;&frac12;&#39;, &#39;&amp;Zcaron;&#39; ],
+</span><span class="">  478: 		[ &#39;&Aring;&frac34;&#39;, &#39;&amp;zcaron;&#39; ],
+</span><span class="">  479: 		[ &#39;&Atilde;&nbsp;&#39;, &#39;&amp;agrave;&#39; ],	# &Atilde;&nbsp;
+</span><span class="">  480: 		[ &#39;&Atilde;&iexcl;&#39;, &#39;&amp;aacute;&#39; ],
+</span><span class="">  481: 		[ &#39;&Atilde;&cent;&#39;, &#39;&amp;acirc;&#39; ],
+</span><span class="">  482: 		[ &#39;&Atilde;&copy;&#39;, &#39;&amp;eacute;&#39; ],
+</span><span class="">  483: 		[ &#39;&Atilde;&uml;&#39;, &#39;&amp;egrave;&#39; ],
+</span><span class="">  484: 		[ &#39;&Atilde;&sect;&#39;, &#39;&amp;ccedil;&#39; ],
+</span><span class="">  485: 		[ &#39;&Atilde;&ordf;&#39;, &#39;&amp;ecirc;&#39; ],
+</span><span class="">  486: 		[ &#39;&Atilde;&laquo;&#39;, &#39;&amp;euml;&#39; ],
+</span><span class="">  487: 		[ &#39;&Atilde;&deg;&#39;, &#39;&amp;eth;&#39; ],
+</span><span class="">  488: 		[ &#39;&Atilde;&shy;&#39;, &#39;&amp;iacute;&#39; ],
+</span><span class="">  489: 		[ &#39;&Atilde;&macr;&#39;, &#39;&amp;iuml;&#39; ],
+</span><span class="">  490: 		[ &#39;&Atilde;&#142;&#39;, &#39;&amp;Icirc;&#39; ],
+</span><span class="">  491: 		[ &#39;&Acirc;&copy;&#39;, &#39;&amp;copy;&#39; ],
+</span><span class="">  492: 		[ &#39;&Acirc;&reg;&#39;, &#39;&amp;reg;&#39; ],
+</span><span class="">  493: 		[ &#39;&Atilde;&sup3;&#39;, &#39;&amp;oacute;&#39; ],
+</span><span class="">  494: 		[ &#39;&Atilde;&acute;&#39;, &#39;&amp;ocirc;&#39; ],
+</span><span class="">  495: 		[ &#39;&Atilde;&para;&#39;, &#39;&amp;ouml;&#39; ],
+</span><span class="">  496: 		[ &#39;&Atilde;&cedil;&#39;, &#39;&amp;oslash;&#39; ],
+</span><span class="">  497: 		[ &#39;&Aring;&#155;&#39;, &#39;&amp;sacute;&#39; ],
+</span><span class="">  498: 		[ &#39;&Atilde;&#158;&#39;, &#39;&amp;THORN;&#39; ],
+</span><span class="">  499: 		[ &#39;&Atilde;&frac34;&#39;, &#39;&amp;thorn;&#39; ],
+</span><span class="">  500: 		[ &#39;&Atilde;&raquo;&#39;, &#39;&amp;ucirc;&#39; ],
+</span><span class="">  501: 		[ &#39;&Atilde;&frac14;&#39;, &#39;&amp;uuml;&#39; ],
+</span><span class="">  502: 		[ &#39;&Atilde;&ordm;&#39;, &#39;&amp;uacute;&#39; ],
+</span><span class="">  503: 		[ &#39;&Acirc;&micro;&#39;, &#39;&amp;micro;&#39;],
+</span><span class="">  504: 		[ &#39;&Acirc;&pound;&#39;, &#39;&amp;pound;&#39; ],
+</span><span class="">  505: 		[ &#39;&Atilde;&#159;&#39;, &#39;&amp;szlig;&#39; ],
+</span><span class="">  506: 		[ &#39;&acirc;&#128;&#147;&#39;, &#39;&amp;ndash;&#39; ],
+</span><span class="">  507: 		[ &#39;&acirc;&#128;&#148;&#39;, &#39;&amp;mdash;&#39; ],
+</span><span class="">  508: 		[ &#39;&Atilde;&plusmn;&#39;, &#39;&amp;ntilde;&#39; ],
+</span><span class="">  509: 		[ &#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39; ],
+</span><span class="">  510: 		[ &#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39; ],
+</span><span class="">  511: 		[ &#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39; ],
+</span><span class="">  512: 		[ &#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39; ],
+</span><span class="">  513: 		[ &#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39; ],
+</span><span class="">  514: 		[ &#39;&acirc;&#132;&cent;&#39;, &#39;&amp;trade;&#39; ],
+</span><span class="">  515: 		[ &#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39; ],
+</span><span class="">  516: 		[ &quot;\x80\$&quot;, &#39; &#39; ],
+</span><span class="">  517: 	);
 </span><span class="">  518: 
-</span><span class="">  519: 	# print STDERR __LINE__, &quot;: ($string)\n&quot;;
-</span><span class="">  520: 	if($string =~ /[^[:ascii:]]/) {
-</span><span class="">  521: 		$string = HTML::Entities::encode_entities_numeric($string, &#39;\x80-\x{10FFFF}&#39;);
-</span><span class="">  522: 		if($string =~ /[^[:ascii:]]/) {
-</span><span class="">  523: 			$complain-&gt;(&quot;TODO: wide_to_html($string)&quot;) if($complain);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  524: 			# Sanitize non-ASCII to hex tokens before embedding in the error message
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  525: 			$string =~ s{
-</span><span class="">  526: 					([^[:ascii:]])
-</span><span class="">  527: 				}{
-</span><span class="">  528: 					&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&#39;%04X&#39;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
-</span><span class="">  529: 				}gex;
-</span><span class="">  530: 			carp &quot;TODO: wide_to_html($string)&quot;;
-</span><span class="">  531: 			croak &quot;BUG: wide_to_html($string)&quot;;
-</span><span class="">  532: 		}
-</span><span class="">  533: 	}
-</span><span class="">  534: 
-</span><span class="">  535: 	return $string;
-</span><span class="">  536: }
-</span><span class="">  537: 
-</span><span class="">  538: =head2 wide_to_xml
-</span><span class="">  539: 
-</span><span class="">  540: =head3 Purpose
-</span><span class="">  541: 
-</span><span class="">  542: Convert a Unicode / UTF-8 string into a pure-ASCII XML fragment by replacing
-</span><span class="">  543: every non-ASCII character with a hexadecimal numeric entity (e.g. C&lt;&amp;#x00E9;&gt;).
-</span><span class="">  544: Unlike HTML, XML does not support most named entities, so only numeric forms
-</span><span class="">  545: are used.  Em-dashes and en-dashes are folded to a plain ASCII hyphen (C&lt;-&gt;).
-</span><span class="">  546: Bare ampersands, angle brackets, and double-quotes are escaped for XML safety.
-</span><span class="">  547: 
-</span><span class="">  548: =head3 Arguments
-</span><span class="">  549: 
-</span><span class="">  550: Named parameters (or a single positional string as the first argument):
+</span><span class="">  519: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  520: 
+</span><span class="">  521: 	# if($string =~ /^Maria\(/) {
+</span><span class="">  522: 		# # print STDERR (unpack &#39;H*&#39;, $string);
+</span><span class="">  523: 		# print STDERR __LINE__, &#39;: &#39;;
+</span><span class="">  524: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  525: 		# print STDERR &quot;\n&quot;;
+</span><span class="">  526: 		# my $i = 0;
+</span><span class="">  527: 		# while((my @call_details = caller($i++))) {
+</span><span class="">  528: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  529: 		# }
+</span><span class="">  530: 		# # die $string;
+</span><span class="">  531: 	# }
+</span><span class="">  532: 
+</span><span class="">  533: 	# print STDERR __LINE__, &quot;: ($string)\n&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  534: 	if($string =~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  535: 		$string = HTML::Entities::encode_entities_numeric($string, &#39;\x80-\x{10FFFF}&#39;);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  536: 		if($string =~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  537: 			$complain-&gt;(&quot;TODO: wide_to_html($string)&quot;) if($complain);
+</span><span class="">  538: 			# Sanitize non-ASCII to hex tokens before embedding in the error message
+</span><span class="">  539: 			$string =~ s{
+</span><span class="">  540: 					([^[:ascii:]])
+</span><span class="">  541: 				}{
+</span><span class="">  542: 					&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&#39;%04X&#39;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
+</span><span class="">  543: 				}gex;
+</span><span class="">  544: 			carp &quot;TODO: wide_to_html($string)&quot;;
+</span><span class="">  545: 			croak &quot;BUG: wide_to_html($string)&quot;;
+</span><span class="">  546: 		}
+</span><span class="">  547: 	}
+</span><span class="">  548: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  549: 	return $string;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  550: }
 </span><span class="">  551: 
-</span><span class="">  552: =over 4
+</span><span class="">  552: =head2 wide_to_xml
 </span><span class="">  553: 
-</span><span class="">  554: =item C&lt;string&gt; (required)
+</span><span class="">  554: =head3 Purpose
 </span><span class="">  555: 
-</span><span class="">  556: The text to encode.  May be a plain scalar or a reference to a scalar.
-</span><span class="">  557: Must be defined; passing C&lt;undef&gt; causes the function to C&lt;die&gt;.
-</span><span class="">  558: 
-</span><span class="">  559: =item C&lt;keep_hrefs&gt; (optional, default 0)
-</span><span class="">  560: 
-</span><span class="">  561: When true, C&lt;&lt; &lt; &gt;&gt;, C&lt;&lt; &gt; &gt;&gt;, and C&lt;&lt; &quot; &gt;&gt; are B&lt;not&gt; escaped.
-</span><span class="">  562: 
-</span><span class="">  563: =item C&lt;complain&gt; (optional)
-</span><span class="">  564: 
-</span><span class="">  565: A code reference invoked with a descriptive message if an unhandled character
-</span><span class="">  566: is encountered.  The function then C&lt;die&gt;s with a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  556: Convert a Unicode / UTF-8 string into a pure-ASCII XML fragment by replacing
+</span><span class="">  557: every non-ASCII character with a hexadecimal numeric entity (e.g. C&lt;&amp;#x00E9;&gt;).
+</span><span class="">  558: Unlike HTML, XML does not support most named entities, so only numeric forms
+</span><span class="">  559: are used.  Em-dashes and en-dashes are folded to a plain ASCII hyphen (C&lt;-&gt;).
+</span><span class="">  560: Bare ampersands, angle brackets, and double-quotes are escaped for XML safety.
+</span><span class="">  561: 
+</span><span class="">  562: =head3 Arguments
+</span><span class="">  563: 
+</span><span class="">  564: Named parameters (or a single positional string as the first argument):
+</span><span class="">  565: 
+</span><span class="">  566: =over 4
 </span><span class="">  567: 
-</span><span class="">  568: =back
+</span><span class="">  568: =item C&lt;string&gt; (required)
 </span><span class="">  569: 
-</span><span class="">  570: =head3 Returns
-</span><span class="">  571: 
-</span><span class="">  572: A defined scalar string containing only ASCII characters (code points 0x00&acirc;&#128;&#147;0x7F).
-</span><span class="">  573: 
-</span><span class="">  574: =head3 Side Effects
-</span><span class="">  575: 
-</span><span class="">  576: Invokes the C&lt;complain&gt; callback with a message when an unhandled character is
-</span><span class="">  577: detected, then dies with a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  570: The text to encode.  May be a plain scalar or a reference to a scalar.
+</span><span class="">  571: Must be defined; passing C&lt;undef&gt; causes the function to C&lt;die&gt;.
+</span><span class="">  572: 
+</span><span class="">  573: =item C&lt;keep_hrefs&gt; (optional, default 0)
+</span><span class="">  574: 
+</span><span class="">  575: When true, C&lt;&lt; &lt; &gt;&gt;, C&lt;&lt; &gt; &gt;&gt;, and C&lt;&lt; &quot; &gt;&gt; are B&lt;not&gt; escaped.
+</span><span class="">  576: 
+</span><span class="">  577: =item C&lt;complain&gt; (optional)
 </span><span class="">  578: 
-</span><span class="">  579: =head3 Usage Example
-</span><span class="">  580: 
-</span><span class="">  581:     use Encode::Wide qw(wide_to_xml);
-</span><span class="">  582: 
-</span><span class="">  583:     my $safe = wide_to_xml(string =&gt; &quot;SURN \x{017D}ganjar&quot;);
-</span><span class="">  584:     # =&gt; &#39;SURN &amp;#x17D;ganjar&#39;
+</span><span class="">  579: A code reference invoked with a descriptive message if an unhandled character
+</span><span class="">  580: is encountered.  The function then C&lt;die&gt;s with a C&lt;BUG:&gt; prefix regardless.
+</span><span class="">  581: 
+</span><span class="">  582: =back
+</span><span class="">  583: 
+</span><span class="">  584: =head3 Returns
 </span><span class="">  585: 
-</span><span class="">  586:     my $href_safe = wide_to_xml(string =&gt; &#39;&lt;tag attr=&quot;val&quot;&gt;&#39;, keep_hrefs =&gt; 1);
-</span><span class="">  587:     # =&gt; &#39;&lt;tag attr=&quot;val&quot;&gt;&#39;
-</span><span class="">  588: 
-</span><span class="">  589: =head3 API SPECIFICATION
-</span><span class="">  590: 
-</span><span class="">  591: =head4 Input
+</span><span class="">  586: A defined scalar string containing only ASCII characters (code points 0x00&acirc;&#128;&#147;0x7F).
+</span><span class="">  587: 
+</span><span class="">  588: =head3 Side Effects
+</span><span class="">  589: 
+</span><span class="">  590: Invokes the C&lt;complain&gt; callback with a message when an unhandled character is
+</span><span class="">  591: detected, then dies with a C&lt;BUG:&gt; prefix regardless.
 </span><span class="">  592: 
-</span><span class="">  593:     {
-</span><span class="">  594:         string     =&gt; { type =&gt; SCALAR | SCALARREF, required =&gt; 1, defined =&gt; 1 },
-</span><span class="">  595:         keep_hrefs =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
-</span><span class="">  596:         complain   =&gt; { type =&gt; CODEREF,  optional =&gt; 1 },
-</span><span class="">  597:     }
-</span><span class="">  598: 
-</span><span class="">  599: =head4 Output
-</span><span class="">  600: 
-</span><span class="">  601:     { type =&gt; SCALAR, constraint =&gt; sub { $_[0] !~ /[^[:ascii:]]/ } }
+</span><span class="">  593: =head3 Usage Example
+</span><span class="">  594: 
+</span><span class="">  595:     use Encode::Wide qw(wide_to_xml);
+</span><span class="">  596: 
+</span><span class="">  597:     my $safe = wide_to_xml(string =&gt; &quot;SURN \x{017D}ganjar&quot;);
+</span><span class="">  598:     # =&gt; &#39;SURN &amp;#x17D;ganjar&#39;
+</span><span class="">  599: 
+</span><span class="">  600:     my $href_safe = wide_to_xml(string =&gt; &#39;&lt;tag attr=&quot;val&quot;&gt;&#39;, keep_hrefs =&gt; 1);
+</span><span class="">  601:     # =&gt; &#39;&lt;tag attr=&quot;val&quot;&gt;&#39;
 </span><span class="">  602: 
-</span><span class="">  603: =head3 MESSAGES
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  604: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  605: =over 4
+</span><span class="">  603: =head3 API SPECIFICATION
+</span><span class="">  604: 
+</span><span class="">  605: =head4 Input
 </span><span class="">  606: 
-</span><span class="">  607: =item C&lt;Usage: wide_to_xml() string not set&gt;
-</span><span class="">  608: 
-</span><span class="">  609: Fatal.  C&lt;string&gt; argument was C&lt;undef&gt;.  Pass a defined scalar or scalar-ref.
-</span><span class="">  610: 
-</span><span class="">  611: =item C&lt;TODO: wide_to_xml(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  612: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  613: Warning (via C&lt;carp&gt;).  A character survived all encoding passes.
-</span><span class="">  614: The argument shows hex-escaped codepoints.  File a bug with that string.
-</span><span class="">  615: 
-</span><span class="">  616: =item C&lt;BUG: wide_to_xml(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
-</span><span class="">  617: 
-</span><span class="">  618: Fatal (via C&lt;croak&gt;).  Same condition as above; signals a gap in the XML
-</span><span class="">  619: character tables.
+</span><span class="">  607:     {
+</span><span class="">  608:         string     =&gt; { type =&gt; SCALAR | SCALARREF, required =&gt; 1, defined =&gt; 1 },
+</span><span class="">  609:         keep_hrefs =&gt; { type =&gt; BOOLEAN, optional =&gt; 1, default =&gt; 0 },
+</span><span class="">  610:         complain   =&gt; { type =&gt; CODEREF,  optional =&gt; 1 },
+</span><span class="">  611:     }
+</span><span class="">  612: 
+</span><span class="">  613: =head4 Output
+</span><span class="">  614: 
+</span><span class="">  615:     { type =&gt; SCALAR, constraint =&gt; sub { $_[0] !~ /[^[:ascii:]]/ } }
+</span><span class="">  616: 
+</span><span class="">  617: =head3 MESSAGES
+</span><span class="">  618: 
+</span><span class="">  619: =over 4
 </span><span class="">  620: 
-</span><span class="">  621: =back
+</span><span class="">  621: =item C&lt;Usage: wide_to_xml() string not set&gt;
 </span><span class="">  622: 
-</span><span class="">  623: =head3 PSEUDOCODE
+</span><span class="">  623: Fatal.  C&lt;string&gt; argument was C&lt;undef&gt;.  Pass a defined scalar or scalar-ref.
 </span><span class="">  624: 
-</span><span class="">  625:     1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
-</span><span class="">  626:     2. Escape bare &amp; not part of an entity
-</span><span class="">  627:     3. Unless keep_hrefs: escape &lt;, &gt;, &quot;
-</span><span class="">  628:     4. First byte_map pass: curly quotes, dashes, curly apostrophes
-</span><span class="">  629:     5. Early return if string is now pure ASCII
-</span><span class="">  630:     6. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
-</span><span class="">  631:     7. Third byte_map pass: literal Unicode source chars
-</span><span class="">  632:     8. If non-ASCII still remains: invoke complain callback, carp, croak BUG
-</span><span class="">  633: 
-</span><span class="">  634: =cut
-</span><span class="">  635: 
-</span><span class="">  636: # See https://www.compart.com/en/unicode/U+0161 etc.
-</span><span class="">  637: #	https://www.compart.com/en/unicode/U+00EB
-</span><span class="">  638: sub wide_to_xml
-</span><span class="">  639: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">640 → 645 → 649</span></span>  640: 	my $params = Params::Get::get_params(&#39;string&#39;, @_);
-</span><span class="">  641: 
-</span><span class="">  642: 	my $string = $params-&gt;{&#39;string&#39;};
-</span><span class="">  643: 	my $complain = $params-&gt;{&#39;complain&#39;};
-</span><span class="">  644: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  645: 	if(!defined($string)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  646: 		croak &#39;Usage: wide_to_xml() string not set&#39;;
-</span><span class="">  647: 	}
-</span><span class="">  648: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">649 → 649 → 662</span></span>  649: 	if(ref($string) eq &#39;SCALAR&#39;) {
-</span><span class="">  650: 		$string = ${$string};
-</span><span class="">  651: 	}
-</span><span class="">  652: 
-</span><span class="">  653: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  654: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  655: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  656: 
-</span><span class="">  657: 	# my $i = 0;
-</span><span class="">  658: 	# while((my @call_details = caller($i++))) {
-</span><span class="">  659: 		# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  660: 	# }
-</span><span class="">  661: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">662 → 670 → 683</span></span>  662: 	$string = HTML::Entities::decode($string);
-</span><span class="">  663: 
-</span><span class="">  664: 	# Decode the four named entities HTML::Entities::decode misses
-</span><span class="">  665: 	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+</span><span class="">  625: =item C&lt;TODO: wide_to_xml(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
+</span><span class="">  626: 
+</span><span class="">  627: Warning (via C&lt;carp&gt;).  A character survived all encoding passes.
+</span><span class="">  628: The argument shows hex-escaped codepoints.  File a bug with that string.
+</span><span class="">  629: 
+</span><span class="">  630: =item C&lt;BUG: wide_to_xml(E&lt;lt&gt;...E&lt;gt&gt;)&gt;
+</span><span class="">  631: 
+</span><span class="">  632: Fatal (via C&lt;croak&gt;).  Same condition as above; signals a gap in the XML
+</span><span class="">  633: character tables.
+</span><span class="">  634: 
+</span><span class="">  635: =back
+</span><span class="">  636: 
+</span><span class="">  637: =head3 PSEUDOCODE
+</span><span class="">  638: 
+</span><span class="">  639:     1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
+</span><span class="">  640:     2. Escape bare &amp; not part of an entity
+</span><span class="">  641:     3. Unless keep_hrefs: escape &lt;, &gt;, &quot;
+</span><span class="">  642:     4. First byte_map pass: curly quotes, dashes, curly apostrophes
+</span><span class="">  643:     5. Early return if string is now pure ASCII
+</span><span class="">  644:     6. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
+</span><span class="">  645:     7. Third byte_map pass: literal Unicode source chars
+</span><span class="">  646:     8. If non-ASCII still remains: invoke complain callback, carp, croak BUG
+</span><span class="">  647: 
+</span><span class="">  648: =cut
+</span><span class="">  649: 
+</span><span class="">  650: # See https://www.compart.com/en/unicode/U+0161 etc.
+</span><span class="">  651: #	https://www.compart.com/en/unicode/U+00EB
+</span><span class="">  652: sub wide_to_xml
+</span><span class="">  653: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">654 → 659 → 663</span></span>  654: 	my $params = Params::Get::get_params(&#39;string&#39;, @_);
+</span><span class="">  655: 
+</span><span class="">  656: 	my $string = $params-&gt;{&#39;string&#39;};
+</span><span class="">  657: 	my $complain = $params-&gt;{&#39;complain&#39;};
+</span><span class="">  658: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  659: 	if(!defined($string)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  660: 		croak &#39;Usage: wide_to_xml() string not set&#39;;
+</span><span class="">  661: 	}
+</span><span class="">  662: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">663 → 663 → 678</span></span>  663: 	if(ref($string) eq &#39;SCALAR&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  664: 		$string = ${$string};
+</span><span class="">  665: 	}
 </span><span class="">  666: 
-</span><span class="">  667: 	# Escape bare &amp; not already part of a valid entity
-</span><span class="">  668: 	$string =~ s/&amp;(?![A-Za-z#0-9]+;)/&amp;amp;/g;
-</span><span class="">  669: 
-</span><span class="">  670: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
-</span><span class="">  671: 		# Escape ASCII markup chars; curly quotes are handled by the byte_map passes below
-</span><span class="">  672: 		$string =~ s/([&lt;&gt;&quot;])/$1 eq &#39;&lt;&#39; ? &#39;&amp;lt;&#39; : $1 eq &#39;&gt;&#39; ? &#39;&amp;gt;&#39; : &#39;&amp;quot;&#39;/ge;
-</span><span class="">  673: 	}
-</span><span class="">  674: 
-</span><span class="">  675: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
-</span><span class="">  676: 	# $string =~ s/&acirc;&#128;&#153;/&amp;apos;/g;
-</span><span class="">  677: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
-</span><span class="">  678: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
-</span><span class="">  679: 	# $string =~ s/\x98/&amp;apos;/g;
-</span><span class="">  680: 	# $string =~ s/[&#39;&acirc;&#128;&#152;&acirc;&#128;&#153;&acirc;&#128;&#152;\x98]/&amp;apos;/g;
-</span><span class="">  681: 
-</span><span class="">  682: 	# Table of byte-sequences-&gt;entities
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">683 → 728 → 736</span></span>  683: 	my @byte_map = (
-</span><span class="">  684: 		[ &quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#156;
-</span><span class="">  685: 		[ &quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#157;
-</span><span class="">  686: 		[ &#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39; ],	# U+201C
-</span><span class="">  687: 		[ &#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39; ],	# U+201D
-</span><span class="">  688: 		[ &quot;\xe2\x80\x93&quot;, &#39;-&#39; ],	# ndash
-</span><span class="">  689: 		[ &quot;\xe2\x80\x94&quot;, &#39;-&#39; ],	# mdash
-</span><span class="">  690: 		[ &quot;\xe2\x80\x98&quot;, &#39;&amp;apos;&#39; ],	# &acirc;&#128;&#152;
-</span><span class="">  691: 		[ &quot;\xe2\x80\x99&quot;, &#39;&amp;apos;&#39; ],	# &acirc;&#128;&#153;
-</span><span class="">  692: 		[ &quot;\xe2\x80\xA6&quot;, &#39;...&#39; ],	# &acirc;&#128;&brvbar;
-</span><span class="">  693: 		[ &quot;&#39;&quot;, &#39;&amp;apos;&#39; ],
-</span><span class="">  694: 		[ &#39;&acirc;&#128;&#152;&#39;, &#39;&amp;apos;&#39; ],
-</span><span class="">  695: 		[ &#39;&acirc;&#128;&#153;&#39;, &#39;&amp;apos;&#39; ],
-</span><span class="">  696: 		[ &#39;&acirc;&#128;&#152;&#39;, &#39;&amp;apos;&#39; ],
-</span><span class="">  697: 		[ &quot;\x98&quot;, &#39;&amp;apos;&#39; ],
-</span><span class="">  698: 	);
-</span><span class="">  699: 
-</span><span class="">  700: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  701: 
-</span><span class="">  702: 	# DEAD CODE: the %entity_map below has keys that are multi-character HTML
-</span><span class="">  703: 	# entity strings (e.g. &#39;&amp;copy;&#39;, &#39;&amp;Aacute;&#39;).  The s{(.)}{...}gex loop
-</span><span class="">  704: 	# that follows matches one character at a time; a single char can never
-</span><span class="">  705: 	# equal a multi-char key, so the true branch is unreachable.
-</span><span class="">  706: 	# By the time the string reaches here, HTML::Entities::decode has already
-</span><span class="">  707: 	# converted all recognised named entities to their Unicode equivalents,
-</span><span class="">  708: 	# which the byte_map passes below encode correctly.
-</span><span class="">  709: 	# Additional bugs in the removed block: &#39;&amp;uacute;&#39; =&gt; &#39;&amp;#0FA;&#39; (decimal,
-</span><span class="">  710: 	# not hex) and &#39;&amp;ucirc;&#39; =&gt; &#39;&amp;#x0F4;&#39; (maps to o-circumflex, not u-circumflex).
-</span><span class="">  711: 	# This block has been commented out to remove dead code and reach 100%
-</span><span class="">  712: 	# branch coverage.  See t/extended_tests.t section 3 for validation.
-</span><span class="">  713: 	#
-</span><span class="">  714: 	# %entity_map = (
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  715: 	# 	&#39;&amp;copy;&#39; =&gt; &#39;&amp;#x0A9;&#39;,
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  716: 	# 	&#39;&amp;Aacute;&#39; =&gt; &#39;&amp;#x0C1;&#39;,
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  717: 	# 	&#39;&amp;ccaron;&#39; =&gt; &#39;&amp;#x10D;&#39;,
-</span><span class="">  718: 	# 	...
-</span><span class="">  719: 	# 	&#39;&amp;excl;&#39; =&gt; &#39;!&#39;,
-</span><span class="">  720: 	# );
-</span><span class="">  721: 	# $string =~ s{(.)}{
-</span><span class="">  722: 	# 	my $cp = $1;
-</span><span class="">  723: 	# 	exists $entity_map{$cp}
-</span><span class="">  724: 	# 		? $entity_map{$cp}
-</span><span class="">  725: 	# 		: $cp
-</span><span class="">  726: 	# }gex;
-</span><span class="">  727: 
-</span><span class="">  728: 	if($string !~ /[^[:ascii:]]/) {
-</span><span class="">  729: 		return $string;
-</span><span class="">  730: 	}
-</span><span class="">  731: 
-</span><span class="">  732: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  733: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  734: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  735: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">736 → 939 → 950</span></span>  736: 	@byte_map = (
-</span><span class="">  737: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
-</span><span class="">  738: 		[&quot;\xc2\xa3&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
-</span><span class="">  739: 		[&quot;\xc2\xa9&quot;, &#39;&amp;#x0A9;&#39;],
-</span><span class="">  740: 		[&quot;\xc2\xaa&quot;, &#39;&amp;#x0AA;&#39;],	# &Acirc;&ordf;
-</span><span class="">  741: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  742: 		[&quot;\xc2\xae&quot;, &#39;&amp;#x0AE;&#39;],
-</span><span class="">  743: 		[&quot;\xc3\x81&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  744: 		[&quot;\xc3\x8e&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  745: 		[&quot;\xc3\xa0&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  746: 		[&quot;\xc3\xa1&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  747: 		[&quot;\xc3\xa5&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
-</span><span class="">  748: 		[&quot;\xc3\xa9&quot;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  749: 		[&quot;\xc3\xaf&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
-</span><span class="">  750: 		[&quot;\xc3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn;
-</span><span class="">  751: 		[&quot;\xc5\xa1&quot;, &#39;&amp;#x161;&#39;],
-</span><span class="">  752: 		[&quot;\xc4\x8d&quot;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  753: 		[&quot;\xc5\xbd&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
-</span><span class="">  754: 		[&quot;\xc5\xbe&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
-</span><span class="">  755: 		[&quot;\xc3\x96&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
-</span><span class="">  756: 		[&quot;\xc3\x9e&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  757: 		[&quot;\xc3\x9f&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
-</span><span class="">  758: 		[&quot;\xc3\xa2&quot;, &#39;&amp;#x0E2;&#39;],	# &Atilde;&cent;
-</span><span class="">  759: 		[&quot;\xc3\xad&quot;, &#39;&amp;#x0ED;&#39;],	# &Atilde;&shy;
-</span><span class="">  760: 		[&quot;\xc3\xa4&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  761: 		[&quot;\xc3\xa7&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
-</span><span class="">  762: 		[&quot;\xc3\xb0&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  763: 		[&quot;\xc3\xb3&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
-</span><span class="">  764: 		[&quot;\xc3\xb8&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  765: 		[&quot;\xc3\xbc&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
-</span><span class="">  766: 		[&quot;\xc3\xbe&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  767: 		[&quot;\xc3\xa8&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
-</span><span class="">  768: 		[&quot;\xc3\xee&quot;, &#39;&amp;#x0EE;&#39;],
-</span><span class="">  769: 		[&quot;\xc3\xb4&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
-</span><span class="">  770: 		[&quot;\xc3\xb6&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
-</span><span class="">  771: 		[&quot;\xc3\x89&quot;, &#39;&amp;#x0C9;&#39;],
-</span><span class="">  772: 		[&quot;\xc3\xaa&quot;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  773: 		[&quot;\xc3\xab&quot;, &#39;&amp;#x0EB;&#39;],	# eumlaut
-</span><span class="">  774: 		[&quot;\xc3\xba&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
-</span><span class="">  775: 		[&quot;\xc3\xbb&quot;, &#39;&amp;#x0BB;&#39;],	# &Atilde;&raquo; - ucirc
-</span><span class="">  776: 		[&quot;\xc5\x9b&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155; - sacute
-</span><span class="">  777: 		[&quot;\xc5\xa0&quot;, &#39;&amp;#x160;&#39;],
-</span><span class="">  778: 		[&quot;\xe2\x80\x93&quot;, &#39;-&#39;],
-</span><span class="">  779: 		[&quot;\xe2\x80\x94&quot;, &#39;-&#39;],
-</span><span class="">  780: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  781: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  782: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
-</span><span class="">  783: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  784: 		[&quot;\xe3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn; - what&#39;s this one?
-</span><span class="">  785: 
-</span><span class="">  786: 	# $string =~ s/\xe4\x8d/&amp;#x10D;/g;	# ? ACOM strangeness
-</span><span class="">  787: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
-</span><span class="">  788: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
-</span><span class="">  789: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
-</span><span class="">  790: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
-</span><span class="">  791: 
-</span><span class="">  792: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
-</span><span class="">  793: 		[&quot;\N{U+010D}&quot;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  794: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
-</span><span class="">  795: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;#x0AE;&#39;],	# &Acirc;&reg;
-</span><span class="">  796: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;#x0B5;&#39;],	# &Acirc;&micro;
-</span><span class="">  797: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  798: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  799: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  800: 		[&quot;\N{U+00E0}&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  801: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  802: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
-</span><span class="">  803: 		[&quot;\N{U+00EA}&quot;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  804: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;#x0ED;&#39;],
-</span><span class="">  805: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;#x0EE;&#39;],
-</span><span class="">  806: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  807: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;#x0C9;&#39;],
-</span><span class="">  808: 		[&quot;\N{U+017D}&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
-</span><span class="">  809: 		[&quot;\N{U+017E}&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
-</span><span class="">  810: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
-</span><span class="">  811: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
-</span><span class="">  812: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl; - aacute
-</span><span class="">  813: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;#x0E2;&#39;],
-</span><span class="">  814: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
-</span><span class="">  815: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
-</span><span class="">  816: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  817: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;#x0F1;&#39;],	# &Atilde;&plusmn;
-</span><span class="">  818: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
-</span><span class="">  819: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
-</span><span class="">  820: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
-</span><span class="">  821: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  822: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
-</span><span class="">  823: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
-</span><span class="">  824: 		[&quot;\N{U+015B}&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155;
-</span><span class="">  825: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  826: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  827: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  828: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  829: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  830: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  831: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  832: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
-</span><span class="">  833: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;#x0EB;&#39;],	# &Atilde;&laquo;
-</span><span class="">  834: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;#x0FB;&#39;],	# &Atilde;&raquo;
-</span><span class="">  835: 		[&quot;\N{U+0160}&quot;, &#39;&amp;#x160;&#39;],
-</span><span class="">  836: 		[&quot;\N{U+0161}&quot;, &#39;&amp;#x161;&#39;],
-</span><span class="">  837: 		[&quot;\N{U+00A3}&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
-</span><span class="">  838: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;#x0A9;&#39;],	# &Acirc;&copy;
-</span><span class="">  839: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  840: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  841: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  842: 		[&quot;\N{U+2013}&quot;, &#39;-&#39;],
-</span><span class="">  843: 		[&quot;\N{U+2014}&quot;, &#39;-&#39;],
-</span><span class="">  844: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  845: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  846: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  847: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
-</span><span class="">  848: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
-</span><span class="">  849: 		[&quot;\N{U+2122}&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent;
-</span><span class="">  850: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent; UTF-8
-</span><span class="">  851: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
-</span><span class="">  852: 	);
-</span><span class="">  853: 
-</span><span class="">  854: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  855: 
-</span><span class="">  856: 	# utf8::encode($string);
-</span><span class="">  857: 	# $string =~ s/&Aring;&iexcl;/&amp;s#x161;/g;
-</span><span class="">  858: 	# $string =~ s/&Auml;&#141;/&amp;#x10D;/g;
-</span><span class="">  859: 	# $string =~ s/&Aring;&frac34;/&amp;z#x17E;/g;
-</span><span class="">  860: 	# $string =~ s/&Atilde;&copy;/&amp;#x0E9;/g;
-</span><span class="">  861: 	# $string =~ s/&Atilde;&#150;/&amp;#x0D6;/g;
-</span><span class="">  862: 	# $string =~ s/&Atilde;&sect;/&amp;#x0E7;/g;
-</span><span class="">  863: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
-</span><span class="">  864: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
-</span><span class="">  865: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
-</span><span class="">  866: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
-</span><span class="">  867: 	# $string =~ s/\N{U+00D6}/&amp;#x0D6;/g;	# &Atilde;&#150;
-</span><span class="">  868: 	# $string =~ s/\N{U+00E7}/&amp;#x0E7;/g;	# &Atilde;&sect;
-</span><span class="">  869: 
-</span><span class="">  870: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
-</span><span class="">  871: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  872: 	# print STDERR &quot;\n&quot;;
-</span><span class="">  873: 
-</span><span class="">  874: 	# utf8::decode($string);
-</span><span class="">  875: 
-</span><span class="">  876: 	# $string =~ s/[&#39;\x98]/&amp;#039;/g;
-</span><span class="">  877: 	@byte_map = (
-</span><span class="">  878: 		[&quot;&#39;&quot;, &#39;&amp;#039;&#39;],
-</span><span class="">  879: 		[&quot;\x98&quot;, &#39;&amp;#039;&#39;],
-</span><span class="">  880: 		[&#39;&Acirc;&copy;&#39;, &#39;&amp;#x0A9;&#39;],
-</span><span class="">  881: 		[&#39;&Acirc;&ordf;&#39;, &#39;&amp;#x0AA;&#39;],
-</span><span class="">  882: 		[&#39;&Acirc;&reg;&#39;, &#39;&amp;#x0AE;&#39;],
-</span><span class="">  883: 		[&#39;&Atilde;&yen;&#39;, &#39;&amp;#x0E5;&#39;],
-</span><span class="">  884: 		[&#39;&Aring;&iexcl;&#39;, &#39;&amp;#x161;&#39;],
-</span><span class="">  885: 		[&#39;&Auml;&#141;&#39;, &#39;&amp;#x10D;&#39;],
-</span><span class="">  886: 		[&#39;&Aring;&frac12;&#39;, &#39;&amp;#x17D;&#39;],
-</span><span class="">  887: 		[&#39;&Aring;&frac34;&#39;, &#39;&amp;#x17E;&#39;],
-</span><span class="">  888: 		[&#39;&Acirc;&pound;&#39;, &#39;&amp;#x0A3;&#39;],
-</span><span class="">  889: 		[&#39;&Acirc;&micro;&#39;, &#39;&amp;#x0B5;&#39;],
-</span><span class="">  890: 		[&#39;&Atilde;&nbsp;&#39;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
-</span><span class="">  891: 		[&#39;&Atilde;&iexcl;&#39;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
-</span><span class="">  892: 		[&#39;&Atilde;&cent;&#39;, &#39;&amp;#x0E2;&#39;],
-</span><span class="">  893: 		[&#39;&Atilde;&curren;&#39;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
-</span><span class="">  894: 		[&#39;&Atilde;&#129;&#39;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
-</span><span class="">  895: 		[&#39;&Atilde;&#150;&#39;, &#39;&amp;#x0D6;&#39;],
-</span><span class="">  896: 		[&#39;&Atilde;&#159;&#39;, &#39;&amp;#x0DF;&#39;],
-</span><span class="">  897: 		[&#39;&Atilde;&sect;&#39;, &#39;&amp;#x0E7;&#39;],
-</span><span class="">  898: 		[&#39;&Atilde;&uml;&#39;, &#39;&amp;#x0E8;&#39;],
-</span><span class="">  899: 		[&#39;&Atilde;&copy;&#39;, &#39;&amp;#x0E9;&#39;],
-</span><span class="">  900: 		[&#39;&Atilde;&ordf;&#39;, &#39;&amp;#x0EA;&#39;],
-</span><span class="">  901: 		[&#39;&Atilde;&laquo;&#39;, &#39;&amp;#x0EB;&#39;],
-</span><span class="">  902: 		[&#39;&Atilde;&shy;&#39;, &#39;&amp;#x0ED;&#39;],
-</span><span class="">  903: 		[&#39;&Atilde;&macr;&#39;, &#39;&amp;#x0EF;&#39;],
-</span><span class="">  904: 		[&#39;&Atilde;&#142;&#39;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
-</span><span class="">  905: 		[&#39;&Atilde;&#158;&#39;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
-</span><span class="">  906: 		[&#39;&Atilde;&deg;&#39;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
-</span><span class="">  907: 		[&#39;&Atilde;&cedil;&#39;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
-</span><span class="">  908: 		[&#39;&Atilde;&raquo;&#39;, &#39;&amp;#x0FB;&#39;],
-</span><span class="">  909: 		[&#39;&Atilde;&plusmn;&#39;, &#39;&amp;#x0F1;&#39;],
-</span><span class="">  910: 		[&#39;&Atilde;&ordm;&#39;, &#39;&amp;#x0FA;&#39;],
-</span><span class="">  911: 		[&#39;&Atilde;&frac14;&#39;, &#39;&amp;#x0FC;&#39;],
-</span><span class="">  912: 		[&#39;&Atilde;&frac34;&#39;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
-</span><span class="">  913: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  914: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  915: 		[&#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  916: 		[&#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39;],
-</span><span class="">  917: 		[&#39;&acirc;&#128;&#148;&#39;, &#39;-&#39;],
-</span><span class="">  918: 		[&#39;&acirc;&#128;&#147;&#39;, &#39;-&#39;],
-</span><span class="">  919: 		[&#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39;],
-</span><span class="">  920: 		[&#39;&acirc;&#132;&cent;&#39;, &#39;&amp;#x2122;&#39;],
-</span><span class="">  921: 		[&#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39;],
-</span><span class="">  922: 		[&quot;\x80\$&quot;, &#39; &#39;],
-</span><span class="">  923: 	);
-</span><span class="">  924: 
-</span><span class="">  925: 	$string = _sub_map(\$string, \@byte_map);
-</span><span class="">  926: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  927: 	# if($string =~ /^Maria\(/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  928: 		# print STDERR (unpack &#39;H*&#39;, $string);
-</span><span class="">  929: 		# print STDERR __LINE__, &#39;: &#39;;
-</span><span class="">  930: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
-</span><span class="">  931: 		# print STDERR &quot;\n&quot;;
-</span><span class="">  932: 		# my $i = 0;
-</span><span class="">  933: 		# while((my @call_details = caller($i++))) {
-</span><span class="">  934: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
-</span><span class="">  935: 		# }
-</span><span class="">  936: 		# die $string;
-</span><span class="">  937: 	# }
-</span><span class="">  938: 
-</span><span class="">  939: 	if($string =~ /[^[:ascii:]]/) {
-</span><span class="">  940: 		$complain-&gt;(&quot;TODO: wide_to_xml($string)&quot;) if($complain);
-</span><span class="">  941: 		# Sanitize non-ASCII to hex tokens before embedding in the error message
-</span><span class="">  942: 		$string =~ s{
-</span><span class="">  943: 				([^[:ascii:]])
-</span><span class="">  944: 			}{
-</span><span class="">  945: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&#39;%04X&#39;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  946: 			}gex;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  947: 		carp &quot;TODO: wide_to_xml($string)&quot;;
-</span><span class="">  948: 		croak &quot;BUG: wide_to_xml($string)&quot;;
-</span><span class="">  949: 	}
-</span><span class="">  950: 	return $string;
-</span><span class="">  951: }
-</span><span class="">  952: 
-</span><span class="">  953: # _sub_map -- apply a list of [from, to] substitutions in a single pass.
-</span><span class="">  954: #
-</span><span class="">  955: # Purpose:    Replace every occurrence of each &#39;from&#39; key with its &#39;to&#39; value.
-</span><span class="">  956: #             Longer keys take priority over shorter ones (longest-match-first).
-</span><span class="">  957: # Entry:      $_[0] scalar-ref to string; $_[1] arrayref of [from, to] pairs.
-</span><span class="">  958: #             Duplicate &#39;from&#39; keys: the first definition wins.
-</span><span class="">  959: # Exit:       Returns a new string (the scalar-ref argument is not modified).
-</span><span class="">  960: # Side Effects: None.
-</span><span class="">  961: sub _sub_map
-</span><span class="">  962: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">963 → 975 → 979</span></span>  963: 	my $string   = ${$_[0]};
-</span><span class="">  964: 	my $byte_map = $_[1];
-</span><span class="">  965: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  966: 	# Build the alternation regex, longest key first to prevent partial matches
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  967: 	my $pattern = join &#39;|&#39;,
-</span><span class="">  968: 		map  { quotemeta($_-&gt;[0]) }
-</span><span class="">  969: 		sort { length($b-&gt;[0]) &lt;=&gt; length($a-&gt;[0]) }
-</span><span class="">  970: 		@{$byte_map};
+</span><span class="">  667: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  668: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  669: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  670: 
+</span><span class="">  671: 	# my $i = 0;
+</span><span class="">  672: 	# while((my @call_details = caller($i++))) {
+</span><span class="">  673: 		# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  674: 	# }
+</span><span class="">  675: 
+</span><span class="">  676: 	# SECURITY: skip entity-decoding when keep_hrefs is set &acirc;&#128;&#148; same rationale as
+</span><span class="">  677: 	# wide_to_html: decoded payloads bypass re-escaping and produce XSS output.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">678 → 678 → 687</span></span>  678: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  679: 		$string = HTML::Entities::decode($string);
+</span><span class="">  680: 
+</span><span class="">  681: 		# Decode the four named entities HTML::Entities::decode misses
+</span><span class="">  682: 		$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+</span><span class="">  683: 	}
+</span><span class="">  684: 
+</span><span class="">  685: 	# Possessive ++ prevents O(n^2) backtracking (ReDoS) on inputs like
+</span><span class="">  686: 	# &quot;&amp;aaaaaa...&quot; with no closing semicolon.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">687 → 689 → 702</span></span>  687: 	$string =~ s/&amp;(?![A-Za-z#0-9]++;)/&amp;amp;/g;
+</span><span class="">  688: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  689: 	unless($params-&gt;{&#39;keep_hrefs&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  690: 		# Escape ASCII markup chars; %_HTML_ESCAPE eliminates the /e eval flag.
+</span><span class="">  691: 		$string =~ s/([&lt;&gt;&quot;])/$_HTML_ESCAPE{$1}/g;
+</span><span class="">  692: 	}
+</span><span class="">  693: 
+</span><span class="">  694: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
+</span><span class="">  695: 	# $string =~ s/&acirc;&#128;&#153;/&amp;apos;/g;
+</span><span class="">  696: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
+</span><span class="">  697: 	# $string =~ s/&acirc;&#128;&#152;/&amp;apos;/g;
+</span><span class="">  698: 	# $string =~ s/\x98/&amp;apos;/g;
+</span><span class="">  699: 	# $string =~ s/[&#39;&acirc;&#128;&#152;&acirc;&#128;&#153;&acirc;&#128;&#152;\x98]/&amp;apos;/g;
+</span><span class="">  700: 
+</span><span class="">  701: 	# Table of byte-sequences-&gt;entities
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">702 → 747 → 755</span></span>  702: 	my @byte_map = (
+</span><span class="">  703: 		[ &quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#156;
+</span><span class="">  704: 		[ &quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39; ],	# &acirc;&#128;&#157;
+</span><span class="">  705: 		[ &#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39; ],	# U+201C
+</span><span class="">  706: 		[ &#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39; ],	# U+201D
+</span><span class="">  707: 		[ &quot;\xe2\x80\x93&quot;, &#39;-&#39; ],	# ndash
+</span><span class="">  708: 		[ &quot;\xe2\x80\x94&quot;, &#39;-&#39; ],	# mdash
+</span><span class="">  709: 		[ &quot;\xe2\x80\x98&quot;, &#39;&amp;apos;&#39; ],	# &acirc;&#128;&#152;
+</span><span class="">  710: 		[ &quot;\xe2\x80\x99&quot;, &#39;&amp;apos;&#39; ],	# &acirc;&#128;&#153;
+</span><span class="">  711: 		[ &quot;\xe2\x80\xA6&quot;, &#39;...&#39; ],	# &acirc;&#128;&brvbar;
+</span><span class="">  712: 		[ &quot;&#39;&quot;, &#39;&amp;apos;&#39; ],
+</span><span class="">  713: 		[ &#39;&acirc;&#128;&#152;&#39;, &#39;&amp;apos;&#39; ],
+</span><span class="">  714: 		[ &#39;&acirc;&#128;&#153;&#39;, &#39;&amp;apos;&#39; ],
+</span><span class="">  715: 		[ &#39;&acirc;&#128;&#152;&#39;, &#39;&amp;apos;&#39; ],
+</span><span class="">  716: 		[ &quot;\x98&quot;, &#39;&amp;apos;&#39; ],
+</span><span class="">  717: 	);
+</span><span class="">  718: 
+</span><span class="">  719: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  720: 
+</span><span class="">  721: 	# DEAD CODE: the %entity_map below has keys that are multi-character HTML
+</span><span class="">  722: 	# entity strings (e.g. &#39;&amp;copy;&#39;, &#39;&amp;Aacute;&#39;).  The s{(.)}{...}gex loop
+</span><span class="">  723: 	# that follows matches one character at a time; a single char can never
+</span><span class="">  724: 	# equal a multi-char key, so the true branch is unreachable.
+</span><span class="">  725: 	# By the time the string reaches here, HTML::Entities::decode has already
+</span><span class="">  726: 	# converted all recognised named entities to their Unicode equivalents,
+</span><span class="">  727: 	# which the byte_map passes below encode correctly.
+</span><span class="">  728: 	# Additional bugs in the removed block: &#39;&amp;uacute;&#39; =&gt; &#39;&amp;#0FA;&#39; (decimal,
+</span><span class="">  729: 	# not hex) and &#39;&amp;ucirc;&#39; =&gt; &#39;&amp;#x0F4;&#39; (maps to o-circumflex, not u-circumflex).
+</span><span class="">  730: 	# This block has been commented out to remove dead code and reach 100%
+</span><span class="">  731: 	# branch coverage.  See t/extended_tests.t section 3 for validation.
+</span><span class="">  732: 	#
+</span><span class="">  733: 	# %entity_map = (
+</span><span class="">  734: 	# 	&#39;&amp;copy;&#39; =&gt; &#39;&amp;#x0A9;&#39;,
+</span><span class="">  735: 	# 	&#39;&amp;Aacute;&#39; =&gt; &#39;&amp;#x0C1;&#39;,
+</span><span class="">  736: 	# 	&#39;&amp;ccaron;&#39; =&gt; &#39;&amp;#x10D;&#39;,
+</span><span class="">  737: 	# 	...
+</span><span class="">  738: 	# 	&#39;&amp;excl;&#39; =&gt; &#39;!&#39;,
+</span><span class="">  739: 	# );
+</span><span class="">  740: 	# $string =~ s{(.)}{
+</span><span class="">  741: 	# 	my $cp = $1;
+</span><span class="">  742: 	# 	exists $entity_map{$cp}
+</span><span class="">  743: 	# 		? $entity_map{$cp}
+</span><span class="">  744: 	# 		: $cp
+</span><span class="">  745: 	# }gex;
+</span><span class="">  746: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  747: 	if($string !~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  748: 		return $string;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  749: 	}
+</span><span class="">  750: 
+</span><span class="">  751: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  752: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  753: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  754: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">755 → 958 → 969</span></span>  755: 	@byte_map = (
+</span><span class="">  756: 		[&quot;\xc2\xa0&quot;, &#39; &#39;],	# Non breaking space
+</span><span class="">  757: 		[&quot;\xc2\xa3&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
+</span><span class="">  758: 		[&quot;\xc2\xa9&quot;, &#39;&amp;#x0A9;&#39;],
+</span><span class="">  759: 		[&quot;\xc2\xaa&quot;, &#39;&amp;#x0AA;&#39;],	# &Acirc;&ordf;
+</span><span class="">  760: 		[&quot;\xc2\xab&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  761: 		[&quot;\xc2\xae&quot;, &#39;&amp;#x0AE;&#39;],
+</span><span class="">  762: 		[&quot;\xc3\x81&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  763: 		[&quot;\xc3\x8e&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  764: 		[&quot;\xc3\xa0&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  765: 		[&quot;\xc3\xa1&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  766: 		[&quot;\xc3\xa5&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
+</span><span class="">  767: 		[&quot;\xc3\xa9&quot;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  768: 		[&quot;\xc3\xaf&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
+</span><span class="">  769: 		[&quot;\xc3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn;
+</span><span class="">  770: 		[&quot;\xc5\xa1&quot;, &#39;&amp;#x161;&#39;],
+</span><span class="">  771: 		[&quot;\xc4\x8d&quot;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  772: 		[&quot;\xc5\xbd&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
+</span><span class="">  773: 		[&quot;\xc5\xbe&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
+</span><span class="">  774: 		[&quot;\xc3\x96&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
+</span><span class="">  775: 		[&quot;\xc3\x9e&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  776: 		[&quot;\xc3\x9f&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
+</span><span class="">  777: 		[&quot;\xc3\xa2&quot;, &#39;&amp;#x0E2;&#39;],	# &Atilde;&cent;
+</span><span class="">  778: 		[&quot;\xc3\xad&quot;, &#39;&amp;#x0ED;&#39;],	# &Atilde;&shy;
+</span><span class="">  779: 		[&quot;\xc3\xa4&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  780: 		[&quot;\xc3\xa7&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
+</span><span class="">  781: 		[&quot;\xc3\xb0&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  782: 		[&quot;\xc3\xb3&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
+</span><span class="">  783: 		[&quot;\xc3\xb8&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  784: 		[&quot;\xc3\xbc&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
+</span><span class="">  785: 		[&quot;\xc3\xbe&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  786: 		[&quot;\xc3\xa8&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
+</span><span class="">  787: 		[&quot;\xc3\xee&quot;, &#39;&amp;#x0EE;&#39;],
+</span><span class="">  788: 		[&quot;\xc3\xb4&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
+</span><span class="">  789: 		[&quot;\xc3\xb6&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
+</span><span class="">  790: 		[&quot;\xc3\x89&quot;, &#39;&amp;#x0C9;&#39;],
+</span><span class="">  791: 		[&quot;\xc3\xaa&quot;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  792: 		[&quot;\xc3\xab&quot;, &#39;&amp;#x0EB;&#39;],	# eumlaut
+</span><span class="">  793: 		[&quot;\xc3\xba&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
+</span><span class="">  794: 		[&quot;\xc3\xbb&quot;, &#39;&amp;#x0BB;&#39;],	# &Atilde;&raquo; - ucirc
+</span><span class="">  795: 		[&quot;\xc5\x9b&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155; - sacute
+</span><span class="">  796: 		[&quot;\xc5\xa0&quot;, &#39;&amp;#x160;&#39;],
+</span><span class="">  797: 		[&quot;\xe2\x80\x93&quot;, &#39;-&#39;],
+</span><span class="">  798: 		[&quot;\xe2\x80\x94&quot;, &#39;-&#39;],
+</span><span class="">  799: 		[&quot;\xe2\x80\x9c&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  800: 		[&quot;\xe2\x80\x9d&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  801: 		[&quot;\xe2\x80\xa6&quot;, &#39;...&#39;],
+</span><span class="">  802: 		[&quot;\xe2\x97\x8f&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  803: 		[&quot;\xe3\xb1&quot;, &#39;&amp;#x0F1;&#39;],	# ntilde &Atilde;&plusmn; - what&#39;s this one?
+</span><span class="">  804: 
+</span><span class="">  805: 	# $string =~ s/\xe4\x8d/&amp;#x10D;/g;	# ? ACOM strangeness
+</span><span class="">  806: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
+</span><span class="">  807: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
+</span><span class="">  808: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
+</span><span class="">  809: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
+</span><span class="">  810: 
+</span><span class="">  811: 		[&quot;\N{U+00A0}&quot;, &#39; &#39;],
+</span><span class="">  812: 		[&quot;\N{U+010D}&quot;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  813: 		[&quot;\N{U+00AB}&quot;, &#39;&amp;quot;&#39;],	# &Acirc;&laquo;
+</span><span class="">  814: 		[&quot;\N{U+00AE}&quot;, &#39;&amp;#x0AE;&#39;],	# &Acirc;&reg;
+</span><span class="">  815: 		[&quot;\N{U+00B5}&quot;, &#39;&amp;#x0B5;&#39;],	# &Acirc;&micro;
+</span><span class="">  816: 		[&quot;\N{U+00C1}&quot;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  817: 		[&quot;\N{U+00CE}&quot;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  818: 		[&quot;\N{U+00DE}&quot;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  819: 		[&quot;\N{U+00E0}&quot;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  820: 		[&quot;\N{U+00E4}&quot;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  821: 		[&quot;\N{U+00E5}&quot;, &#39;&amp;#x0E5;&#39;],	# &Atilde;&yen;
+</span><span class="">  822: 		[&quot;\N{U+00EA}&quot;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  823: 		[&quot;\N{U+00ED}&quot;, &#39;&amp;#x0ED;&#39;],
+</span><span class="">  824: 		[&quot;\N{U+00EE}&quot;, &#39;&amp;#x0EE;&#39;],
+</span><span class="">  825: 		[&quot;\N{U+00FE}&quot;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  826: 		[&quot;\N{U+00C9}&quot;, &#39;&amp;#x0C9;&#39;],
+</span><span class="">  827: 		[&quot;\N{U+017D}&quot;, &#39;&amp;#x17D;&#39;],	# &Aring;&frac12;
+</span><span class="">  828: 		[&quot;\N{U+017E}&quot;, &#39;&amp;#x17E;&#39;],	# &Aring;&frac34;
+</span><span class="">  829: 		[&quot;\N{U+00D6}&quot;, &#39;&amp;#x0D6;&#39;],	# &Atilde;&#150;
+</span><span class="">  830: 		[&quot;\N{U+00DF}&quot;, &#39;&amp;#x0DF;&#39;],	# &Atilde;&#159;
+</span><span class="">  831: 		[&quot;\N{U+00E1}&quot;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl; - aacute
+</span><span class="">  832: 		[&quot;\N{U+00E2}&quot;, &#39;&amp;#x0E2;&#39;],
+</span><span class="">  833: 		[&quot;\N{U+00E8}&quot;, &#39;&amp;#x0E8;&#39;],	# &Atilde;&uml;
+</span><span class="">  834: 		[&quot;\N{U+00EF}&quot;, &#39;&amp;#x0EF;&#39;],	# &Atilde;&macr;
+</span><span class="">  835: 		[&quot;\N{U+00F0}&quot;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  836: 		[&quot;\N{U+00F1}&quot;, &#39;&amp;#x0F1;&#39;],	# &Atilde;&plusmn;
+</span><span class="">  837: 		[&quot;\N{U+00F3}&quot;, &#39;&amp;#x0F3;&#39;],	# &Atilde;&sup3;
+</span><span class="">  838: 		[&quot;\N{U+00F4}&quot;, &#39;&amp;#x0F4;&#39;],	# &Atilde;&acute;
+</span><span class="">  839: 		[&quot;\N{U+00F6}&quot;, &#39;&amp;#x0F6;&#39;],	# &Atilde;&para;
+</span><span class="">  840: 		[&quot;\N{U+00F8}&quot;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  841: 		[&quot;\N{U+00FA}&quot;, &#39;&amp;#x0FA;&#39;],	# &Atilde;&ordm;
+</span><span class="">  842: 		[&quot;\N{U+00FC}&quot;, &#39;&amp;#x0FC;&#39;],	# &Atilde;&frac14;
+</span><span class="">  843: 		[&quot;\N{U+015B}&quot;, &#39;&amp;#x15B;&#39;],	# &Aring;&#155;
+</span><span class="">  844: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  845: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  846: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  847: 		[&quot;\N{U+00E9}&quot;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  848: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  849: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  850: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  851: 		[&quot;\N{U+00E7}&quot;, &#39;&amp;#x0E7;&#39;],	# &Atilde;&sect;
+</span><span class="">  852: 		[&quot;\N{U+00EB}&quot;, &#39;&amp;#x0EB;&#39;],	# &Atilde;&laquo;
+</span><span class="">  853: 		[&quot;\N{U+00FB}&quot;, &#39;&amp;#x0FB;&#39;],	# &Atilde;&raquo;
+</span><span class="">  854: 		[&quot;\N{U+0160}&quot;, &#39;&amp;#x160;&#39;],
+</span><span class="">  855: 		[&quot;\N{U+0161}&quot;, &#39;&amp;#x161;&#39;],
+</span><span class="">  856: 		[&quot;\N{U+00A3}&quot;, &#39;&amp;#x0A3;&#39;],	# &Acirc;&pound;
+</span><span class="">  857: 		[&quot;\N{U+00A9}&quot;, &#39;&amp;#x0A9;&#39;],	# &Acirc;&copy;
+</span><span class="">  858: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  859: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  860: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  861: 		[&quot;\N{U+2013}&quot;, &#39;-&#39;],
+</span><span class="">  862: 		[&quot;\N{U+2014}&quot;, &#39;-&#39;],
+</span><span class="">  863: 		[&quot;\N{U+2018}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  864: 		[&quot;\N{U+2019}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  865: 		[&quot;\N{U+201C}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  866: 		[&quot;\N{U+201D}&quot;, &#39;&amp;quot;&#39;],
+</span><span class="">  867: 		[&quot;\N{U+2026}&quot;, &#39;...&#39;],	# &acirc;&#128;&brvbar;
+</span><span class="">  868: 		[&quot;\N{U+2122}&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent;
+</span><span class="">  869: 		[&quot;\xe2\x84\xa2&quot;, &#39;&amp;#x2122;&#39;],	# &acirc;&#132;&cent; UTF-8
+</span><span class="">  870: 		[&quot;\N{U+25CF}&quot;, &#39;&amp;#x25CF;&#39;],	# &acirc;&#151;&#143;
+</span><span class="">  871: 	);
+</span><span class="">  872: 
+</span><span class="">  873: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  874: 
+</span><span class="">  875: 	# utf8::encode($string);
+</span><span class="">  876: 	# $string =~ s/&Aring;&iexcl;/&amp;s#x161;/g;
+</span><span class="">  877: 	# $string =~ s/&Auml;&#141;/&amp;#x10D;/g;
+</span><span class="">  878: 	# $string =~ s/&Aring;&frac34;/&amp;z#x17E;/g;
+</span><span class="">  879: 	# $string =~ s/&Atilde;&copy;/&amp;#x0E9;/g;
+</span><span class="">  880: 	# $string =~ s/&Atilde;&#150;/&amp;#x0D6;/g;
+</span><span class="">  881: 	# $string =~ s/&Atilde;&sect;/&amp;#x0E7;/g;
+</span><span class="">  882: 	# $string =~ s/\N{U+0161}/&amp;#x161;/g;
+</span><span class="">  883: 	# $string =~ s/\N{U+010D}/&amp;#x10D;/g;
+</span><span class="">  884: 	# $string =~ s/\N{U+017E}/&amp;#x17E;/g;
+</span><span class="">  885: 	# $string =~ s/\N{U+00E9}/&amp;#x0E9;/g;
+</span><span class="">  886: 	# $string =~ s/\N{U+00D6}/&amp;#x0D6;/g;	# &Atilde;&#150;
+</span><span class="">  887: 	# $string =~ s/\N{U+00E7}/&amp;#x0E7;/g;	# &Atilde;&sect;
+</span><span class="">  888: 
+</span><span class="">  889: 	# print STDERR __LINE__, &quot;: ($string)&quot;;
+</span><span class="">  890: 	# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  891: 	# print STDERR &quot;\n&quot;;
+</span><span class="">  892: 
+</span><span class="">  893: 	# utf8::decode($string);
+</span><span class="">  894: 
+</span><span class="">  895: 	# $string =~ s/[&#39;\x98]/&amp;#039;/g;
+</span><span class="">  896: 	@byte_map = (
+</span><span class="">  897: 		[&quot;&#39;&quot;, &#39;&amp;#039;&#39;],
+</span><span class="">  898: 		[&quot;\x98&quot;, &#39;&amp;#039;&#39;],
+</span><span class="">  899: 		[&#39;&Acirc;&copy;&#39;, &#39;&amp;#x0A9;&#39;],
+</span><span class="">  900: 		[&#39;&Acirc;&ordf;&#39;, &#39;&amp;#x0AA;&#39;],
+</span><span class="">  901: 		[&#39;&Acirc;&reg;&#39;, &#39;&amp;#x0AE;&#39;],
+</span><span class="">  902: 		[&#39;&Atilde;&yen;&#39;, &#39;&amp;#x0E5;&#39;],
+</span><span class="">  903: 		[&#39;&Aring;&iexcl;&#39;, &#39;&amp;#x161;&#39;],
+</span><span class="">  904: 		[&#39;&Auml;&#141;&#39;, &#39;&amp;#x10D;&#39;],
+</span><span class="">  905: 		[&#39;&Aring;&frac12;&#39;, &#39;&amp;#x17D;&#39;],
+</span><span class="">  906: 		[&#39;&Aring;&frac34;&#39;, &#39;&amp;#x17E;&#39;],
+</span><span class="">  907: 		[&#39;&Acirc;&pound;&#39;, &#39;&amp;#x0A3;&#39;],
+</span><span class="">  908: 		[&#39;&Acirc;&micro;&#39;, &#39;&amp;#x0B5;&#39;],
+</span><span class="">  909: 		[&#39;&Atilde;&nbsp;&#39;, &#39;&amp;#x0E0;&#39;],	# &Atilde;&nbsp;
+</span><span class="">  910: 		[&#39;&Atilde;&iexcl;&#39;, &#39;&amp;#x0E1;&#39;],	# &Atilde;&iexcl;
+</span><span class="">  911: 		[&#39;&Atilde;&cent;&#39;, &#39;&amp;#x0E2;&#39;],
+</span><span class="">  912: 		[&#39;&Atilde;&curren;&#39;, &#39;&amp;#x0E4;&#39;],	# &Atilde;&curren;
+</span><span class="">  913: 		[&#39;&Atilde;&#129;&#39;, &#39;&amp;#x0C1;&#39;],	# &Atilde;&#129;
+</span><span class="">  914: 		[&#39;&Atilde;&#150;&#39;, &#39;&amp;#x0D6;&#39;],
+</span><span class="">  915: 		[&#39;&Atilde;&#159;&#39;, &#39;&amp;#x0DF;&#39;],
+</span><span class="">  916: 		[&#39;&Atilde;&sect;&#39;, &#39;&amp;#x0E7;&#39;],
+</span><span class="">  917: 		[&#39;&Atilde;&uml;&#39;, &#39;&amp;#x0E8;&#39;],
+</span><span class="">  918: 		[&#39;&Atilde;&copy;&#39;, &#39;&amp;#x0E9;&#39;],
+</span><span class="">  919: 		[&#39;&Atilde;&ordf;&#39;, &#39;&amp;#x0EA;&#39;],
+</span><span class="">  920: 		[&#39;&Atilde;&laquo;&#39;, &#39;&amp;#x0EB;&#39;],
+</span><span class="">  921: 		[&#39;&Atilde;&shy;&#39;, &#39;&amp;#x0ED;&#39;],
+</span><span class="">  922: 		[&#39;&Atilde;&macr;&#39;, &#39;&amp;#x0EF;&#39;],
+</span><span class="">  923: 		[&#39;&Atilde;&#142;&#39;, &#39;&amp;#x0CE;&#39;],	# &Atilde;&#142;
+</span><span class="">  924: 		[&#39;&Atilde;&#158;&#39;, &#39;&amp;#x0DE;&#39;],	# &Atilde;&#158;
+</span><span class="">  925: 		[&#39;&Atilde;&deg;&#39;, &#39;&amp;#x0F0;&#39;],	# &Atilde;&deg;
+</span><span class="">  926: 		[&#39;&Atilde;&cedil;&#39;, &#39;&amp;#x0F8;&#39;],	# &Atilde;&cedil;
+</span><span class="">  927: 		[&#39;&Atilde;&raquo;&#39;, &#39;&amp;#x0FB;&#39;],
+</span><span class="">  928: 		[&#39;&Atilde;&plusmn;&#39;, &#39;&amp;#x0F1;&#39;],
+</span><span class="">  929: 		[&#39;&Atilde;&ordm;&#39;, &#39;&amp;#x0FA;&#39;],
+</span><span class="">  930: 		[&#39;&Atilde;&frac14;&#39;, &#39;&amp;#x0FC;&#39;],
+</span><span class="">  931: 		[&#39;&Atilde;&frac34;&#39;, &#39;&amp;#x0FE;&#39;],	# &Atilde;&frac34;
+</span><span class="">  932: 		[&#39;&acirc;&#128;&#156;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  933: 		[&#39;&acirc;&#128;&#157;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  934: 		[&#39;&Acirc;&laquo;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  935: 		[&#39;&Acirc;&raquo;&#39;, &#39;&amp;quot;&#39;],
+</span><span class="">  936: 		[&#39;&acirc;&#128;&#148;&#39;, &#39;-&#39;],
+</span><span class="">  937: 		[&#39;&acirc;&#128;&#147;&#39;, &#39;-&#39;],
+</span><span class="">  938: 		[&#39;&acirc;&#128;&brvbar;&#39;, &#39;...&#39;],
+</span><span class="">  939: 		[&#39;&acirc;&#132;&cent;&#39;, &#39;&amp;#x2122;&#39;],
+</span><span class="">  940: 		[&#39;&acirc;&#151;&#143;&#39;, &#39;&amp;#x25CF;&#39;],
+</span><span class="">  941: 		[&quot;\x80\$&quot;, &#39; &#39;],
+</span><span class="">  942: 	);
+</span><span class="">  943: 
+</span><span class="">  944: 	$string = _sub_map(\$string, \@byte_map);
+</span><span class="">  945: 
+</span><span class="">  946: 	# if($string =~ /^Maria\(/) {
+</span><span class="">  947: 		# print STDERR (unpack &#39;H*&#39;, $string);
+</span><span class="">  948: 		# print STDERR __LINE__, &#39;: &#39;;
+</span><span class="">  949: 		# print STDERR (sprintf &#39;%v02X&#39;, $string);
+</span><span class="">  950: 		# print STDERR &quot;\n&quot;;
+</span><span class="">  951: 		# my $i = 0;
+</span><span class="">  952: 		# while((my @call_details = caller($i++))) {
+</span><span class="">  953: 			# print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
+</span><span class="">  954: 		# }
+</span><span class="">  955: 		# die $string;
+</span><span class="">  956: 	# }
+</span><span class="">  957: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  958: 	if($string =~ /[^[:ascii:]]/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  959: 		$complain-&gt;(&quot;TODO: wide_to_xml($string)&quot;) if($complain);
+</span><span class="">  960: 		# Sanitize non-ASCII to hex tokens before embedding in the error message
+</span><span class="">  961: 		$string =~ s{
+</span><span class="">  962: 				([^[:ascii:]])
+</span><span class="">  963: 			}{
+</span><span class="">  964: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&#39;%04X&#39;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
+</span><span class="">  965: 			}gex;
+</span><span class="">  966: 		carp &quot;TODO: wide_to_xml($string)&quot;;
+</span><span class="">  967: 		croak &quot;BUG: wide_to_xml($string)&quot;;
+</span><span class="">  968: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  969: 	return $string;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  970: }
 </span><span class="">  971: 
-</span><span class="">  972: 	# Pre-build a hash for O(1) lookup during substitution.
-</span><span class="">  973: 	# Iterate in reverse so that the first definition in @byte_map wins on duplicate keys.
-</span><span class="">  974: 	my %map;
-</span><span class="">  975: 	for my $pair (reverse @{$byte_map}) {
-</span><span class="">  976: 		$map{$pair-&gt;[0]} = $pair-&gt;[1];
-</span><span class="">  977: 	}
-</span><span class="">  978: 
-</span><span class="">  979: 	$string =~ s/($pattern)/$map{$1}/ge;
-</span><span class="">  980: 
-</span><span class="">  981: 	return $string;
-</span><span class="">  982: }
-</span><span class="">  983: 
-</span><span class="">  984: =head1 LIMITATIONS
-</span><span class="">  985: 
-</span><span class="">  986: =over 4
-</span><span class="">  987: 
-</span><span class="">  988: =item Character coverage is hand-maintained
-</span><span class="">  989: 
-</span><span class="">  990: Both functions use explicit byte_map tables.  Characters not listed fall back
-</span><span class="">  991: to C&lt;HTML::Entities::encode_entities_numeric&gt; (HTML only) or trigger a fatal
-</span><span class="">  992: C&lt;BUG:&gt; error (XML).  To add a missing character, extend the appropriate
-</span><span class="">  993: C&lt;@byte_map&gt; array in both the UTF-8-bytes pass and the C&lt;\N{U+...}&gt; pass.
-</span><span class="">  994: 
-</span><span class="">  995: =item No C&lt;&lt; &lt;script&gt; &gt;&gt; / C&lt;&lt; &lt;style&gt; &gt;&gt; awareness
-</span><span class="">  996: 
-</span><span class="">  997: C&lt;wide_to_html&gt; applies entity escaping uniformly; it does not detect or skip
-</span><span class="">  998: content inside C&lt;&lt; &lt;script&gt; &gt;&gt; or C&lt;&lt; &lt;style&gt; &gt;&gt; blocks.
-</span><span class="">  999: Do not feed raw HTML documents through this function expecting semantic
-</span><span class=""> 1000: preservation of embedded scripts.
-</span><span class=""> 1001: 
-</span><span class=""> 1002: =item XML numeric entity format
+</span><span class="">  972: # _sub_map -- apply a list of [from, to] substitutions in a single pass.
+</span><span class="">  973: #
+</span><span class="">  974: # Purpose:    Replace every occurrence of each &#39;from&#39; key with its &#39;to&#39; value.
+</span><span class="">  975: #             Longer keys take priority over shorter ones (longest-match-first).
+</span><span class="">  976: # Entry:      $_[0] scalar-ref to string; $_[1] arrayref of [from, to] pairs.
+</span><span class="">  977: #             Duplicate &#39;from&#39; keys: the first definition wins.
+</span><span class="">  978: # Exit:       Returns a new string (the scalar-ref argument is not modified).
+</span><span class="">  979: # Side Effects: None.
+</span><span class="">  980: sub _sub_map
+</span><span class="">  981: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">982 → 994 → 999</span></span>  982: 	my $string   = ${$_[0]};
+</span><span class="">  983: 	my $byte_map = $_[1];
+</span><span class="">  984: 
+</span><span class="">  985: 	# Build the alternation regex, longest key first to prevent partial matches
+</span><span class="">  986: 	my $pattern = join &#39;|&#39;,
+</span><span class="">  987: 		map  { quotemeta($_-&gt;[0]) }
+</span><span class="">  988: 		sort { length($b-&gt;[0]) &lt;=&gt; length($a-&gt;[0]) }
+</span><span class="">  989: 		@{$byte_map};
+</span><span class="">  990: 
+</span><span class="">  991: 	# Pre-build a hash for O(1) lookup during substitution.
+</span><span class="">  992: 	# Iterate in reverse so that the first definition in @byte_map wins on duplicate keys.
+</span><span class="">  993: 	my %map;
+</span><span class="">  994: 	for my $pair (reverse @{$byte_map}) {
+</span><span class="">  995: 		$map{$pair-&gt;[0]} = $pair-&gt;[1];
+</span><span class="">  996: 	}
+</span><span class="">  997: 
+</span><span class="">  998: 	# No /e flag: hash dereference is a simple value interpolation, not code.
+</span><span class="">  999: 	$string =~ s/($pattern)/$map{$1}/g;
+</span><span class=""> 1000: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1001: 	return $string;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1002: }
 </span><span class=""> 1003: 
-</span><span class=""> 1004: The XML numeric entities produced use a minimal hex representation
-</span><span class=""> 1005: (e.g. C&lt;&amp;#x0E9;&gt;) rather than the canonical 4-digit form (C&lt;&amp;#x00E9;&gt;).
-</span><span class=""> 1006: Both are valid XML 1.0, but consumers that do strict format matching should
-</span><span class=""> 1007: normalise before comparing.
-</span><span class=""> 1008: 
-</span><span class=""> 1009: =item Input encoding assumption
-</span><span class=""> 1010: 
-</span><span class=""> 1011: The module decodes HTML entities first via C&lt;HTML::Entities::decode&gt;, then
-</span><span class=""> 1012: applies byte-level substitutions.  Callers must not pass raw binary data
-</span><span class=""> 1013: (non-UTF-8 byte strings) without first decoding them to Perl&#39;s internal
-</span><span class=""> 1014: Unicode representation; undefined behaviour may result.
-</span><span class=""> 1015: 
-</span><span class=""> 1016: =back
-</span><span class=""> 1017: 
-</span><span class=""> 1018: =head1 SEE ALSO
-</span><span class=""> 1019: 
-</span><span class=""> 1020: =over 4
+</span><span class=""> 1004: =head1 LIMITATIONS
+</span><span class=""> 1005: 
+</span><span class=""> 1006: =over 4
+</span><span class=""> 1007: 
+</span><span class=""> 1008: =item Character coverage is hand-maintained
+</span><span class=""> 1009: 
+</span><span class=""> 1010: Both functions use explicit byte_map tables.  Characters not listed fall back
+</span><span class=""> 1011: to C&lt;HTML::Entities::encode_entities_numeric&gt; (HTML only) or trigger a fatal
+</span><span class=""> 1012: C&lt;BUG:&gt; error (XML).  To add a missing character, extend the appropriate
+</span><span class=""> 1013: C&lt;@byte_map&gt; array in both the UTF-8-bytes pass and the C&lt;\N{U+...}&gt; pass.
+</span><span class=""> 1014: 
+</span><span class=""> 1015: =item No C&lt;&lt; &lt;script&gt; &gt;&gt; / C&lt;&lt; &lt;style&gt; &gt;&gt; awareness
+</span><span class=""> 1016: 
+</span><span class=""> 1017: C&lt;wide_to_html&gt; applies entity escaping uniformly; it does not detect or skip
+</span><span class=""> 1018: content inside C&lt;&lt; &lt;script&gt; &gt;&gt; or C&lt;&lt; &lt;style&gt; &gt;&gt; blocks.
+</span><span class=""> 1019: Do not feed raw HTML documents through this function expecting semantic
+</span><span class=""> 1020: preservation of embedded scripts.
 </span><span class=""> 1021: 
-</span><span class=""> 1022: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Encode-Wide/coverage/&gt;
+</span><span class=""> 1022: =item XML numeric entity format
 </span><span class=""> 1023: 
-</span><span class=""> 1024: =item * L&lt;HTML::Entities&gt;
-</span><span class=""> 1025: 
-</span><span class=""> 1026: =item * L&lt;Encode&gt;
-</span><span class=""> 1027: 
-</span><span class=""> 1028: =item * L&lt;XML::Entities&gt;
-</span><span class=""> 1029: 
-</span><span class=""> 1030: =item * L&lt;Unicode::Escape&gt;
-</span><span class=""> 1031: 
-</span><span class=""> 1032: =item * L&lt;https://www.compart.com/en/unicode/&gt;
-</span><span class=""> 1033: 
-</span><span class=""> 1034: =back
+</span><span class=""> 1024: The XML numeric entities produced use a minimal hex representation
+</span><span class=""> 1025: (e.g. C&lt;&amp;#x0E9;&gt;) rather than the canonical 4-digit form (C&lt;&amp;#x00E9;&gt;).
+</span><span class=""> 1026: Both are valid XML 1.0, but consumers that do strict format matching should
+</span><span class=""> 1027: normalise before comparing.
+</span><span class=""> 1028: 
+</span><span class=""> 1029: =item Input encoding assumption
+</span><span class=""> 1030: 
+</span><span class=""> 1031: The module decodes HTML entities first via C&lt;HTML::Entities::decode&gt;, then
+</span><span class=""> 1032: applies byte-level substitutions.  Callers must not pass raw binary data
+</span><span class=""> 1033: (non-UTF-8 byte strings) without first decoding them to Perl&#39;s internal
+</span><span class=""> 1034: Unicode representation; undefined behaviour may result.
 </span><span class=""> 1035: 
-</span><span class=""> 1036: =head1 SUPPORT
+</span><span class=""> 1036: =back
 </span><span class=""> 1037: 
-</span><span class=""> 1038: This module is provided as-is without any warranty.
+</span><span class=""> 1038: =head1 SEE ALSO
 </span><span class=""> 1039: 
-</span><span class=""> 1040: Please report any bugs or feature requests to C&lt;bug-encode-wide at rt.cpan.org&gt;,
-</span><span class=""> 1041: or through the web interface at
-</span><span class=""> 1042: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide&gt;.
-</span><span class=""> 1043: I will be notified, and then you&#39;ll
-</span><span class=""> 1044: automatically be notified of progress on your bug as I make changes.
+</span><span class=""> 1040: =over 4
+</span><span class=""> 1041: 
+</span><span class=""> 1042: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Encode-Wide/coverage/&gt;
+</span><span class=""> 1043: 
+</span><span class=""> 1044: =item * L&lt;HTML::Entities&gt;
 </span><span class=""> 1045: 
-</span><span class=""> 1046: =head1 FORMAL SPECIFICATION
+</span><span class=""> 1046: =item * L&lt;Encode&gt;
 </span><span class=""> 1047: 
-</span><span class=""> 1048: =head2 wide_to_html
+</span><span class=""> 1048: =item * L&lt;XML::Entities&gt;
 </span><span class=""> 1049: 
-</span><span class=""> 1050: Let S be the input string, S&#39; the output string.
+</span><span class=""> 1050: =item * L&lt;Unicode::Escape&gt;
 </span><span class=""> 1051: 
-</span><span class=""> 1052:     &acirc;&#136;&#128; c &acirc;&#136;&#136; S&#39; : ord(c) &acirc;&#137;&curren; 0x7F                          (ASCII guarantee)
-</span><span class=""> 1053:     S = &quot;&quot;  &acirc;&#159;&sup1;  S&#39; = &quot;&quot;                                 (empty pass-through)
-</span><span class=""> 1054:     keep_hrefs = 0 &acirc;&#159;&sup1; &quot;&lt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &quot;&gt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &acirc;&#136;&#132; bare &quot; in S&#39;
-</span><span class=""> 1055:     keep_apos = 0  &acirc;&#159;&sup1; &acirc;&#136;&#132; bare apostrophe in S&#39;
-</span><span class=""> 1056:     &Acirc;&not;&acirc;&#136;&#131; bare &amp; in S&#39; (&amp; only appears as part of a valid entity)
-</span><span class=""> 1057:     string = undef &acirc;&#159;&sup1; die(&quot;Usage: wide_to_html() string not set&quot;)
-</span><span class=""> 1058: 
-</span><span class=""> 1059: =head2 wide_to_xml
-</span><span class=""> 1060: 
-</span><span class=""> 1061: Let S be the input string, S&#39; the output string.
-</span><span class=""> 1062: 
-</span><span class=""> 1063:     &acirc;&#136;&#128; c &acirc;&#136;&#136; S&#39; : ord(c) &acirc;&#137;&curren; 0x7F                          (ASCII guarantee)
-</span><span class=""> 1064:     S = &quot;&quot;  &acirc;&#159;&sup1;  S&#39; = &quot;&quot;                                 (empty pass-through)
-</span><span class=""> 1065:     keep_hrefs = 0 &acirc;&#159;&sup1; &quot;&lt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &quot;&gt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &acirc;&#136;&#132; bare &quot; in S&#39;
-</span><span class=""> 1066:     U+2013 &acirc;&#136;&#136; S &acirc;&#159;&sup1; &quot;-&quot; &acirc;&#136;&#136; S&#39; &acirc;&#136;&sect; &quot;&acirc;&#128;&#147;&quot; &acirc;&#136;&#137; S&#39;                (en-dash collapsed)
-</span><span class=""> 1067:     U+2014 &acirc;&#136;&#136; S &acirc;&#159;&sup1; &quot;-&quot; &acirc;&#136;&#136; S&#39; &acirc;&#136;&sect; &quot;&acirc;&#128;&#148;&quot; &acirc;&#136;&#137; S&#39;                (em-dash collapsed)
-</span><span class=""> 1068:     &Acirc;&not;&acirc;&#136;&#131; bare &amp; in S&#39; (&amp; only appears as part of a valid entity)
-</span><span class=""> 1069:     string = undef &acirc;&#159;&sup1; die(&quot;Usage: string not set&quot;)
-</span><span class=""> 1070: 
-</span><span class=""> 1071: =head1 AUTHOR
-</span><span class=""> 1072: 
-</span><span class=""> 1073: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
-</span><span class=""> 1074: 
-</span><span class=""> 1075: =head1 LICENCE AND COPYRIGHT
-</span><span class=""> 1076: 
-</span><span class=""> 1077: Copyright 2025-2026 Nigel Horne.
+</span><span class=""> 1052: =item * L&lt;https://www.compart.com/en/unicode/&gt;
+</span><span class=""> 1053: 
+</span><span class=""> 1054: =back
+</span><span class=""> 1055: 
+</span><span class=""> 1056: =head1 SUPPORT
+</span><span class=""> 1057: 
+</span><span class=""> 1058: This module is provided as-is without any warranty.
+</span><span class=""> 1059: 
+</span><span class=""> 1060: Please report any bugs or feature requests to C&lt;bug-encode-wide at rt.cpan.org&gt;,
+</span><span class=""> 1061: or through the web interface at
+</span><span class=""> 1062: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide&gt;.
+</span><span class=""> 1063: I will be notified, and then you&#39;ll
+</span><span class=""> 1064: automatically be notified of progress on your bug as I make changes.
+</span><span class=""> 1065: 
+</span><span class=""> 1066: =head1 FORMAL SPECIFICATION
+</span><span class=""> 1067: 
+</span><span class=""> 1068: =head2 wide_to_html
+</span><span class=""> 1069: 
+</span><span class=""> 1070: Let S be the input string, S&#39; the output string.
+</span><span class=""> 1071: 
+</span><span class=""> 1072:     &acirc;&#136;&#128; c &acirc;&#136;&#136; S&#39; : ord(c) &acirc;&#137;&curren; 0x7F                          (ASCII guarantee)
+</span><span class=""> 1073:     S = &quot;&quot;  &acirc;&#159;&sup1;  S&#39; = &quot;&quot;                                 (empty pass-through)
+</span><span class=""> 1074:     keep_hrefs = 0 &acirc;&#159;&sup1; &quot;&lt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &quot;&gt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &acirc;&#136;&#132; bare &quot; in S&#39;
+</span><span class=""> 1075:     keep_apos = 0  &acirc;&#159;&sup1; &acirc;&#136;&#132; bare apostrophe in S&#39;
+</span><span class=""> 1076:     &Acirc;&not;&acirc;&#136;&#131; bare &amp; in S&#39; (&amp; only appears as part of a valid entity)
+</span><span class=""> 1077:     string = undef &acirc;&#159;&sup1; die(&quot;Usage: wide_to_html() string not set&quot;)
 </span><span class=""> 1078: 
-</span><span class=""> 1079: Usage is subject to the GPL2 licence terms.
-</span><span class=""> 1080: If you use it,
-</span><span class=""> 1081: please let me know.
+</span><span class=""> 1079: =head2 wide_to_xml
+</span><span class=""> 1080: 
+</span><span class=""> 1081: Let S be the input string, S&#39; the output string.
 </span><span class=""> 1082: 
-</span><span class=""> 1083: =cut
-</span><span class=""> 1084: 
-</span><span class=""> 1085: 1;
+</span><span class=""> 1083:     &acirc;&#136;&#128; c &acirc;&#136;&#136; S&#39; : ord(c) &acirc;&#137;&curren; 0x7F                          (ASCII guarantee)
+</span><span class=""> 1084:     S = &quot;&quot;  &acirc;&#159;&sup1;  S&#39; = &quot;&quot;                                 (empty pass-through)
+</span><span class=""> 1085:     keep_hrefs = 0 &acirc;&#159;&sup1; &quot;&lt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &quot;&gt;&quot; &acirc;&#136;&#137; S&#39; &acirc;&#136;&sect; &acirc;&#136;&#132; bare &quot; in S&#39;
+</span><span class=""> 1086:     U+2013 &acirc;&#136;&#136; S &acirc;&#159;&sup1; &quot;-&quot; &acirc;&#136;&#136; S&#39; &acirc;&#136;&sect; &quot;&acirc;&#128;&#147;&quot; &acirc;&#136;&#137; S&#39;                (en-dash collapsed)
+</span><span class=""> 1087:     U+2014 &acirc;&#136;&#136; S &acirc;&#159;&sup1; &quot;-&quot; &acirc;&#136;&#136; S&#39; &acirc;&#136;&sect; &quot;&acirc;&#128;&#148;&quot; &acirc;&#136;&#137; S&#39;                (em-dash collapsed)
+</span><span class=""> 1088:     &Acirc;&not;&acirc;&#136;&#131; bare &amp; in S&#39; (&amp; only appears as part of a valid entity)
+</span><span class=""> 1089:     string = undef &acirc;&#159;&sup1; die(&quot;Usage: string not set&quot;)
+</span><span class=""> 1090: 
+</span><span class=""> 1091: =head1 AUTHOR
+</span><span class=""> 1092: 
+</span><span class=""> 1093: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
+</span><span class=""> 1094: 
+</span><span class=""> 1095: =head1 LICENCE AND COPYRIGHT
+</span><span class=""> 1096: 
+</span><span class=""> 1097: Copyright 2025-2026 Nigel Horne.
+</span><span class=""> 1098: 
+</span><span class=""> 1099: Usage is subject to the GPL2 licence terms.
+</span><span class=""> 1100: If you use it,
+</span><span class=""> 1101: please let me know.
+</span><span class=""> 1102: 
+</span><span class=""> 1103: =cut
+</span><span class=""> 1104: 
+</span><span class=""> 1105: 1;
 </span></pre>
 
 <script>
