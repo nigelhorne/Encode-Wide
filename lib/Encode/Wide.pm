@@ -510,13 +510,13 @@ sub wide_to_html
 				print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 			}
 			$complain->("TODO: wide_to_html($string)") if($complain);
-			warn "TODO: wide_to_html($string)";
 			# $string =~ s/[^[:ascii:]]/XXXXX/g;
 			$string =~ s{
 					([^[:ascii:]])
 				}{
 					'>>>>' . sprintf("%04X", ord($1)) . '<<<<'
 				}gex;	# e=evaluate, g=global, x=extended
+			warn "TODO: wide_to_html($string)";
 			die "BUG: wide_to_html($string)";
 		}
 	}
@@ -934,13 +934,13 @@ sub wide_to_xml
 			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 		}
 		$complain->("TODO: wide_to_xml($string)") if($complain);
-		warn "TODO: wide_to_xml($string)";
 		# $string =~ s/[^[:ascii:]]/XXXXX/g;
 		$string =~ s{
 				([^[:ascii:]])
 			}{
 				'>>>>' . sprintf("%04X", ord($1)) . '<<<<'
 			}gex;	# e=evaluate, g=global, x=extended
+		warn "TODO: wide_to_xml($string)";
 		die "BUG: wide_to_xml($string)";
 	}
 	return $string;
