@@ -802,13 +802,13 @@ Approximate LCSAJ segments: 35<br>
 </span><span class="">  510: 				print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
 </span><span class="">  511: 			}
 </span><span class="">  512: 			$complain-&gt;(&quot;TODO: wide_to_html($string)&quot;) if($complain);
-</span><span class="">  513: 			warn &quot;TODO: wide_to_html($string)&quot;;
-</span><span class="">  514: 			# $string =~ s/[^[:ascii:]]/XXXXX/g;
-</span><span class="">  515: 			$string =~ s{
-</span><span class="">  516: 					([^[:ascii:]])
-</span><span class="">  517: 				}{
-</span><span class="">  518: 					&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
-</span><span class="">  519: 				}gex;	# e=evaluate, g=global, x=extended
+</span><span class="">  513: 			# $string =~ s/[^[:ascii:]]/XXXXX/g;
+</span><span class="">  514: 			$string =~ s{
+</span><span class="">  515: 					([^[:ascii:]])
+</span><span class="">  516: 				}{
+</span><span class="">  517: 					&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
+</span><span class="">  518: 				}gex;	# e=evaluate, g=global, x=extended
+</span><span class="">  519: 			warn &quot;TODO: wide_to_html($string)&quot;;
 </span><span class="">  520: 			die &quot;BUG: wide_to_html($string)&quot;;
 </span><span class="">  521: 		}
 </span><span class="">  522: 	}
@@ -1226,13 +1226,13 @@ Approximate LCSAJ segments: 35<br>
 </span><span class="">  934: 			print STDERR &quot;\t&quot;, colored($call_details[2] . &#39; of &#39; . $call_details[1], &#39;red&#39;), &quot;\n&quot;;
 </span><span class="">  935: 		}
 </span><span class="">  936: 		$complain-&gt;(&quot;TODO: wide_to_xml($string)&quot;) if($complain);
-</span><span class="">  937: 		warn &quot;TODO: wide_to_xml($string)&quot;;
-</span><span class="">  938: 		# $string =~ s/[^[:ascii:]]/XXXXX/g;
-</span><span class="">  939: 		$string =~ s{
-</span><span class="">  940: 				([^[:ascii:]])
-</span><span class="">  941: 			}{
-</span><span class="">  942: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
-</span><span class="">  943: 			}gex;	# e=evaluate, g=global, x=extended
+</span><span class="">  937: 		# $string =~ s/[^[:ascii:]]/XXXXX/g;
+</span><span class="">  938: 		$string =~ s{
+</span><span class="">  939: 				([^[:ascii:]])
+</span><span class="">  940: 			}{
+</span><span class="">  941: 				&#39;&gt;&gt;&gt;&gt;&#39; . sprintf(&quot;%04X&quot;, ord($1)) . &#39;&lt;&lt;&lt;&lt;&#39;
+</span><span class="">  942: 			}gex;	# e=evaluate, g=global, x=extended
+</span><span class="">  943: 		warn &quot;TODO: wide_to_xml($string)&quot;;
 </span><span class="">  944: 		die &quot;BUG: wide_to_xml($string)&quot;;
 </span><span class="">  945: 	}
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  946: 	return $string;
