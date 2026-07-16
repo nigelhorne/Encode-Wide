@@ -22,8 +22,6 @@ our @EXPORT_OK = qw(wide_to_html wide_to_xml);
 # keep_hrefs => 1 means ensure hyperlinks still work
 # keep_apos => 1 means keep apostrophes, useful within <script>
 
-=encoding UTF-8
-
 =head1 NAME
 
 Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities
@@ -35,6 +33,8 @@ Encode::Wide - Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-s
 =cut
 
 our $VERSION = 0.06;
+
+=encoding UTF-8
 
 =head1 SYNOPSIS
 
@@ -176,17 +176,6 @@ in that case.
 =head4 Output
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
-
-=head3 FORMAL SPECIFICATION
-
-Let S be the input string, S' the output string.
-
-    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
-    S = ""  ⟹  S' = ""                                 (empty pass-through)
-    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
-    keep_apos = 0  ⟹ ∄ bare apostrophe in S'
-    ¬∃ bare & in S' (& only appears as part of a valid entity)
-    string = undef ⟹ die("Usage: wide_to_html() string not set")
 
 =cut
 
@@ -601,18 +590,6 @@ in that case.
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
 
-=head3 FORMAL SPECIFICATION
-
-Let S be the input string, S' the output string.
-
-    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
-    S = ""  ⟹  S' = ""                                 (empty pass-through)
-    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
-    U+2013 ∈ S ⟹ "-" ∈ S' ∧ "–" ∉ S'                (en-dash collapsed)
-    U+2014 ∈ S ⟹ "-" ∈ S' ∧ "—" ∉ S'                (em-dash collapsed)
-    ¬∃ bare & in S' (& only appears as part of a valid entity)
-    string = undef ⟹ die("Usage: string not set")
-
 =cut
 
 # See https://www.compart.com/en/unicode/U+0161 etc.
@@ -709,54 +686,31 @@ sub wide_to_xml
 
 	$string = _sub_map(\$string, \@byte_map);
 
-	%entity_map = (
-		'&copy;' => '&#x0A9;',
-		'&Aacute;' => '&#x0C1;',	# Á
-		'&ccaron;' => '&#x10D;',
-		'&agrave;' => '&#x0E0;',	# á
-		'&aacute;' => '&#x0E1;',	# á
-		'&acirc;' => '&#x0E2;',		# â
-		'&auml;' => '&#x0E4;',		# ä
-		'&aring;' => '&#x0E5;',	# å
-		'&ccedil;' => '&#x0E7;',	# ç
-		'&egrave;' => '&#x0E8;',
-		'&eacute;' => '&#x0E9;',
-		'&ecirc;' => '&#x0EA;',
-		'&euml;' => '&#x0EB;',	# euml
-		'&Icirc;' => '&#x0CE;',	# Î
-		'&Eacute;' => '&#x0C9;',
-		'&szlig;' => '&#x0DF;',	# ß
-		'&iacute;' => '&#xED;',	# í
-		'&icirc;' => '&#x0EE;',
-		'&iuml;' => '&#x0EF;',	# ï
-		'&eth;' => '&#x0F0;',	# ð
-		'&uacute;' => '&#0FA;',	# ú
-		'&uuml;' => '&#x0FC;',
-		'&scaron;' => '&#x161;',
-		'&oacute;' => '&#x0F3;',	# ó
-		'&ucirc;' => '&#x0F4;',
-		'&ouml;' => '&#x0F6;',
-		'&ordf;' => '&#x0AA;',	# ª
-		'&oslash;' => '&#x0F8;',	# ø
-		'&Zcaron;' => '&#x17D;',
-		'&zcaron;' => '&#x17E;',
-		'&Scaron;' => '&#x160;',
-		'&THORN;' => '&#x0DE;',	# Þ
-		'&thorn;' => '&#x0FE;',	# þ
-		'&reg;' => '&#x0AE;',
-		'&pound;' => '&#163;',
-		'&ntilde;' => '&#x0F1;',
-		'&mdash;' => '-',
-		'&ndash;' => '-',
-		'&excl;' => '!',
-	);
-
-	$string =~ s{(.)}{
-		my $cp = $1;
-		exists $entity_map{$cp}
-			? $entity_map{$cp}
-			: $cp
-	}gex;
+	# DEAD CODE: the %entity_map below has keys that are multi-character HTML
+	# entity strings (e.g. '&copy;', '&Aacute;').  The s{(.)}{...}gex loop
+	# that follows matches one character at a time; a single char can never
+	# equal a multi-char key, so the true branch is unreachable.
+	# By the time the string reaches here, HTML::Entities::decode has already
+	# converted all recognised named entities to their Unicode equivalents,
+	# which the byte_map passes below encode correctly.
+	# Additional bugs in the removed block: '&uacute;' => '&#0FA;' (decimal,
+	# not hex) and '&ucirc;' => '&#x0F4;' (maps to o-circumflex, not u-circumflex).
+	# This block has been commented out to remove dead code and reach 100%
+	# branch coverage.  See t/extended_tests.t section 3 for validation.
+	#
+	# %entity_map = (
+	# 	'&copy;' => '&#x0A9;',
+	# 	'&Aacute;' => '&#x0C1;',
+	# 	'&ccaron;' => '&#x10D;',
+	# 	...
+	# 	'&excl;' => '!',
+	# );
+	# $string =~ s{(.)}{
+	# 	my $cp = $1;
+	# 	exists $entity_map{$cp}
+	# 		? $entity_map{$cp}
+	# 		: $cp
+	# }gex;
 
 	if($string !~ /[^[:ascii:]]/) {
 		return $string;
@@ -867,6 +821,7 @@ sub wide_to_xml
 		["\N{U+00FB}", '&#x0FB;'],	# û
 		["\N{U+0160}", '&#x160;'],
 		["\N{U+0161}", '&#x161;'],
+		["\N{U+00A3}", '&#x0A3;'],	# £
 		["\N{U+00A9}", '&#x0A9;'],	# ©
 	# print STDERR __LINE__, ": ($string)";
 	# print STDERR (sprintf '%v02X', $string);
@@ -1038,6 +993,31 @@ or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide>.
 I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+=head1 FORMAL SPECIFICATION
+
+=head2 wide_to_html
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    keep_apos = 0  ⟹ ∄ bare apostrophe in S'
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: wide_to_html() string not set")
+
+=head2 wide_to_xml
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    U+2013 ∈ S ⟹ "-" ∈ S' ∧ "–" ∉ S'                (en-dash collapsed)
+    U+2014 ∈ S ⟹ "-" ∈ S' ∧ "—" ∉ S'                (em-dash collapsed)
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: string not set")
 
 =head1 AUTHOR
 

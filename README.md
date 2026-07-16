@@ -133,17 +133,6 @@ in that case.
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
 
-### FORMAL SPECIFICATION
-
-Let S be the input string, S' the output string.
-
-    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
-    S = ""  ⟹  S' = ""                                 (empty pass-through)
-    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
-    keep_apos = 0  ⟹ ∄ bare apostrophe in S'
-    ¬∃ bare & in S' (& only appears as part of a valid entity)
-    string = undef ⟹ die("Usage: wide_to_html() string not set")
-
 ## wide\_to\_xml
 
 ### Purpose
@@ -206,18 +195,6 @@ in that case.
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
 
-### FORMAL SPECIFICATION
-
-Let S be the input string, S' the output string.
-
-    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
-    S = ""  ⟹  S' = ""                                 (empty pass-through)
-    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
-    U+2013 ∈ S ⟹ "-" ∈ S' ∧ "–" ∉ S'                (en-dash collapsed)
-    U+2014 ∈ S ⟹ "-" ∈ S' ∧ "—" ∉ S'                (em-dash collapsed)
-    ¬∃ bare & in S' (& only appears as part of a valid entity)
-    string = undef ⟹ die("Usage: string not set")
-
 # SEE ALSO
 
 - [Test Dashboard](https://nigelhorne.github.io/Encode-Wide/coverage/)
@@ -236,6 +213,31 @@ or through the web interface at
 [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Encode-Wide).
 I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+# FORMAL SPECIFICATION
+
+## wide\_to\_html
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    keep_apos = 0  ⟹ ∄ bare apostrophe in S'
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: wide_to_html() string not set")
+
+## wide\_to\_xml
+
+Let S be the input string, S' the output string.
+
+    ∀ c ∈ S' : ord(c) ≤ 0x7F                          (ASCII guarantee)
+    S = ""  ⟹  S' = ""                                 (empty pass-through)
+    keep_hrefs = 0 ⟹ "<" ∉ S' ∧ ">" ∉ S' ∧ ∄ bare " in S'
+    U+2013 ∈ S ⟹ "-" ∈ S' ∧ "–" ∉ S'                (en-dash collapsed)
+    U+2014 ∈ S ⟹ "-" ∈ S' ∧ "—" ∉ S'                (em-dash collapsed)
+    ¬∃ bare & in S' (& only appears as part of a valid entity)
+    string = undef ⟹ die("Usage: string not set")
 
 # AUTHOR
 
