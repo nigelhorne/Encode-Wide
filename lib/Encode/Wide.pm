@@ -27,6 +27,9 @@ my $_EXTRA_ENTITY_RE = do {
 	qr/$pat/;
 };
 
+# Module-level HTML escape map eliminates the /e eval flag in keep_hrefs substitutions
+my %_HTML_ESCAPE = ( '<' => '&lt;', '>' => '&gt;', '"' => '&quot;' );
+
 # Encode to HTML whatever the non-ASCII encoding scheme has been chosen
 # Can't use HTML:Entities::encode since that doesn't seem to cope with
 #	all encodings and misses some characters
@@ -250,17 +253,29 @@ sub wide_to_html
 		# print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 	# }
 
-	$string = HTML::Entities::decode($string);
+	# SECURITY: skip entity-decoding when keep_hrefs is set.  Calling
+	# HTML::Entities::decode before the keep_hrefs gate converts encoded
+	# payloads like &lt;script&gt; to raw <script>, which then bypass
+	# re-escaping and produce XSS output.  When the caller asserts the input
+	# contains trusted HTML (keep_hrefs => 1) we treat the text as-is and
+	# only encode wide characters; entity-normalisation is then the caller's
+	# responsibility.
+	unless($params->{'keep_hrefs'}) {
+		$string = HTML::Entities::decode($string);
 
-	# Decode the four named entities HTML::Entities::decode misses
-	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+		# Decode the four named entities HTML::Entities::decode misses
+		$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+	}
 
-	# Escape bare & not already part of a valid entity
-	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
+	# Escape bare & not already part of a valid entity.
+	# Possessive ++ on the char class prevents O(n^2) backtracking (ReDoS)
+	# when the input contains & not followed by a semicolon-terminated name.
+	$string =~ s/&(?![A-Za-z#0-9]++;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		# Escape the three characters that break HTML attribute or body contexts
-		$string =~ s/([<>"])/$1 eq '<' ? '&lt;' : $1 eq '>' ? '&gt;' : '&quot;'/ge;
+		# Escape the three characters that break HTML attribute or body contexts.
+		# Module-level %_HTML_ESCAPE eliminates the /e eval flag.
+		$string =~ s/([<>"])/$_HTML_ESCAPE{$1}/g;
 	}
 
 	# $string =~ s/&db=/&amp;db=/g;
@@ -283,7 +298,8 @@ sub wide_to_html
 	$string = _sub_map(\$string, \@byte_map);
 
 	unless($params->{'keep_apos'}) {
-		# Multi-byte curly apostrophes can’t be combined in a char-class, so use a hash
+		# Multi-byte curly apostrophes can’t be combined in a char-class, so use
+		# an alternation regex built from the key set — no /e eval needed.
 		my %apos_map = (
 			"'"            => '&apos;',
 			"\x{2018}" => '&apos;',	# U+2018 left single quotation mark
@@ -291,10 +307,8 @@ sub wide_to_html
 			"\x{0060}" => '&apos;',	# U+0060 grave accent used as apostrophe
 			"\x98"     => '&apos;',
 		);
-
-		$string =~ s{(.)}{
-			exists $apos_map{$1} ? $apos_map{$1} : $1
-		}gex;
+		my $apos_re = join '|', map { quotemeta } keys %apos_map;
+		$string =~ s/($apos_re)/$apos_map{$1}/g;
 	}
 
 	if($string !~ /[^[:ascii:]]/) {
@@ -659,17 +673,22 @@ sub wide_to_xml
 		# print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
 	# }
 
-	$string = HTML::Entities::decode($string);
+	# SECURITY: skip entity-decoding when keep_hrefs is set — same rationale as
+	# wide_to_html: decoded payloads bypass re-escaping and produce XSS output.
+	unless($params->{'keep_hrefs'}) {
+		$string = HTML::Entities::decode($string);
 
-	# Decode the four named entities HTML::Entities::decode misses
-	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+		# Decode the four named entities HTML::Entities::decode misses
+		$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
+	}
 
-	# Escape bare & not already part of a valid entity
-	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
+	# Possessive ++ prevents O(n^2) backtracking (ReDoS) on inputs like
+	# "&aaaaaa..." with no closing semicolon.
+	$string =~ s/&(?![A-Za-z#0-9]++;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		# Escape ASCII markup chars; curly quotes are handled by the byte_map passes below
-		$string =~ s/([<>"])/$1 eq '<' ? '&lt;' : $1 eq '>' ? '&gt;' : '&quot;'/ge;
+		# Escape ASCII markup chars; %_HTML_ESCAPE eliminates the /e eval flag.
+		$string =~ s/([<>"])/$_HTML_ESCAPE{$1}/g;
 	}
 
 	# $string =~ s/‘/&apos;/g;
@@ -976,7 +995,8 @@ sub _sub_map
 		$map{$pair->[0]} = $pair->[1];
 	}
 
-	$string =~ s/($pattern)/$map{$1}/ge;
+	# No /e flag: hash dereference is a simple value interpolation, not code.
+	$string =~ s/($pattern)/$map{$1}/g;
 
 	return $string;
 }
