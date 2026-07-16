@@ -316,6 +316,11 @@ subtest 'wide_to_xml: $@ not clobbered during normal encoding' => sub {
 };
 
 subtest 'Neither function clears a pending alarm' => sub {
+	# alarm() is not implemented on Windows; skip rather than fail.
+	if($^O eq 'MSWin32') {
+		plan skip_all => 'alarm() not supported on Windows';
+		return;
+	}
 	# If either function accidentally calls alarm(0), remaining time drops to 0.
 	local $SIG{ALRM} = sub { die "alarm-fired\n" };
 	alarm(10);
