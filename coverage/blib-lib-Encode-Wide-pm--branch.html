@@ -25,23 +25,25 @@ https://pjcj.net
 <div><br/></div>
 <table>
 <tr><th>line</th><th>%</th><th colspan="2">coverage</th><th>branch</th></tr>
-<tr><td class="h"><a id="L189">189</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $string)</td></tr>
-<tr><td class="h"><a id="L197">197</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $string eq &quot;SCALAR&quot;)</td></tr>
-<tr><td class="h"><a id="L227">227</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_hrefs&#39;})</td></tr>
-<tr><td class="h"><a id="L236">236</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">exists $entity_map{$cp} ? :</td></tr>
-<tr><td class="h"><a id="L260">260</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_apos&#39;})</td></tr>
-<tr><td class="h"><a id="L277">277</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">exists $entity_map{$cp} ? :</td></tr>
-<tr><td class="h"><a id="L282">282</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($string =~ /[^[:ascii:]]/)</td></tr>
-<tr><td class="h"><a id="L502">502</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
-<tr><td class="h"><a id="L504">504</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
-<tr><td class="h"><a id="L512">512</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $complain</td></tr>
-<tr><td class="h"><a id="L604">604</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $string)</td></tr>
-<tr><td class="h"><a id="L612">612</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $string eq &quot;SCALAR&quot;)</td></tr>
-<tr><td class="h"><a id="L645">645</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_hrefs&#39;})</td></tr>
-<tr><td class="h"><a id="L657">657</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">exists $entity_map{$cp} ? :</td></tr>
-<tr><td class="h"><a id="L715">715</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($string =~ /[^[:ascii:]]/)</td></tr>
-<tr><td class="h"><a id="L927">927</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
-<tr><td class="h"><a id="L936">936</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $complain</td></tr>
+<tr><td class="h"><a id="L237">237</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $string)</td></tr>
+<tr><td class="h"><a id="L241">241</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $string eq &quot;SCALAR&quot;)</td></tr>
+<tr><td class="h"><a id="L261">261</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_hrefs&#39;})</td></tr>
+<tr><td class="h"><a id="L263">263</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$1 eq &#39;&gt;&#39; ? :</td></tr>
+<tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$1 eq &#39;&lt;&#39; ? :</td></tr>
+<tr><td class="h"><a id="L285">285</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_apos&#39;})</td></tr>
+<tr><td class="h"><a id="L296">296</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">exists $apos_map{$1} ? :</td></tr>
+<tr><td class="h"><a id="L300">300</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($string =~ /[^[:ascii:]]/)</td></tr>
+<tr><td class="h"><a id="L520">520</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
+<tr><td class="h"><a id="L522">522</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
+<tr><td class="h"><a id="L523">523</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $complain</td></tr>
+<tr><td class="h"><a id="L645">645</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $string)</td></tr>
+<tr><td class="h"><a id="L649">649</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $string eq &quot;SCALAR&quot;)</td></tr>
+<tr><td class="h"><a id="L670">670</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;keep_hrefs&#39;})</td></tr>
+<tr><td class="h"><a id="L672">672</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$1 eq &#39;&gt;&#39; ? :</td></tr>
+<tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$1 eq &#39;&lt;&#39; ? :</td></tr>
+<tr><td class="h"><a id="L728">728</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($string =~ /[^[:ascii:]]/)</td></tr>
+<tr><td class="h"><a id="L939">939</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($string =~ /[^[:ascii:]]/)</td></tr>
+<tr><td class="h"><a id="L940">940</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $complain</td></tr>
 </table>
 </body>
 </html>
