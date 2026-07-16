@@ -5,12 +5,27 @@ package Encode::Wide;
 use strict;
 use warnings;
 
+use Carp qw(croak carp confess);
 use Exporter qw(import);
 use HTML::Entities;
 use Params::Get 0.13;
-use Term::ANSIColor;
 
 our @EXPORT_OK = qw(wide_to_html wide_to_xml);
+
+# HTML::Entities::decode does not handle these four named entities, so we
+# decode them ourselves.  The regex is built once at compile time: longest
+# key first to avoid partial-match ambiguity (e.g. &Scaron; before &s...).
+my %_EXTRA_ENTITY_MAP = (
+	'&ccaron;' => "\x{010D}",	# c with caron
+	'&zcaron;' => "\x{017E}",	# z with caron
+	'&Zcaron;' => "\x{017D}",	# Z with caron
+	'&Scaron;' => "\x{0160}",	# S with caron
+);
+my $_EXTRA_ENTITY_RE = do {
+	my $pat = join '|', map { quotemeta }
+		sort { length($b) <=> length($a) } keys %_EXTRA_ENTITY_MAP;
+	qr/$pat/;
+};
 
 # Encode to HTML whatever the non-ASCII encoding scheme has been chosen
 # Can't use HTML:Entities::encode since that doesn't seem to cope with
@@ -148,9 +163,8 @@ A defined scalar string containing only ASCII characters (code points 0x00–0x7
 
 =head3 Side Effects
 
-Prints diagnostic information to STDERR and invokes the C<complain> callback
-when an unhandled character is detected.  Dies with C<"BUG: wide_to_html(...)">
-in that case.
+Invokes the C<complain> callback with a message when an unhandled character is
+detected, then dies with a C<BUG:> prefix regardless.
 
 =head3 Usage Example
 
@@ -177,6 +191,40 @@ in that case.
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
 
+=head3 MESSAGES
+
+=over 4
+
+=item C<Usage: wide_to_html() string not set>
+
+Fatal.  C<string> argument was C<undef>.  Pass a defined scalar or scalar-ref.
+
+=item C<TODO: wide_to_html(E<lt>...E<gt>)>
+
+Warning (via C<carp>).  A character survived all encoding passes and
+C<encode_entities_numeric>.  The argument shows hex-escaped codepoints.
+Add the missing character to the byte_map or file a bug.
+
+=item C<BUG: wide_to_html(E<lt>...E<gt>)>
+
+Fatal (via C<croak>).  Same condition as the TODO warning above.
+This should never occur in normal use; it signals a gap in the character tables.
+
+=back
+
+=head3 PSEUDOCODE
+
+    1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
+    2. Escape bare & not part of an entity
+    3. Unless keep_hrefs: escape <, >, "
+    4. First byte_map pass: typographic chars, exclamation mark
+    5. Unless keep_apos: encode apostrophe variants to &apos;
+    6. Early return if string is now pure ASCII
+    7. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
+    8. Third byte_map pass: literal Unicode source chars
+    9. Fallback: HTML::Entities::encode_entities_numeric for any remaining non-ASCII
+   10. If non-ASCII still remains: invoke complain callback, carp, croak BUG
+
 =cut
 
 sub wide_to_html
@@ -187,11 +235,7 @@ sub wide_to_html
 	my $complain = $params->{'complain'};
 
 	if(!defined($string)) {
-		my $i = 0;
-		while((my @call_details = caller($i++))) {
-			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
-		}
-		die 'Usage: wide_to_html() string not set';
+		croak 'Usage: wide_to_html() string not set';
 	}
 
 	if(ref($string) eq 'SCALAR') {
@@ -207,35 +251,16 @@ sub wide_to_html
 	# }
 
 	$string = HTML::Entities::decode($string);
-	# $string =~ s/ & / &amp; /g;
 
-	# HTML::Entities::decode doesn't handle these named entities, so decode them manually
-	my %entity_map = (
-		'&ccaron;' => 'č',
-		'&zcaron;' => 'ž',
-		'&Zcaron;' => 'Ž',
-		'&Scaron;' => 'Š',
-	);
+	# Decode the four named entities HTML::Entities::decode misses
+	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
 
-	# Build an alternation from longest key first to avoid partial matches, then substitute
-	my $entity_re = join '|', map { quotemeta } sort { length($b) <=> length($a) } keys %entity_map;
-	$string =~ s/($entity_re)/$entity_map{$1}/g;
-
-	# Escape only if it's not already part of an entity
+	# Escape bare & not already part of a valid entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		%entity_map = (
-			'<' => '&lt;',
-			'>' => '&gt;',
-			'"' => '&quot;',
-		);
-		$string =~ s{(.)}{
-			my $cp = $1;
-			exists $entity_map{$cp}
-				? $entity_map{$cp}
-				: $cp
-		}gex;
+		# Escape the three characters that break HTML attribute or body contexts
+		$string =~ s/([<>"])/$1 eq '<' ? '&lt;' : $1 eq '>' ? '&gt;' : '&quot;'/ge;
 	}
 
 	# $string =~ s/&db=/&amp;db=/g;
@@ -258,24 +283,17 @@ sub wide_to_html
 	$string = _sub_map(\$string, \@byte_map);
 
 	unless($params->{'keep_apos'}) {
-		# We can't combine since each char in the multi-byte matches, not the entire multi-byte
-		# $string =~ s/['‘’‘\x98]/&apos;/g;
-		%entity_map = (
-			"'" => '&apos;',
-			'‘' => '&apos;',
-			'’' => '&apos;',
-			'‘' => '&apos;',
-			"\x98" => '&apos;',
+		# Multi-byte curly apostrophes can’t be combined in a char-class, so use a hash
+		my %apos_map = (
+			"'"            => '&apos;',
+			"\x{2018}" => '&apos;',	# U+2018 left single quotation mark
+			"\x{2019}" => '&apos;',	# U+2019 right single quotation mark
+			"\x{0060}" => '&apos;',	# U+0060 grave accent used as apostrophe
+			"\x98"     => '&apos;',
 		);
 
-		$string =~ s{
-			# ([\x80-\x{10FFFF}])
-			(.)
-		}{
-			my $cp = $1;
-			exists $entity_map{$cp}
-				? $entity_map{$cp}
-				: $cp
+		$string =~ s{(.)}{
+			exists $apos_map{$1} ? $apos_map{$1} : $1
 		}gex;
 	}
 
@@ -455,7 +473,7 @@ sub wide_to_html
 		[ 'ð', '&eth;' ],
 		[ 'í', '&iacute;' ],
 		[ 'ï', '&iuml;' ],
-		[ 'Î', '&Iicrc;' ],
+		[ 'Î', '&Icirc;' ],
 		[ '©', '&copy;' ],
 		[ '®', '&reg;' ],
 		[ 'ó', '&oacute;' ],
@@ -502,22 +520,15 @@ sub wide_to_html
 	if($string =~ /[^[:ascii:]]/) {
 		$string = HTML::Entities::encode_entities_numeric($string, '\x80-\x{10FFFF}');
 		if($string =~ /[^[:ascii:]]/) {
-			print STDERR (unpack 'H*', $string);
-			print STDERR __LINE__, ': ';
-			print STDERR (sprintf '%v02X', $string), "\n";
-			my $i = 0;
-			while((my @call_details = caller($i++))) {
-				print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
-			}
 			$complain->("TODO: wide_to_html($string)") if($complain);
-			# $string =~ s/[^[:ascii:]]/XXXXX/g;
+			# Sanitize non-ASCII to hex tokens before embedding in the error message
 			$string =~ s{
 					([^[:ascii:]])
 				}{
-					'>>>>' . sprintf("%04X", ord($1)) . '<<<<'
-				}gex;	# e=evaluate, g=global, x=extended
-			warn "TODO: wide_to_html($string)";
-			die "BUG: wide_to_html($string)";
+					'>>>>' . sprintf('%04X', ord($1)) . '<<<<'
+				}gex;
+			carp "TODO: wide_to_html($string)";
+			croak "BUG: wide_to_html($string)";
 		}
 	}
 
@@ -562,9 +573,8 @@ A defined scalar string containing only ASCII characters (code points 0x00–0x7
 
 =head3 Side Effects
 
-Prints diagnostic information to STDERR and invokes the C<complain> callback
-when an unhandled character is detected.  Dies with C<"BUG: wide_to_xml(...)">
-in that case.
+Invokes the C<complain> callback with a message when an unhandled character is
+detected, then dies with a C<BUG:> prefix regardless.
 
 =head3 Usage Example
 
@@ -590,6 +600,37 @@ in that case.
 
     { type => SCALAR, constraint => sub { $_[0] !~ /[^[:ascii:]]/ } }
 
+=head3 MESSAGES
+
+=over 4
+
+=item C<Usage: wide_to_xml() string not set>
+
+Fatal.  C<string> argument was C<undef>.  Pass a defined scalar or scalar-ref.
+
+=item C<TODO: wide_to_xml(E<lt>...E<gt>)>
+
+Warning (via C<carp>).  A character survived all encoding passes.
+The argument shows hex-escaped codepoints.  File a bug with that string.
+
+=item C<BUG: wide_to_xml(E<lt>...E<gt>)>
+
+Fatal (via C<croak>).  Same condition as above; signals a gap in the XML
+character tables.
+
+=back
+
+=head3 PSEUDOCODE
+
+    1. Decode HTML entities (HTML::Entities::decode + 4 extra named entities)
+    2. Escape bare & not part of an entity
+    3. Unless keep_hrefs: escape <, >, "
+    4. First byte_map pass: curly quotes, dashes, curly apostrophes
+    5. Early return if string is now pure ASCII
+    6. Second byte_map pass: UTF-8 byte sequences + \N{U+...} named chars
+    7. Third byte_map pass: literal Unicode source chars
+    8. If non-ASCII still remains: invoke complain callback, carp, croak BUG
+
 =cut
 
 # See https://www.compart.com/en/unicode/U+0161 etc.
@@ -602,11 +643,7 @@ sub wide_to_xml
 	my $complain = $params->{'complain'};
 
 	if(!defined($string)) {
-		my $i = 0;
-		while((my @call_details = caller($i++))) {
-			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
-		}
-		die 'Usage: string not set';
+		croak 'Usage: wide_to_xml() string not set';
 	}
 
 	if(ref($string) eq 'SCALAR') {
@@ -623,40 +660,16 @@ sub wide_to_xml
 	# }
 
 	$string = HTML::Entities::decode($string);
-	# print STDERR __LINE__, ": ($string)\n";
 
-	# $string =~ s/&amp;/&/g;
+	# Decode the four named entities HTML::Entities::decode misses
+	$string =~ s/($_EXTRA_ENTITY_RE)/$_EXTRA_ENTITY_MAP{$1}/g;
 
-	# HTML::Entities::decode doesn't handle these named entities, so decode them manually
-	my %entity_map = (
-		'&ccaron;' => 'č',
-		'&zcaron;' => 'ž',
-		'&Zcaron;' => 'Ž',
-		'&Scaron;' => 'Š',
-	);
-
-	# Build an alternation from longest key first to avoid partial matches, then substitute
-	my $entity_re = join '|', map { quotemeta } sort { length($b) <=> length($a) } keys %entity_map;
-	$string =~ s/($entity_re)/$entity_map{$1}/g;
-
-	# Escape only if it's not already part of an entity
+	# Escape bare & not already part of a valid entity
 	$string =~ s/&(?![A-Za-z#0-9]+;)/&amp;/g;
 
 	unless($params->{'keep_hrefs'}) {
-		%entity_map = (
-			'<' => '&lt;',
-			'>' => '&gt;',
-			'"' => '&quot;',
-			'”' => '&quot;',	# U+201C
-			'”' => '&quot;',	# U+201D
-		);
-
-		$string =~ s{(.)}{
-			my $cp = $1;
-			exists $entity_map{$cp}
-				? $entity_map{$cp}
-				: $cp
-		}gex;
+		# Escape ASCII markup chars; curly quotes are handled by the byte_map passes below
+		$string =~ s/([<>"])/$1 eq '<' ? '&lt;' : $1 eq '>' ? '&gt;' : '&quot;'/ge;
 	}
 
 	# $string =~ s/‘/&apos;/g;
@@ -923,48 +936,84 @@ sub wide_to_xml
 		# die $string;
 	# }
 
-	# print STDERR __LINE__, ": ($string)\n";
 	if($string =~ /[^[:ascii:]]/) {
-		print STDERR (unpack 'H*', $string);
-		print STDERR __LINE__, ': ';
-		print STDERR (sprintf '%v02X', $string);
-		print STDERR "\n";
-		my $i = 0;
-		while((my @call_details = caller($i++))) {
-			print STDERR "\t", colored($call_details[2] . ' of ' . $call_details[1], 'red'), "\n";
-		}
 		$complain->("TODO: wide_to_xml($string)") if($complain);
-		# $string =~ s/[^[:ascii:]]/XXXXX/g;
+		# Sanitize non-ASCII to hex tokens before embedding in the error message
 		$string =~ s{
 				([^[:ascii:]])
 			}{
-				'>>>>' . sprintf("%04X", ord($1)) . '<<<<'
-			}gex;	# e=evaluate, g=global, x=extended
-		warn "TODO: wide_to_xml($string)";
-		die "BUG: wide_to_xml($string)";
+				'>>>>' . sprintf('%04X', ord($1)) . '<<<<'
+			}gex;
+		carp "TODO: wide_to_xml($string)";
+		croak "BUG: wide_to_xml($string)";
 	}
 	return $string;
 }
 
+# _sub_map -- apply a list of [from, to] substitutions in a single pass.
+#
+# Purpose:    Replace every occurrence of each 'from' key with its 'to' value.
+#             Longer keys take priority over shorter ones (longest-match-first).
+# Entry:      $_[0] scalar-ref to string; $_[1] arrayref of [from, to] pairs.
+#             Duplicate 'from' keys: the first definition wins.
+# Exit:       Returns a new string (the scalar-ref argument is not modified).
+# Side Effects: None.
 sub _sub_map
 {
-	my $string = ${$_[0]};
+	my $string   = ${$_[0]};
 	my $byte_map = $_[1];
 
-	# Build an alternation sorted by longest sequence first
+	# Build the alternation regex, longest key first to prevent partial matches
 	my $pattern = join '|',
-		map { quotemeta($_->[0]) }
-		sort { length $b->[0] <=> length $a->[0] }
+		map  { quotemeta($_->[0]) }
+		sort { length($b->[0]) <=> length($a->[0]) }
 		@{$byte_map};
 
-	$string =~ s/($pattern)/do {
-		my $bytes = $1;
-		my ($pair) = grep { $_->[0] eq $bytes } @{$byte_map};
-		$pair->[1];
-	}/ge;
+	# Pre-build a hash for O(1) lookup during substitution.
+	# Iterate in reverse so that the first definition in @byte_map wins on duplicate keys.
+	my %map;
+	for my $pair (reverse @{$byte_map}) {
+		$map{$pair->[0]} = $pair->[1];
+	}
+
+	$string =~ s/($pattern)/$map{$1}/ge;
 
 	return $string;
 }
+
+=head1 LIMITATIONS
+
+=over 4
+
+=item Character coverage is hand-maintained
+
+Both functions use explicit byte_map tables.  Characters not listed fall back
+to C<HTML::Entities::encode_entities_numeric> (HTML only) or trigger a fatal
+C<BUG:> error (XML).  To add a missing character, extend the appropriate
+C<@byte_map> array in both the UTF-8-bytes pass and the C<\N{U+...}> pass.
+
+=item No C<< <script> >> / C<< <style> >> awareness
+
+C<wide_to_html> applies entity escaping uniformly; it does not detect or skip
+content inside C<< <script> >> or C<< <style> >> blocks.
+Do not feed raw HTML documents through this function expecting semantic
+preservation of embedded scripts.
+
+=item XML numeric entity format
+
+The XML numeric entities produced use a minimal hex representation
+(e.g. C<&#x0E9;>) rather than the canonical 4-digit form (C<&#x00E9;>).
+Both are valid XML 1.0, but consumers that do strict format matching should
+normalise before comparing.
+
+=item Input encoding assumption
+
+The module decodes HTML entities first via C<HTML::Entities::decode>, then
+applies byte-level substitutions.  Callers must not pass raw binary data
+(non-UTF-8 byte strings) without first decoding them to Perl's internal
+Unicode representation; undefined behaviour may result.
+
+=back
 
 =head1 SEE ALSO
 

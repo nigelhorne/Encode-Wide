@@ -79,6 +79,11 @@ my @tests = (
 		input   => 'An&zcaron;link',
 		html	=> 'An&zcaron;link',
 		xml	=> 'An&#x17E;link',
+	}, {
+		name	=> 'I circumflex (U+00CE) HTML named entity correct spelling',
+		input   => "\x{00CE}",
+		html	=> '&Icirc;',
+		xml	=> '&#x0CE;',
 	},
 );
 
@@ -113,7 +118,7 @@ throws_ok {
 } qr/^Usage:.+wide_to_html\(/, 'Missing string param throws';
 
 throws_ok {
-	wide_to_xml()
-} qr/^Usage:.+wide_to_xml\(/, 'Missing string param throws';
+	wide_to_xml(string => undef)
+} qr/Usage: wide_to_xml\(\) string not set/, 'Missing string param throws';
 
 done_testing();

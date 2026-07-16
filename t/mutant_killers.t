@@ -210,7 +210,7 @@ subtest 'COND_INV_604_2: undef-string guard in wide_to_xml' => sub {
 	plan tests => 2;
 
 	throws_ok { wide_to_xml(string => undef) }
-		qr/Usage: string not set/,
+		qr/Usage: wide_to_xml\(\) string not set/,
 		'undef string triggers die in wide_to_xml (true-branch confirmed)';
 
 	lives_ok { wide_to_xml(string => 'x') }

@@ -288,7 +288,7 @@ subtest 'wide_to_xml: dies with correct message when string arg is absent' => su
 
 subtest 'wide_to_xml: dies when string is explicitly undef' => sub {
 	throws_ok { wide_to_xml(string => undef) }
-		qr/Usage: string not set/,
+		qr/Usage: wide_to_xml\(\) string not set/,
 		'undef string produces expected error';
 };
 
