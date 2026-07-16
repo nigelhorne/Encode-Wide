@@ -1,0 +1,245 @@
+{
+   "runs" : [
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163543.18907,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1784163536.65102,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163536.79605,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1784163536.79591,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163537.08291,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/00-load.t",
+         "start" : 1784163537.08175,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163537.49771,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/30-basics.t",
+         "start" : 1784163537.44953,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163537.87332,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/edge.t",
+         "start" : 1784163537.86489,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163539.61072,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/edge_cases.t",
+         "start" : 1784163538.20579,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163540.00832,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/eof.t",
+         "start" : 1784163540.00803,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163540.24203,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/eol.t",
+         "start" : 1784163540.2417,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163540.6366,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/function.t",
+         "start" : 1784163540.54098,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163541.58036,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/integration.t",
+         "start" : 1784163541.05795,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163541.38501,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1784163541.38496,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163541.55442,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1784163541.55435,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163541.95591,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/manifest.t",
+         "start" : 1784163541.95564,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163542.18648,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/pod-cm.t",
+         "start" : 1784163542.18618,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163542.4191,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/pod-synopsis.t",
+         "start" : 1784163542.41879,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163542.65278,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/pod.t",
+         "start" : 1784163542.65247,
+         "version" : 0.06
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Convert wide characters (Unicode, UTF-8, etc.) into HTML or XML-safe ASCII entities",
+         "dir" : "/home/runner/work/Encode-Wide/Encode-Wide",
+         "finish" : 1784163543.03122,
+         "name" : "Encode-Wide",
+         "perl" : "5.40.4",
+         "run" : "t/unit.t",
+         "start" : 1784163542.94344,
+         "version" : 0.06
+      }
+   ],
+   "summary" : {
+      "Total" : {
+         "branch" : {
+            "covered" : 34,
+            "error" : 2,
+            "percentage" : 94.4444444444444,
+            "total" : 36,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 133,
+            "percentage" : 100,
+            "total" : 133
+         },
+         "subroutine" : {
+            "covered" : 9,
+            "percentage" : 100,
+            "total" : 9
+         },
+         "total" : {
+            "covered" : 176,
+            "error" : 2,
+            "percentage" : 98.876404494382,
+            "total" : 178,
+            "uncoverable" : 0
+         }
+      },
+      "blib/lib/Encode/Wide.pm" : {
+         "branch" : {
+            "covered" : 34,
+            "error" : 2,
+            "percentage" : 94.4444444444444,
+            "total" : 36,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 133,
+            "percentage" : 100,
+            "total" : 133
+         },
+         "subroutine" : {
+            "covered" : 9,
+            "percentage" : 100,
+            "total" : 9
+         },
+         "total" : {
+            "covered" : 176,
+            "error" : 2,
+            "percentage" : 98.876404494382,
+            "total" : 178,
+            "uncoverable" : 0
+         }
+      }
+   }
+}
