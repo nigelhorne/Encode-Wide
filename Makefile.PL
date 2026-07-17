@@ -18,7 +18,7 @@ WriteMakefile(
 	ABSTRACT_FROM => 'lib/Encode/Wide.pm',
 	EXE_FILES => [ 'bin/wide2html', 'bin/wide2xml' ],
 	((defined($ExtUtils::MakeMaker::VERSION) && ($ExtUtils::MakeMaker::VERSION >= 6.3002))
-		? ('LICENSE'=> 'GPL')
+		? ('LICENSE'=> 'gpl_2')
 		: ()),
 	CONFIGURE_REQUIRES => {
 		'ExtUtils::MakeMaker' => 6.64,	# Minimum version for TEST_REQUIRES
@@ -26,7 +26,6 @@ WriteMakefile(
 		'Exporter' => 0,
 		'HTML::Entities' => 0,
 		'Params::Get' => 0.13,
-		'Term::ANSIColor' => 0,
 	},  TEST_REQUIRES => {
 		'File::Glob' => 0,
 		'File::Slurp' => 0,
@@ -40,6 +39,7 @@ WriteMakefile(
 		'Test::Most' => 0,
 		'Test::Needs' => 0,
 		'Test::Returns' => 0,
+		'Time::HiRes' => 0,
 	}, dist => $dist,
 	clean => { FILES => 'Encode-Wide-*' },
 	# META_ADD => {
@@ -52,7 +52,7 @@ WriteMakefile(
 			repository => {
 				repository => 'https://github.com/nigelhorne/Encode-Wide',
 				type => 'git',
-				url => 'git://github.com/nigelhorne/Encode-Wide.git',
+				url => 'https://github.com/nigelhorne/Encode-Wide.git',
 				web => 'https://github.com/nigelhorne/Encode-Wide',
 				# license => 'http://dev.perl.org/licenses/',
 			}, bugtracker => {

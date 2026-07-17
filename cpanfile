@@ -5,7 +5,6 @@ requires 'perl', '5.10.0';
 requires 'Exporter';
 requires 'HTML::Entities';
 requires 'Params::Get', '0.13';
-requires 'Term::ANSIColor';
 
 on 'configure' => sub {
 	requires 'ExtUtils::MakeMaker', '6.64';
@@ -24,6 +23,7 @@ on 'test' => sub {
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::Returns';
+	requires 'Time::HiRes';
 };
 
 on 'develop' => sub {
